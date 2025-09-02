@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [],
+  "contact": {
+    "sources": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric",
+    "issues": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric/issues"
+  },
+  "license": "GNU GPLv3",
+  "accessWidener": "dragonmounts.plus.accesswidener",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.dragonmounts.plus.client.DragonMountsClient"
+    ],
+    "main": [
+      "net.dragonmounts.plus.DragonMounts"
+    ],
+    "fabric-datagen": [
+      "net.dragonmounts.plus.data.DMDataGenerator"
+    ],
+    "modmenu": [
+      "net.dragonmounts.plus.compat.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "dragonmounts.plus.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/Ewm8aTTJ3K",
+        "modmenu.github_releases": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric/releases"
+      },
+      "update_checker": false
+    }
+  }
+}

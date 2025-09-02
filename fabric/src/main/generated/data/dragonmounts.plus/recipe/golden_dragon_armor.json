@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "dragonmounts.plus.dragon_armor",
+  "key": {
+    "#": "#c:ingots/gold",
+    "X": "#c:storage_blocks/gold"
+  },
+  "pattern": [
+    "#  ",
+    "XXX",
+    " ##"
+  ],
+  "result": {
+    "count": 1,
+    "id": "dragonmounts.plus:golden_dragon_armor"
+  }
+}

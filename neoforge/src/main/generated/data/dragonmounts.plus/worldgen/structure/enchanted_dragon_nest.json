@@ -1,0 +1,14 @@
+{
+  "type": "dragonmounts.plus:dragon_nest",
+  "biomes": "#dragonmounts.plus:has_structure/enchanted_dragon_nest",
+  "configs": [
+    {
+      "placement": "on_land_surface",
+      "templates": [
+        "dragonmounts.plus:enchanted"
+      ]
+    }
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

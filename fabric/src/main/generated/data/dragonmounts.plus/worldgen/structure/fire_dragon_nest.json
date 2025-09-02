@@ -1,0 +1,26 @@
+{
+  "type": "dragonmounts.plus:dragon_nest",
+  "biomes": "#dragonmounts.plus:has_structure/fire_dragon_nest",
+  "configs": [
+    {
+      "placement": "in_mountain",
+      "templates": [
+        "dragonmounts.plus:fire"
+      ]
+    },
+    {
+      "placement": "partly_buried",
+      "templates": [
+        "dragonmounts.plus:fire"
+      ]
+    },
+    {
+      "placement": "underground",
+      "templates": [
+        "dragonmounts.plus:fire"
+      ]
+    }
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}
