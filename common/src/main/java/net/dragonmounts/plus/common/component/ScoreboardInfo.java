@@ -17,38 +17,38 @@ import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.ScoreHolder;
 import net.minecraft.world.scores.Scoreboard;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public record ScoreboardInfo(@Nullable String team, @NotNull List<Entry> scores) {
+public record ScoreboardInfo(@Nullable String team, List<Entry> scores) {
     public static final Codec<String> TEAM_CODEC = Codec.STRING.lenientOptionalFieldOf("Team", null).codec();
-    public static final Codec<List<Entry>> SCORE_CODEC = RecordCodecBuilder.<Entry>create(
-            instance -> instance.group(
-                    Codec.STRING.fieldOf("Name").forGetter(Entry::name),
-                    Codec.INT.fieldOf("Score").forGetter(Entry::value),
-                    Codec.BOOL.lenientOptionalFieldOf("Locked", true).forGetter(Entry::locked),
-                    ComponentSerialization.CODEC.lenientOptionalFieldOf("display").forGetter(Entry::display),
-                    NumberFormatTypes.CODEC.lenientOptionalFieldOf("format").forGetter(Entry::format)
-            ).apply(instance, Entry::new)
-    ).listOf().fieldOf("Scores").codec();
+    public static final Codec<List<Entry>> SCORE_CODEC = RecordCodecBuilder.<Entry>create(instance -> instance.group(
+            Codec.STRING.fieldOf("Name").forGetter(Entry::name),
+            Codec.INT.fieldOf("Score").forGetter(Entry::value),
+            Codec.BOOL.lenientOptionalFieldOf("Locked", true).forGetter(Entry::locked),
+            ComponentSerialization.CODEC.lenientOptionalFieldOf("display").forGetter(Entry::display),
+            NumberFormatTypes.CODEC.lenientOptionalFieldOf("format").forGetter(Entry::format)
+    ).apply(instance, Entry::new)).listOf().fieldOf("Scores").codec();
     public static final ScoreboardCodec CODEC = new ScoreboardCodec();
 
     public static void applyScores(Scoreboard scoreboard, DataComponentHolder components, ScoreHolder holder) {
         var scores = components.get(DMDataComponents.SCORES);
-        if (scores != null) {
-            scores.apply((ScoreboardAccessor) scoreboard, holder);
-        }
+        if (scores == null) return;
+        var accessor = (ScoreboardAccessor) scoreboard;
+        accessor.dragonmounts$plus$loadEntries(holder, scores.scores);
+        if (scores.team == null) return;
+        accessor.dragonmounts$plus$addPlayerToTeam(holder.getScoreboardName(), scores.team);
     }
 
-    public void apply(ScoreboardAccessor accessor, ScoreHolder holder) {
-        if (this.team != null) {
-            accessor.dragonmounts$plus$addPlayerToTeam(holder.getScoreboardName(), this.team);
+    public static List<Entry> takeSnapshot(Map<Objective, Score> scores) {
+        var list = new ObjectArrayList<Entry>(scores.size());
+        for (var entry : scores.entrySet()) {
+            list.add(new Entry(entry.getKey().getName(), entry.getValue()));
         }
-        accessor.dragonmounts$plus$loadEntries(holder, this.scores);
+        return list;
     }
 
     public record Entry(
@@ -71,17 +71,7 @@ public record ScoreboardInfo(@Nullable String team, @NotNull List<Entry> scores)
         }
     }
 
-    public static List<Entry> takeSnapshot(Map<Objective, Score> scores) {
-        var list = new ObjectArrayList<Entry>(scores.size());
-        for (var entry : scores.entrySet()) {
-            list.add(new Entry(entry.getKey().getName(), entry.getValue()));
-        }
-        return list;
-    }
-
-    /**
-     * @see com.mojang.serialization.codecs.PairCodec
-     */
+    /// @see com.mojang.serialization.codecs.PairCodec
     public static final class ScoreboardCodec implements Codec<ScoreboardInfo> {
         @Override
         public <T> DataResult<Pair<ScoreboardInfo, T>> decode(final DynamicOps<T> ops, final T input) {

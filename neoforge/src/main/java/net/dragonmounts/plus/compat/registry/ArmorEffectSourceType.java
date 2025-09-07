@@ -17,5 +17,5 @@ public record ArmorEffectSourceType<T extends ArmorEffectSource>(MapCodec<T> cod
     public static final ArmorEffectSourceType<ListBasedArmorEffectSource> COMPONENT =
             new ArmorEffectSourceType<>(ListBasedArmorEffectSource.CODEC);
     public static final ArmorEffectSourceType<ArmorEffectSource> BUILTIN =
-            new ArmorEffectSourceType<>(MapCodec.unit(ListBasedArmorEffectSource.EMPTY));
+            new ArmorEffectSourceType<>(MapCodec.unit(ListBasedArmorEffectSource::empty));
 }

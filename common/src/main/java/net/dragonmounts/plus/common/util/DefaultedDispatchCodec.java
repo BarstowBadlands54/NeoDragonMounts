@@ -59,10 +59,9 @@ public class DefaultedDispatchCodec<K, V> extends MapCodec<V> {
                 decoder.apply(type).flatMap(elementDecoder -> {
                     if (ops.compressMaps()) {
                         final T value = input.get(ops.createString(COMPRESSED_VALUE_KEY));
-                        if (value == null) {
-                            return DataResult.error(() -> "Input does not have a \"value\" entry: " + input);
-                        }
-                        return elementDecoder.decoder().parse(ops, value).map(Function.identity());
+                        return value == null
+                                ? DataResult.error(() -> "Input does not have a \"value\" entry: " + input)
+                                : elementDecoder.decoder().parse(ops, value).map(Function.identity());
                     }
                     return elementDecoder.decode(ops, input).map(Function.identity());
                 })
@@ -74,6 +73,7 @@ public class DefaultedDispatchCodec<K, V> extends MapCodec<V> {
         var result = encoder.apply(input);
         var builder = prefix.withErrorsFrom(result);
         if (result.isError()) return builder;
+        assert result.result().isPresent();
         return ops.compressMaps()
                 ? prefix.add(typeKey, type.apply(input).flatMap(t -> keyCodec.encodeStart(ops, t)))
                 .add(COMPRESSED_VALUE_KEY, result.result().get().encoder().encodeStart(ops, input))

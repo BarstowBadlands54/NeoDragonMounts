@@ -45,13 +45,12 @@ import java.util.function.Function;
 
 import static net.dragonmounts.plus.common.DragonMountsShared.DRAGON_TYPE;
 import static net.dragonmounts.plus.common.DragonMountsShared.makeId;
-import static net.dragonmounts.plus.compat.registry.RegistryHandler.makeDefaultedRegistry;
 
 @SuppressWarnings("unused")
 public class DragonType implements TooltipProvider, DragonTypified {
     public static final String DATA_PARAMETER_KEY = "DragonType";
     public static final ResourceLocation DEFAULT_KEY = makeId("ender");
-    public static final DefaultedMappedRegistry<DragonType> REGISTRY = makeDefaultedRegistry(DRAGON_TYPE, DEFAULT_KEY);
+    public static final DefaultedMappedRegistry<DragonType> REGISTRY = Dummy.get();
     public static final Codec<DragonType> CODEC = REGISTRY.byNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonType> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_TYPE);
     public static final EntityDataSerializer<DragonType> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);
@@ -66,7 +65,6 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final TranslatableContents name;
     public final ArmorMaterial material;
     public final ToolMaterial tier;
-
 
     public DragonType(ResourceLocation identifier, DragonTypeBuilder builder) {
         this.identifier = identifier;

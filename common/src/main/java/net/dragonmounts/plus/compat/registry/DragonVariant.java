@@ -19,12 +19,11 @@ import java.util.function.Function;
 
 import static net.dragonmounts.plus.common.DragonMountsShared.DRAGON_VARIANT;
 import static net.dragonmounts.plus.common.DragonMountsShared.makeId;
-import static net.dragonmounts.plus.compat.registry.RegistryHandler.makeDefaultedRegistry;
 
 public class DragonVariant implements DragonTypified {
     public static final String DATA_PARAMETER_KEY = "Variant";
     public static final ResourceLocation DEFAULT_KEY = makeId("ender_female");
-    public static final DefaultedMappedRegistry<DragonVariant> REGISTRY = makeDefaultedRegistry(DRAGON_VARIANT, DEFAULT_KEY);
+    public static final DefaultedMappedRegistry<DragonVariant> REGISTRY = Dummy.get();
     public static final Codec<DragonVariant> CODEC = REGISTRY.byNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonVariant> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_VARIANT);
     public static final EntityDataSerializer<DragonVariant> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);

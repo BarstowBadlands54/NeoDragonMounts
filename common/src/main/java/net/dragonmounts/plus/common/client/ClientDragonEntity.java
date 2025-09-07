@@ -116,17 +116,23 @@ public class ClientDragonEntity extends TameableDragonEntity {
     @Override
     public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
-        if (!this.isBreathing() && DragonFood.isDragonFood(stack)) return InteractionResult.CONSUME;
-        if (this.isOwnedBy(player)) {
-            if (DragonInventory.isDragonArmor(stack)
-                    || DragonInventory.isDragonSaddle(stack)
-                    || DragonInventory.isChest(stack)
-                    || stack.is(DMItemTags.BATONS)
-            ) return InteractionResult.CONSUME;
-            var result = stack.interactLivingEntity(player, this, hand);
-            return result.consumesAction() ? result : InteractionResult.CONSUME;
+        boolean notOwner = !this.isOwnedBy(player);
+        if (!this.isBreathing()) {
+            var food = DragonFood.getInstance(stack);
+            if (food != null) {
+                return (food.requiresOwner() && notOwner) || (
+                        !food.canAlwaysFeed() && this.getHealth() >= this.getMaxHealth() && this.isTame()
+                ) ? InteractionResult.FAIL : InteractionResult.CONSUME;
+            }
         }
-        return InteractionResult.PASS;
+        if (notOwner) return InteractionResult.PASS;
+        if (DragonInventory.isDragonArmor(stack)
+                || DragonInventory.isDragonSaddle(stack)
+                || DragonInventory.isChest(stack)
+                || stack.is(DMItemTags.BATONS)
+        ) return InteractionResult.CONSUME;
+        var result = stack.interactLivingEntity(player, this, hand);
+        return result.consumesAction() ? result : InteractionResult.CONSUME;
     }
 
     @Override

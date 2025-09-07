@@ -206,13 +206,13 @@ public class TypeCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register(CommandBuildContext context, Predicate<CommandSourceStack> permission) {
         var argument = ResourceArgument.resource(context, DragonMountsShared.DRAGON_TYPE);
         var registry = context.lookupOrThrow(DragonMountsShared.DRAGON_TYPE);
-        SuggestionProvider<CommandSourceStack> suggestions = ((context1, builder) -> {
+        SuggestionProvider<CommandSourceStack> suggestions = (ignored, builder) -> {
             var input = builder.getRemaining().toLowerCase(Locale.ROOT);
-            boolean hasNamespace = input.indexOf(58) > -1;
+            boolean namespaced = input.indexOf(58) > -1;
             for (var iterator = registry.listElements().iterator(); iterator.hasNext(); ) {
                 var type = iterator.next().value();
                 var id = type.getId();
-                if (hasNamespace) {
+                if (namespaced) {
                     var string = id.toString();
                     if (matchesSubStr(input, string)) {
                         builder.suggest(string, type.getName());
@@ -222,7 +222,7 @@ public class TypeCommand {
                 }
             }
             return builder.buildFuture();
-        });
+        };
         return Commands.literal("type")
                 .then(Commands.literal("block").then(BLOCK_HANDLER.generateCommand(argument, suggestions, permission)))
                 .then(Commands.literal("entity").then(ENTITY_HANDLER.generateCommand(argument, suggestions, permission)));

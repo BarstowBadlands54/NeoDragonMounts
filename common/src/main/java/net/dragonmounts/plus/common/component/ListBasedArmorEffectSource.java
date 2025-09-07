@@ -11,40 +11,35 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Collections;
 import java.util.List;
 
-public final class ListBasedArmorEffectSource implements ArmorEffectSource {
-    public static final MapCodec<ListBasedArmorEffectSource> CODEC = ArmorEffectEntry.CODEC.listOf().xmap(
-            ListBasedArmorEffectSource::new,
-            ListBasedArmorEffectSource::getEffects
-    ).fieldOf("effects");
-    public static final ListBasedArmorEffectSource EMPTY = new ListBasedArmorEffectSource(Collections.emptyList());
+public interface ListBasedArmorEffectSource extends ArmorEffectSource {
+    List<ArmorEffectEntry> getEffects();
 
-    public static ListBasedArmorEffectSource of(List<ArmorEffectEntry> effects) {
-        return effects.isEmpty() ? EMPTY : new ListBasedArmorEffectSource(effects);
-    }
-
-    public static ListBasedArmorEffectSource of(ArmorEffectEntry... effects) {
+    static ListBasedArmorEffectSource of(ArmorEffectEntry... effects) {
         return of(List.of(effects));
     }
 
-    public final List<ArmorEffectEntry> effects;
-
-    private ListBasedArmorEffectSource(final List<ArmorEffectEntry> effects) {
-        this.effects = effects;
+    static ListBasedArmorEffectSource of(List<ArmorEffectEntry> effects) {
+        return effects.isEmpty() ? empty() : () -> effects;
     }
 
-    public List<ArmorEffectEntry> getEffects() {
-        return this.effects;
+    static ListBasedArmorEffectSource empty() {
+        return Collections::emptyList;
     }
+
+    MapCodec<ListBasedArmorEffectSource> CODEC = ArmorEffectEntry.CODEC.listOf().xmap(
+            ListBasedArmorEffectSource::of,
+            ListBasedArmorEffectSource::getEffects
+    ).fieldOf("effects");
 
     @Override
-    public void affect(ArmorEffectManager manager, Player player, ItemStack stack) {
-        for (var entry : this.effects) {
+    default void affect(ArmorEffectManager manager, Player player, ItemStack stack) {
+        for (var entry : this.getEffects()) {
             manager.addLevel(entry.effect(), entry.level());
         }
     }
 
     @Override
-    public ArmorEffectSourceType<?> getType() {
+    default ArmorEffectSourceType<?> getType() {
         return ArmorEffectSourceType.COMPONENT;
     }
 }

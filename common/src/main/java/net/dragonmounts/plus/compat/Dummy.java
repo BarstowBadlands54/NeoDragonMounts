@@ -1,9 +1,8 @@
 package net.dragonmounts.plus.compat;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 public interface Dummy {
+    @SuppressWarnings("InfiniteRecursion")
     static <T> T get() {
-        throw new NotImplementedException();
+        return get();
     }
 }

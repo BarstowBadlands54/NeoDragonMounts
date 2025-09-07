@@ -70,8 +70,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
     public ServerDragonEntity(ServerLevel level, BiConsumer<ServerLevel, ServerDragonEntity> init) {
         super(DMEntities.TAMEABLE_DRAGON.get(), level);
         init.accept(level, this);
-        if (this.stage != null) return;
-        this.setLifeStage(DragonLifeStage.ADULT, true, false);
+        if (this.stage == null) {
+            this.setLifeStage(DragonLifeStage.ADULT, true, false);
+        }
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         int age = this.age;
-        DragonLifeStage stage = this.stage;
+        var stage = this.stage;
         if (tag.contains(DragonLifeStage.DATA_PARAMETER_KEY)) {
             this.setLifeStage(DragonLifeStage.byName(tag.getString(DragonLifeStage.DATA_PARAMETER_KEY)), false, false);
         }
@@ -145,9 +146,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
             int y = pos.getY(), max = Math.min(y + 5, level.getMaxY());
             var mutable = pos.mutable();
             while (++y < max) {
-                if (DragonCoreBlock.tryPlaceAt(level, mutable.setY(y), state, stack)) {
-                    return;
-                }
+                if (DragonCoreBlock.tryPlaceAt(level, mutable.setY(y), state, stack)) return;
             }
         } else return;
         level.addFreshEntity(new ItemEntity(level, this.getX(), this.getY(), this.getZ(), stack));
@@ -158,7 +157,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (this.nearestCrystal != null && this.nearestCrystal.isAlive()) {
             if (++this.crystalTicks > 0 && this.getHealth() < this.getMaxHealth()) {
                 this.crystalTicks = -10;
-                this.setHealth(this.getHealth() + 1.0F);
+                this.heal(1.0F);
                 addOrResetEffect(this, MobEffects.DAMAGE_BOOST, 300, 0, false, true, true, 101);//15s
             }
             if (this.random.nextInt(20) == 0) {
@@ -248,7 +247,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (!this.isBreathing()) {
             var food = DragonFood.getInstance(stack);
             if (food != null) {
-                if (food.requiresOwner() && !isOwner) return InteractionResult.FAIL;
+                if ((food.requiresOwner() && !isOwner) || (
+                        !food.canAlwaysFeed() && this.getHealth() >= this.getMaxHealth() && this.isTame()
+                )) return InteractionResult.FAIL;
                 var level = this.level();
                 var locked = this.isAgeLocked();
                 for (var effect : food.effects()) {
@@ -258,7 +259,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                     // detoxification should not ripen the dragon
                     this.ageUp(food.age(), false);
                 }
-                this.setHealth(this.getHealth() + food.health());
+                this.heal(food.health());
                 if (isOwner) {
                     if (this.getLifeStage() == DragonLifeStage.ADULT && this.canFallInLove()) {
                         this.setInLove(player);

@@ -26,18 +26,20 @@ public record DragonFood(
         float health,
         float tamingProbability,
         boolean requiresOwner,
+        boolean canAlwaysFeed,
         Holder<SoundEvent> majorSound,
         Optional<Holder<SoundEvent>> minorSound,
         Optional<ItemStack> particles,
         List<ConsumeEffect> effects
 ) {
-    public static final DragonFood RAW_MEAT = new DragonFood(1500, 2.0F, 0.25F, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
-    public static final DragonFood COOKED_MEAT = new DragonFood(2500, 3.0F, 0.375F, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+    public static final DragonFood RAW_MEAT = new DragonFood(1500, 2.0F, 0.25F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+    public static final DragonFood COOKED_MEAT = new DragonFood(2500, 3.0F, 0.375F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
     public static final Codec<DragonFood> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.optionalFieldOf("age", 0).forGetter(DragonFood::age),
             Codec.FLOAT.optionalFieldOf("health", 0.0F).forGetter(DragonFood::health),
             Codec.floatRange(0.0F, 1.0F).optionalFieldOf("taming_probability", 0.25F).forGetter(DragonFood::tamingProbability),
             Codec.BOOL.optionalFieldOf("requires_owner", false).forGetter(DragonFood::requiresOwner),
+            Codec.BOOL.optionalFieldOf("can_always_feed", false).forGetter(DragonFood::canAlwaysFeed),
             SoundEvent.CODEC.optionalFieldOf("major_sound", SoundEvents.GENERIC_EAT).forGetter(DragonFood::majorSound),
             SoundEvent.CODEC.optionalFieldOf("minor_sound").forGetter(DragonFood::minorSound),
             ItemStack.CODEC.optionalFieldOf("override_particles").forGetter(DragonFood::particles),
@@ -51,6 +53,7 @@ public record DragonFood(
                 0.0F,
                 0.0F,
                 false,
+                buffer.readBoolean(),
                 SoundEvent.STREAM_CODEC.decode(buffer),
                 buffer.readBoolean()
                         ? Optional.of(SoundEvent.STREAM_CODEC.decode(buffer))
@@ -63,6 +66,7 @@ public record DragonFood(
     }
 
     public void encode(RegistryFriendlyByteBuf buffer) {
+        buffer.writeBoolean(this.canAlwaysFeed);
         SoundEvent.STREAM_CODEC.encode(buffer, this.majorSound);
         Runnable writeNull = () -> buffer.writeBoolean(false);
         this.minorSound.ifPresentOrElse(sound -> {
@@ -112,6 +116,7 @@ public record DragonFood(
                 1.0F,
                 0.25F,
                 true,
+                true,
                 SoundEvents.HONEY_DRINK,
                 Optional.empty(),
                 Optional.of(ItemStack.EMPTY),
@@ -121,6 +126,7 @@ public record DragonFood(
                 100,
                 -1.0F,
                 0.0F,
+                true,
                 true,
                 SoundEvents.GENERIC_EAT,
                 Optional.empty(),
@@ -132,6 +138,7 @@ public record DragonFood(
                 2.0F,
                 0.25F,
                 false,
+                false,
                 SoundEvents.GENERIC_EAT,
                 minorDrink,
                 Optional.of(new ItemStack(Items.COD)),
@@ -141,6 +148,7 @@ public record DragonFood(
                 1500,
                 2.0F,
                 0.25F,
+                false,
                 false,
                 SoundEvents.GENERIC_EAT,
                 minorDrink,
@@ -152,6 +160,7 @@ public record DragonFood(
                 2.0F,
                 0.25F,
                 false,
+                false,
                 SoundEvents.GENERIC_EAT,
                 minorDrink,
                 Optional.of(new ItemStack(Items.TROPICAL_FISH)),
@@ -161,6 +170,7 @@ public record DragonFood(
                 2500,
                 3.0F,
                 0.375F,
+                false,
                 false,
                 SoundEvents.GENERIC_EAT,
                 minorDrink,

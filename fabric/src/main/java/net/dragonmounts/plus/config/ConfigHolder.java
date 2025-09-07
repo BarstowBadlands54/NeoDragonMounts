@@ -42,7 +42,14 @@ public abstract class ConfigHolder<S> {
         try {
             CompoundTag result = null;
             if (Files.isRegularFile(source)) {
-                result = write(this, NbtIo.readCompressed(source, NbtAccounter.unlimitedHeap()));
+                CompoundTag existing;
+                try {
+                    existing = NbtIo.readCompressed(source, NbtAccounter.unlimitedHeap());
+                } catch (Exception exception) {
+                    LOGGER.error("Exception reading {}", source, exception);
+                    existing = null;
+                }
+                result = write(this, existing);
             } else if (Files.notExists(source)) {
                 Files.createDirectories(source.getParent());
                 result = write(this, null);
@@ -79,10 +86,10 @@ public abstract class ConfigHolder<S> {
         entry.setSaved();
     }
 
-    public static @Nullable CompoundTag write(ConfigHolder<?> holder, @Nullable CompoundTag exist) {
+    public static @Nullable CompoundTag write(ConfigHolder<?> holder, @Nullable CompoundTag existing) {
         boolean changed = false;
-        boolean full = exist == null;
-        var root = full ? new CompoundTag() : exist;
+        boolean full = existing == null;
+        var root = full ? new CompoundTag() : existing;
         for (var entry : holder.getEntries()) {
             if (full || entry.isChanged()) {
                 changed = true;

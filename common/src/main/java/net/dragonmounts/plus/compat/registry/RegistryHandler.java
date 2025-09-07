@@ -3,15 +3,11 @@ package net.dragonmounts.plus.compat.registry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.dragonmounts.plus.compat.Dummy;
-import net.minecraft.core.DefaultedMappedRegistry;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
@@ -90,14 +86,6 @@ public class RegistryHandler {
     }
 
     public static <T extends ConsumeEffect> ConsumeEffect.Type<T> registerConsumeEffect(String name, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> network) {
-        return Dummy.get();
-    }
-
-    public static <T> MappedRegistry<T> makeSimpleRegistry(ResourceKey<Registry<T>> key) {
-        return Dummy.get();
-    }
-
-    public static <T> DefaultedMappedRegistry<T> makeDefaultedRegistry(ResourceKey<Registry<T>> key, ResourceLocation fallback) {
         return Dummy.get();
     }
 }

@@ -30,9 +30,9 @@ public record ContorlGrowthConsumeEffect(boolean isAllowed) implements ConsumeEf
     }
 
     @Override
-    public boolean apply(Level level, ItemStack stack, LivingEntity entity) {
-        if (entity instanceof TameableDragonEntity dragon) {
-            dragon.setAgeLocked(!this.isAllowed);
+    public boolean apply(@NotNull Level level, @NotNull ItemStack stack, @NotNull LivingEntity entity) {
+        if (entity instanceof TameableDragonEntity) {
+            ((TameableDragonEntity) entity).setAgeLocked(!this.isAllowed);
             return true;
         }
         return false;

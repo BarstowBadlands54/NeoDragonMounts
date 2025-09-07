@@ -4,6 +4,8 @@ import net.dragonmounts.plus.common.client.DMParticleSprites;
 import net.dragonmounts.plus.common.client.breath.impl.*;
 import net.dragonmounts.plus.common.client.model.dragon.BuiltinFactory;
 import net.dragonmounts.plus.common.init.DragonArmorMaterials;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.function.Function;
@@ -15,6 +17,15 @@ import static net.dragonmounts.plus.common.client.variant.VariantAppearance.TEXT
 public class VariantAppearances {
     public static DefaultAppearance.Builder builder(BuiltinFactory model) {
         return new DefaultAppearance.Builder(model.location);
+    }
+
+    public static void registerArmorTextures(@Nullable String category, ResourceLocation folder) {
+        registerArmorTexture(category, DragonArmorMaterials.COPPER.assetId(), folder.withSuffix("/copper.png"));
+        registerArmorTexture(category, DragonArmorMaterials.IRON.assetId(), folder.withSuffix("/iron.png"));
+        registerArmorTexture(category, DragonArmorMaterials.GOLD.assetId(), folder.withSuffix("/gold.png"));
+        registerArmorTexture(category, DragonArmorMaterials.EMERALD.assetId(), folder.withSuffix("/emerald.png"));
+        registerArmorTexture(category, DragonArmorMaterials.DIAMOND.assetId(), folder.withSuffix("/diamond.png"));
+        registerArmorTexture(category, DragonArmorMaterials.NETHERITE.assetId(), folder.withSuffix("/netherite.png"));
     }
 
     public static final VariantAppearance AETHER_FEMALE;
@@ -183,43 +194,16 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder(BuiltinFactory.SCULK);
+        var builder = builder(BuiltinFactory.SCULK).setArmorCategory("sculk");
         WILD_SCULK = builder.build(makeId("sculk/wild_type"));
         MUTANT_SCULK = builder.build(makeId("sculk/mutant"));
         HOLLOWED = builder.build(makeId("sculk/hollowed"));
     }
 
     static {
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.COPPER.assetId(),
-                makeId("textures/entity/equipment/dragon_body/copper.png")
-        );
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.IRON.assetId(),
-                makeId("textures/entity/equipment/dragon_body/iron.png")
-        );
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.GOLD.assetId(),
-                makeId("textures/entity/equipment/dragon_body/gold.png")
-        );
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.EMERALD.assetId(),
-                makeId("textures/entity/equipment/dragon_body/emerald.png")
-        );
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.DIAMOND.assetId(),
-                makeId("textures/entity/equipment/dragon_body/diamond.png")
-        );
-        registerArmorTexture(
-                null,
-                DragonArmorMaterials.NETHERITE.assetId(),
-                makeId("textures/entity/equipment/dragon_body/nethierite.png")
-        );
+        registerArmorTextures(null, makeId("textures/entity/equipment/normal_dragon_body"));
+        registerArmorTextures("sculk", makeId("textures/entity/equipment/sculk_dragon_body"));
+        registerArmorTextures("skeleton", makeId("textures/entity/equipment/skeleton_dragon_body"));
     }
 
     public static Function<String, VariantAppearance> getBuiltinSupplier() {
