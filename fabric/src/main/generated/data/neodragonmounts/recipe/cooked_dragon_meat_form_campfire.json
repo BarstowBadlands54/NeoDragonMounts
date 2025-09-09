@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 0.35,
+  "ingredient": "neodragonmounts:dragon_meat",
+  "result": {
+    "id": "neodragonmounts:cooked_dragon_meat"
+  }
+}

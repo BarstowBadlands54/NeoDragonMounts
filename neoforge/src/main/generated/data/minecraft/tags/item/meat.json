@@ -1,6 +1,6 @@
 {
   "values": [
-    "dragonmounts.plus:dragon_meat",
-    "dragonmounts.plus:cooked_dragon_meat"
+    "neodragonmounts:dragon_meat",
+    "neodragonmounts:cooked_dragon_meat"
   ]
 }

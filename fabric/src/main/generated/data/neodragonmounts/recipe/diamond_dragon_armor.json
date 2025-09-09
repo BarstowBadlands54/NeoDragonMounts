@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_armor",
+  "key": {
+    "#": "#c:gems/diamond",
+    "X": "#c:storage_blocks/diamond"
+  },
+  "pattern": [
+    "#  ",
+    "XXX",
+    " ##"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:diamond_dragon_armor"
+  }
+}

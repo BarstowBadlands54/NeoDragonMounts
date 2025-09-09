@@ -1,19 +1,19 @@
 {
   "values": [
-    "dragonmounts.plus:moonlight_dragon_scale_hoe",
-    "dragonmounts.plus:terra_dragon_scale_hoe",
-    "dragonmounts.plus:zombie_dragon_scale_hoe",
-    "dragonmounts.plus:dark_dragon_scale_hoe",
-    "dragonmounts.plus:aether_dragon_scale_hoe",
-    "dragonmounts.plus:fire_dragon_scale_hoe",
-    "dragonmounts.plus:forest_dragon_scale_hoe",
-    "dragonmounts.plus:ice_dragon_scale_hoe",
-    "dragonmounts.plus:storm_dragon_scale_hoe",
-    "dragonmounts.plus:sunlight_dragon_scale_hoe",
-    "dragonmounts.plus:water_dragon_scale_hoe",
-    "dragonmounts.plus:enchanted_dragon_scale_hoe",
-    "dragonmounts.plus:ender_dragon_scale_hoe",
-    "dragonmounts.plus:sculk_dragon_scale_hoe",
-    "dragonmounts.plus:nether_dragon_scale_hoe"
+    "neodragonmounts:moonlight_dragon_scale_hoe",
+    "neodragonmounts:terra_dragon_scale_hoe",
+    "neodragonmounts:zombie_dragon_scale_hoe",
+    "neodragonmounts:dark_dragon_scale_hoe",
+    "neodragonmounts:aether_dragon_scale_hoe",
+    "neodragonmounts:fire_dragon_scale_hoe",
+    "neodragonmounts:forest_dragon_scale_hoe",
+    "neodragonmounts:ice_dragon_scale_hoe",
+    "neodragonmounts:storm_dragon_scale_hoe",
+    "neodragonmounts:sunlight_dragon_scale_hoe",
+    "neodragonmounts:water_dragon_scale_hoe",
+    "neodragonmounts:enchanted_dragon_scale_hoe",
+    "neodragonmounts:ender_dragon_scale_hoe",
+    "neodragonmounts:sculk_dragon_scale_hoe",
+    "neodragonmounts:nether_dragon_scale_hoe"
   ]
 }

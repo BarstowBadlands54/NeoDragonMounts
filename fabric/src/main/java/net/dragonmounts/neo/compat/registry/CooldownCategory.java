@@ -1,0 +1,23 @@
+package net.dragonmounts.neo.compat.registry;
+
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+
+import static net.dragonmounts.neo.common.DragonMountsShared.COOLDOWN_CATEGORY;
+import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeSimpleRegistry;
+
+public class CooldownCategory {
+    public static final MappedRegistry<net.dragonmounts.neo.compat.registry.CooldownCategory> REGISTRY = makeSimpleRegistry(COOLDOWN_CATEGORY);
+
+    public final ResourceLocation identifier;
+    private final int id;
+
+    public CooldownCategory(ResourceLocation identifier) {
+        this.id = REGISTRY.getId(Registry.register(REGISTRY, this.identifier = identifier, this));
+    }
+
+    public final int getId() {
+        return this.id;
+    }
+}

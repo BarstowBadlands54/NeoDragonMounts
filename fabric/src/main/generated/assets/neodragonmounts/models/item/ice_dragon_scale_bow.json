@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": {
+    "layer0": "neodragonmounts:item/ice_dragon_scale_bow"
+  }
+}

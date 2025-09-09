@@ -1,0 +1,35 @@
+package net.dragonmounts.neo.compat.registry;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+
+import java.util.function.BiFunction;
+
+public class BlockItemHolder<B extends Block, I extends Item> extends ObjectHolder<I, Item> implements ItemLike {
+    public static <B extends Block, I extends Item> net.dragonmounts.neo.compat.registry.BlockItemHolder<B, I> registerItem(net.dragonmounts.neo.compat.registry.BlockHolder<B> block, BiFunction<B, Item.Properties, I> factory) {
+        var key = ResourceKey.create(Registries.ITEM, block.key.location());
+        var item = factory.apply(block.value, new Item.Properties().setId(key).useBlockDescriptionPrefix());
+        if (item instanceof BlockItem) {
+            ((BlockItem) item).registerBlocks(Item.BY_BLOCK, item);
+        }
+        return new net.dragonmounts.neo.compat.registry.BlockItemHolder<>(block, key, item);
+    }
+
+    public final net.dragonmounts.neo.compat.registry.BlockHolder<B> block;
+
+    public BlockItemHolder(BlockHolder<B> block, ResourceKey<Item> key, I item) {
+        super(BuiltInRegistries.ITEM, key, item);
+        this.block = block;
+
+    }
+
+    @Override
+    public Item asItem() {
+        return this.value;
+    }
+}

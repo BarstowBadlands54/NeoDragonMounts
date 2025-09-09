@@ -1,0 +1,6 @@
+{
+  "parent": "neodragonmounts:item/template_shield",
+  "textures": {
+    "layer0": "neodragonmounts:item/terra_dragon_scale_shield"
+  }
+}

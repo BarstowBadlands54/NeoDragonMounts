@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_armor",
+  "key": {
+    "#": "#c:gems/emerald",
+    "X": "#c:storage_blocks/emerald"
+  },
+  "pattern": [
+    "#  ",
+    "XXX",
+    " ##"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:emerald_dragon_armor"
+  }
+}

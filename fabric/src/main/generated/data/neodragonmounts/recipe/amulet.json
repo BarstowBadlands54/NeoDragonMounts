@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": "#c:glass_blocks/colorless",
+    "O": "minecraft:ender_eye",
+    "Y": "#c:strings"
+  },
+  "pattern": [
+    " Y ",
+    "#O#",
+    " # "
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:amulet"
+  }
+}

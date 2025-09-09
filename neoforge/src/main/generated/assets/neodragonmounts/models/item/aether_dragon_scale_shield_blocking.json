@@ -1,0 +1,6 @@
+{
+  "parent": "neodragonmounts:item/template_shield_blocking",
+  "textures": {
+    "layer0": "neodragonmounts:item/aether_dragon_scale_shield"
+  }
+}

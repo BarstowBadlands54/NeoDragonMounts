@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_chestplate",
+  "key": {
+    "X": "neodragonmounts:storm_dragon_scales"
+  },
+  "pattern": [
+    "X X",
+    "XXX",
+    "XXX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:storm_dragon_scale_chestplate"
+  }
+}

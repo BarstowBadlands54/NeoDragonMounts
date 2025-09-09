@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_leggings",
+  "key": {
+    "X": "neodragonmounts:forest_dragon_scales"
+  },
+  "pattern": [
+    "XXX",
+    "X X",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:forest_dragon_scale_leggings"
+  }
+}

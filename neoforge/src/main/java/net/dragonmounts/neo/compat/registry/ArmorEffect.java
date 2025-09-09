@@ -1,0 +1,14 @@
+package net.dragonmounts.neo.compat.registry;
+
+import net.dragonmounts.neo.common.capability.ArmorEffectManager;
+import net.minecraft.core.Registry;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.registries.RegistryBuilder;
+
+import static net.dragonmounts.neo.common.DragonMountsShared.ARMOR_EFFECT;
+
+public interface ArmorEffect {
+    Registry<net.dragonmounts.neo.compat.registry.ArmorEffect> REGISTRY = new RegistryBuilder<>(ARMOR_EFFECT).sync(true).create();
+
+    boolean activate(ArmorEffectManager manager, Player player, int level);
+}

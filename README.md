@@ -1,4 +1,4 @@
-![LOGO](neoforge/src/main/resources/dragonmounts.plus.png)
+![LOGO](neoforge/src/main/resources/neodragonmounts.png)
 [![Discord](https://img.shields.io/discord/1293105990476103720?logo=Discord&logoColor=white&label=Discord&labelColor=%235865F2)](https://discord.gg/Ewm8aTTJ3K)
 
 ## License

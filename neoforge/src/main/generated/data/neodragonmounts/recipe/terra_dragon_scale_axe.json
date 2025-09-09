@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_axe",
+  "key": {
+    "#": "#c:rods/wooden",
+    "X": "neodragonmounts:terra_dragon_scales"
+  },
+  "pattern": [
+    "XX",
+    "X#",
+    " #"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:terra_dragon_scale_axe"
+  }
+}

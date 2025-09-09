@@ -31,9 +31,9 @@ fabricApi {
 }
 
 loom {
-    accessWidenerPath.set(file("src/main/resources/dragonmounts.plus.accesswidener"))
+    accessWidenerPath.set(file("src/main/resources/neodragonmounts.accesswidener"))
     mixin {
-        defaultRefmapName.set("dragonmounts.plus.refmap.json")
+        defaultRefmapName.set("neodragonmounts.refmap.json")
     }
     runs {
         client {

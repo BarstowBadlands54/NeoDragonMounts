@@ -1,0 +1,24 @@
+{
+  "type": "neodragonmounts:dragon_nest",
+  "biomes": "#neodragonmounts:has_structure/water_dragon_nest",
+  "configs": [
+    {
+      "placement": "on_land_surface",
+      "templates": [
+        "neodragonmounts:water1",
+        "neodragonmounts:water2",
+        "neodragonmounts:water3"
+      ]
+    },
+    {
+      "placement": "on_ocean_floor",
+      "templates": [
+        "neodragonmounts:water1",
+        "neodragonmounts:water2",
+        "neodragonmounts:water3"
+      ]
+    }
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

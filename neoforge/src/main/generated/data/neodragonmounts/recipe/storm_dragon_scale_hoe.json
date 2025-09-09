@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_hoe",
+  "key": {
+    "#": "#c:rods/wooden",
+    "X": "neodragonmounts:storm_dragon_scales"
+  },
+  "pattern": [
+    "XX",
+    " #",
+    " #"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:storm_dragon_scale_hoe"
+  }
+}

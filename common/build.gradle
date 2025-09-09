@@ -34,7 +34,7 @@ configurations {
 }
 
 artifacts {
-    commonJava file('src/main/java/net/dragonmounts/plus/common')
+    commonJava file('src/main/java/net/dragonmounts/neo/common')
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
 

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "neodragonmounts.dragon_scale_block",
+  "key": {
+    "#": "neodragonmounts:zombie_dragon_scales"
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:zombie_dragon_scale_block"
+  }
+}

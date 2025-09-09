@@ -1,0 +1,19 @@
+package net.dragonmounts.neo.common.client;
+
+import net.minecraft.resources.ResourceLocation;
+
+import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
+
+public interface DMParticleSprites {
+    ResourceLocation FLAME_BREATH = makeId("breath_fire");
+    ResourceLocation BLUE_FLAME_BREATH = makeId("breath_blue_fire");
+    ResourceLocation AIRFLOW_BREATH = makeId("breath_air");
+    ResourceLocation DARK_BREATH = makeId("breath_dark");
+    ResourceLocation ENDER_BREATH = makeId("breath_acid");
+    ResourceLocation WATER_BREATH = makeId("breath_hydro");
+    ResourceLocation ICE_BREATH = makeId("breath_ice");
+    ResourceLocation NETHER_BREATH = makeId("breath_nether");
+    ResourceLocation SOUL_BREATH = makeId("breath_soul");
+    ResourceLocation POISON_BREATH = makeId("breath_poison");
+    ResourceLocation WITHER_BREATH = makeId("breath_wither");
+}

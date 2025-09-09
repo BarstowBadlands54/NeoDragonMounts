@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_helmet",
+  "key": {
+    "X": "neodragonmounts:water_dragon_scales"
+  },
+  "pattern": [
+    "XXX",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:water_dragon_scale_helmet"
+  }
+}

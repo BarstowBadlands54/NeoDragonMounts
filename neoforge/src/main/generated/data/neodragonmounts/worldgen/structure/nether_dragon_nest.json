@@ -1,0 +1,14 @@
+{
+  "type": "neodragonmounts:dragon_nest",
+  "biomes": "#neodragonmounts:has_structure/nether_dragon_nest",
+  "configs": [
+    {
+      "placement": "in_nether",
+      "templates": [
+        "neodragonmounts:nether"
+      ]
+    }
+  ],
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

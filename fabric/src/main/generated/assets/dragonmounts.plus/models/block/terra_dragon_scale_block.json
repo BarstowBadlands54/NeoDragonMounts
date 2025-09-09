@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "dragonmounts.plus:block/terra_dragon_scale_block"
-  }
-}

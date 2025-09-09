@@ -6,28 +6,28 @@
   "description": "${description}",
   "authors": [],
   "contact": {
-    "sources": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric",
-    "issues": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric/issues"
+    "sources": "https://github.com/DragonMounts-Team/NeoDragonMounts",
+    "issues": "https://github.com/DragonMounts-Team/NeoDragonMounts/issues"
   },
   "license": "GNU GPLv3",
-  "accessWidener": "dragonmounts.plus.accesswidener",
+  "accessWidener": "neodragonmounts.accesswidener",
   "environment": "*",
   "entrypoints": {
     "client": [
-      "net.dragonmounts.plus.client.DragonMountsClient"
+      "net.dragonmounts.neo.client.DragonMountsClient"
     ],
     "main": [
-      "net.dragonmounts.plus.DragonMounts"
+      "net.dragonmounts.neo.DragonMounts"
     ],
     "fabric-datagen": [
-      "net.dragonmounts.plus.data.DMDataGenerator"
+      "net.dragonmounts.neo.data.DMDataGenerator"
     ],
     "modmenu": [
-      "net.dragonmounts.plus.compat.ModMenuCompat"
+      "net.dragonmounts.neo.compat.ModMenuCompat"
     ]
   },
   "mixins": [
-    "dragonmounts.plus.mixins.json"
+    "neodragonmounts.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
@@ -41,7 +41,7 @@
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/Ewm8aTTJ3K",
-        "modmenu.github_releases": "https://github.com/DragonMounts-Team/DragonMountsPlus-Fabric/releases"
+        "modmenu.github_releases": "https://github.com/DragonMounts-Team/NeoDragonMounts/releases"
       },
       "update_checker": false
     }

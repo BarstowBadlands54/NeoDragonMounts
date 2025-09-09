@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": "#c:gems/amethyst",
+    "O": "#c:ender_pearls",
+    "U": "minecraft:dragon_breath"
+  },
+  "pattern": [
+    "#U#",
+    "UOU",
+    "#U#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:variation_orb"
+  }
+}
