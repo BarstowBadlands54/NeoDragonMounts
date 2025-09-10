@@ -70,9 +70,9 @@ public abstract class ConfigHolder<S> {
         Util.ioPool().execute(this::loadSync);
     }
 
-    public abstract Collection<net.dragonmounts.neo.config.ConfigEntry<?>> getEntries();
+    public abstract Collection<ConfigEntry<?>> getEntries();
 
-    protected abstract <T> ArgumentBuilder<S, ?> buildCommand(net.dragonmounts.neo.config.ConfigEntry<T> entry);
+    protected abstract <T> ArgumentBuilder<S, ?> buildCommand(ConfigEntry<T> entry);
 
     public <T extends ArgumentBuilder<S, T>> T appendCommands(T command) {
         for (var entry : this.getEntries()) {
@@ -86,7 +86,7 @@ public abstract class ConfigHolder<S> {
         entry.setSaved();
     }
 
-    public static @Nullable CompoundTag write(net.dragonmounts.neo.config.ConfigHolder<?> holder, @Nullable CompoundTag existing) {
+    public static @Nullable CompoundTag write(ConfigHolder<?> holder, @Nullable CompoundTag existing) {
         boolean changed = false;
         boolean full = existing == null;
         var root = full ? new CompoundTag() : existing;

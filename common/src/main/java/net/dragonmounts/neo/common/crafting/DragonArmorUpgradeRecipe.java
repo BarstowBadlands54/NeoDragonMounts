@@ -49,17 +49,18 @@ public class DragonArmorUpgradeRecipe implements SmithingRecipe {
                 props.put(entry.attribute(), modifier.amount());
             }
         }
-        var builder = ImmutableList.<ItemAttributeModifiers.Entry>builder();
+        var builder = ImmutableList.<ItemAttributeModifiers.Entry>builderWithExpectedSize(base.size() + props.size());
         for (var entry : base) {
             if (entry.slot() == EquipmentSlotGroup.BODY && props.containsKey(entry.attribute())) {
                 var modifier = entry.modifier();
                 if (modifier.is(DMItems.DRAGON_ARMOR_MODIFIER_NAME)) {
                     if (modifier.operation() == AttributeModifier.Operation.ADD_VALUE) {
-                        double amount = props.getDouble(entry.attribute());
-                        props.removeDouble(entry.attribute());
+                        var attribute = entry.attribute();
+                        double amount = props.getDouble(attribute);
+                        props.removeDouble(attribute);
                         if (modifier.amount() < amount) {
                             builder.add(new ItemAttributeModifiers.Entry(
-                                    entry.attribute(),
+                                    attribute,
                                     new AttributeModifier(DMItems.DRAGON_ARMOR_MODIFIER_NAME, amount, AttributeModifier.Operation.ADD_VALUE),
                                     EquipmentSlotGroup.BODY
                             ));

@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.function.BiFunction;
 
@@ -58,7 +59,7 @@ public abstract class DragonHeadBlock extends BaseEntityBlock implements DragonT
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public @UnknownNullability BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(POWERED, context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 

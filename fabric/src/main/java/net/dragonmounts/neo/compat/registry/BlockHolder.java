@@ -14,8 +14,8 @@ import java.util.function.Function;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class BlockHolder<T extends Block> extends ObjectHolder<T, Block> implements ItemLike {
-    public static <T extends Block> net.dragonmounts.neo.compat.registry.BlockHolder<T> registerBlock(String name, Function<Properties, T> factory) {
-        return new net.dragonmounts.neo.compat.registry.BlockHolder<>(makeKey(Registries.BLOCK, name), factory);
+    public static <T extends Block> BlockHolder<T> registerBlock(String name, Function<Properties, T> factory) {
+        return new BlockHolder<>(makeKey(Registries.BLOCK, name), factory);
     }
 
     public BlockHolder(ResourceKey<Block> key, Function<Properties, T> factory) {

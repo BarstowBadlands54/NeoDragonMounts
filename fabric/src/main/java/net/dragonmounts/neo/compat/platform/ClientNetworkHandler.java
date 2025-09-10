@@ -146,15 +146,15 @@ public class ClientNetworkHandler {
 
 
     public static void initClient() {
-        registerGlobalReceiver(SyncCooldownPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleCooldownSync);
-        registerGlobalReceiver(ArmorRipostePayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleArmorRiposte);
-        registerGlobalReceiver(InitCooldownPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleCooldownInit);
-        registerGlobalReceiver(ShakeEggPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleEggShake);
-        registerGlobalReceiver(SyncDragonAgePayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleDragonSync);
-        registerGlobalReceiver(FeedDragonPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleFeedDragon);
-        registerGlobalReceiver(SyncEggAgePayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleEggSync);
-        registerGlobalReceiver(S2CSyncConfigPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleSyncConfig);
-        registerGlobalReceiver(BooleanConfigPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleBooleanConfig);
-        registerGlobalReceiver(DoubleConfigPayload.TYPE, net.dragonmounts.neo.compat.platform.ClientNetworkHandler::handleDoubleConfig);
+        registerGlobalReceiver(SyncCooldownPayload.TYPE, ClientNetworkHandler::handleCooldownSync);
+        registerGlobalReceiver(ArmorRipostePayload.TYPE, ClientNetworkHandler::handleArmorRiposte);
+        registerGlobalReceiver(InitCooldownPayload.TYPE, ClientNetworkHandler::handleCooldownInit);
+        registerGlobalReceiver(ShakeEggPayload.TYPE, ClientNetworkHandler::handleEggShake);
+        registerGlobalReceiver(SyncDragonAgePayload.TYPE, ClientNetworkHandler::handleDragonSync);
+        registerGlobalReceiver(FeedDragonPayload.TYPE, ClientNetworkHandler::handleFeedDragon);
+        registerGlobalReceiver(SyncEggAgePayload.TYPE, ClientNetworkHandler::handleEggSync);
+        registerGlobalReceiver(S2CSyncConfigPayload.TYPE, ClientNetworkHandler::handleSyncConfig);
+        registerGlobalReceiver(BooleanConfigPayload.TYPE, ClientNetworkHandler::handleBooleanConfig);
+        registerGlobalReceiver(DoubleConfigPayload.TYPE, ClientNetworkHandler::handleDoubleConfig);
     }
 }

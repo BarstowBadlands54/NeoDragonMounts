@@ -25,27 +25,27 @@ public final class DragonScaleArmorSuit implements DragonTypified, ArmorEffectSo
     public static final String CHESTPLATE_TRANSLATION_KEY = ITEM_TRANSLATION_KEY_PREFIX + "dragon_scale_chestplate";
     public static final String LEGGINGS_TRANSLATION_KEY = ITEM_TRANSLATION_KEY_PREFIX + "dragon_scale_leggings";
     public static final String BOOTS_TRANSLATION_KEY = ITEM_TRANSLATION_KEY_PREFIX + "dragon_scale_boots";
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit> SUITS = new ObjectArrayList<>();
+    private static final ObjectArrayList<DragonScaleArmorSuit> SUITS = new ObjectArrayList<>();
 
-    public static net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit makeSuit(
-            net.dragonmounts.neo.compat.registry.DragonType type,
+    public static DragonScaleArmorSuit makeSuit(
+            DragonType type,
             DescribedArmorEffect effect,
             ItemGroup group,
             String helmet,
             String chestplate,
             String leggings,
             String boots,
-            ArmorSuitInfo.Factory<net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit, DragonScaleArmorItem> factory
+            ArmorSuitInfo.Factory<DragonScaleArmorSuit, DragonScaleArmorItem> factory
     ) {
         var registry = Registries.ITEM;
-        var suit = new net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit(new ArmorSuitInfo<>(
+        var suit = new DragonScaleArmorSuit(new ArmorSuitInfo<>(
                 makeKey(registry, helmet),
                 makeKey(registry, chestplate),
                 makeKey(registry, leggings),
                 makeKey(registry, boots),
                 factory
         ), type, effect);
-        type.bindInstance(net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit.class, suit);
+        type.bindInstance(DragonScaleArmorSuit.class, suit);
         SUITS.add(suit);
         group.add(suit::getHelmet);
         group.add(suit::getChestplate);
@@ -60,17 +60,17 @@ public final class DragonScaleArmorSuit implements DragonTypified, ArmorEffectSo
         }
     }
 
-    public final net.dragonmounts.neo.compat.registry.DragonType type;
+    public final DragonType type;
     public final DescribedArmorEffect effect;
-    public final ArmorSuitInfo<net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit, DragonScaleArmorItem> info;
+    public final ArmorSuitInfo<DragonScaleArmorSuit, DragonScaleArmorItem> info;
     private DragonScaleArmorItem helmet;
     private DragonScaleArmorItem chestplate;
     private DragonScaleArmorItem leggings;
     private DragonScaleArmorItem boots;
 
     public DragonScaleArmorSuit(
-            ArmorSuitInfo<net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit, DragonScaleArmorItem> info,
-            net.dragonmounts.neo.compat.registry.DragonType type,
+            ArmorSuitInfo<DragonScaleArmorSuit, DragonScaleArmorItem> info,
+            DragonType type,
             DescribedArmorEffect effect
     ) {
         this.info = info;
@@ -119,14 +119,14 @@ public final class DragonScaleArmorSuit implements DragonTypified, ArmorEffectSo
     }
 
     @Override
-    public net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<?> getType() {
+    public ArmorEffectSourceType<?> getType() {
         return ArmorEffectSourceType.BUILTIN;
     }
 
     @Override
     public boolean equals(Object other) {
         return this == other || (
-                other instanceof net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit that && Objects.equals(this.type, that.type)
+                other instanceof DragonScaleArmorSuit that && Objects.equals(this.type, that.type)
         );
     }
 

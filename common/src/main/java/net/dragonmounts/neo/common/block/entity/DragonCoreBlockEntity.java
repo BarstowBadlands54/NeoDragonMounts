@@ -4,6 +4,7 @@ import net.dragonmounts.neo.common.block.DragonCoreBlock;
 import net.dragonmounts.neo.common.init.DMBlockEntities;
 import net.dragonmounts.neo.common.inventory.DragonCoreHandler;
 import net.dragonmounts.neo.compat.platform.MenuProvider;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -32,14 +33,15 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import static net.dragonmounts.neo.common.util.BlockUtil.updateNeighborStates;
 
-/**
- * @see net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity
- */
+/// @see net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity
+@SuppressWarnings("UnstableApiUsage")
+@MethodsReturnNonnullByDefault
+@NotNullByDefault
 public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, MenuProvider<BlockPos> {
     public static final int[] SLOTS = new int[]{0};
     private static final String TRANSLATION_KEY = "container.neodragonmounts.dragon_core";
@@ -140,7 +142,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
             if (this.openCount < 0) this.openCount = 0;
             var pos = this.worldPosition;
             var level = this.level;
-            //noinspection DataFlowIssue
+            if (level == null) return;
             level.blockEvent(pos, this.getBlockState().getBlock(), 1, ++this.openCount);
             if (this.openCount == 1) {
                 RandomSource random = level.random;
@@ -157,7 +159,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
         if (!this.remove && !player.isSpectator()) {
             var pos = this.worldPosition;
             var level = this.level;
-            //noinspection DataFlowIssue
+            if (level == null) return;
             level.blockEvent(pos, this.getBlockState().getBlock(), 1, --this.openCount);
             if (this.openCount <= 0) {
                 level.gameEvent(player, GameEvent.CONTAINER_CLOSE, pos);
@@ -167,7 +169,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
     }
 
     @Override
-    protected @NotNull Component getDefaultName() {
+    protected Component getDefaultName() {
         return Component.translatable(TRANSLATION_KEY);
     }
 
@@ -189,7 +191,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
     }
 
     @Override
-    protected @NotNull NonNullList<ItemStack> getItems() {
+    protected NonNullList<ItemStack> getItems() {
         return this.items;
     }
 
@@ -203,7 +205,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
         return false;
     }
 
-    public int @NotNull [] getSlotsForFace(Direction direction) {
+    public int[] getSlotsForFace(Direction direction) {
         return SLOTS;
     }
 
@@ -220,7 +222,7 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
     }
 
     @Override
-    protected @NotNull DragonCoreHandler createMenu(int id, Inventory player) {
+    protected DragonCoreHandler createMenu(int id, Inventory player) {
         return new DragonCoreHandler(id, player, this);
     }
 

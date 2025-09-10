@@ -13,11 +13,11 @@ import java.util.Set;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class BlockEntityHolder<T extends BlockEntity> extends ObjectHolder<BlockEntityType<T>, BlockEntityType<?>> {
-    public static <T extends BlockEntity> net.dragonmounts.neo.compat.registry.BlockEntityHolder<T> registerBlockEntity(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, net.dragonmounts.neo.compat.registry.BlockHolder<?>... blocks) {
-        return new net.dragonmounts.neo.compat.registry.BlockEntityHolder<>(makeKey(Registries.BLOCK_ENTITY_TYPE, name), factory, blocks);
+    public static <T extends BlockEntity> BlockEntityHolder<T> registerBlockEntity(String name, FabricBlockEntityTypeBuilder.Factory<T> factory, BlockHolder<?>... blocks) {
+        return new BlockEntityHolder<>(makeKey(Registries.BLOCK_ENTITY_TYPE, name), factory, blocks);
     }
 
-    public static Block[] unwrap(net.dragonmounts.neo.compat.registry.BlockHolder<?>... wrapped) {
+    public static Block[] unwrap(BlockHolder<?>... wrapped) {
         var blocks = new Block[wrapped.length];
         for (int i = 0; i < wrapped.length; ++i) {
             blocks[i] = wrapped[i].value;
@@ -25,7 +25,7 @@ public class BlockEntityHolder<T extends BlockEntity> extends ObjectHolder<Block
         return blocks;
     }
 
-    public final Set<net.dragonmounts.neo.compat.registry.BlockHolder<?>> blocks;
+    public final Set<BlockHolder<?>> blocks;
 
     public BlockEntityHolder(ResourceKey<BlockEntityType<?>> key, FabricBlockEntityTypeBuilder.Factory<? extends T> factory, BlockHolder<?>... blocks) {
         super(BuiltInRegistries.BLOCK_ENTITY_TYPE, key, FabricBlockEntityTypeBuilder.<T>create(factory, unwrap(blocks)).build());

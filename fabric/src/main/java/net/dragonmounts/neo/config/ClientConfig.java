@@ -12,16 +12,16 @@ import java.util.List;
 import static net.dragonmounts.neo.config.EntryUtil.config;
 
 public class ClientConfig extends ConfigHolder<FabricClientCommandSource> {
-    public static final net.dragonmounts.neo.config.ClientConfig INSTANCE = new net.dragonmounts.neo.config.ClientConfig(DragonMountsShared.NAMESPACE, "client.dat");
-    protected final List<net.dragonmounts.neo.config.ConfigEntry<?>> entries;
-    public final net.dragonmounts.neo.config.BooleanEntry debug;
-    public final net.dragonmounts.neo.config.DoubleEntry cameraDistance;
+    public static final ClientConfig INSTANCE = new ClientConfig(DragonMountsShared.NAMESPACE, "client.dat");
+    protected final List<ConfigEntry<?>> entries;
+    public final BooleanEntry debug;
+    public final DoubleEntry cameraDistance;
     public final DoubleEntry cameraOffset;
-    public final net.dragonmounts.neo.config.BooleanEntry convergePitchAngle;
-    public final net.dragonmounts.neo.config.BooleanEntry convergeYawAngle;
-    public final net.dragonmounts.neo.config.BooleanEntry hoverState;
-    public final net.dragonmounts.neo.config.BooleanEntry toggleDescending;
-    public final net.dragonmounts.neo.config.BooleanEntry toggleBreathing;
+    public final BooleanEntry convergePitchAngle;
+    public final BooleanEntry convergeYawAngle;
+    public final BooleanEntry hoverState;
+    public final BooleanEntry toggleDescending;
+    public final BooleanEntry toggleBreathing;
     public final BooleanEntry pauseOnFluting;
 
     protected ClientConfig(String mod, String file) {
@@ -41,7 +41,7 @@ public class ClientConfig extends ConfigHolder<FabricClientCommandSource> {
     }
 
     @Override
-    public Collection<net.dragonmounts.neo.config.ConfigEntry<?>> getEntries() {
+    public Collection<ConfigEntry<?>> getEntries() {
         return this.entries;
     }
 

@@ -65,10 +65,10 @@ import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeDefaulted
 public class DragonType implements TooltipProvider, DragonTypified {
     public static final String DATA_PARAMETER_KEY = "DragonType";
     public static final ResourceLocation DEFAULT_KEY = makeId("ender");
-    public static final DefaultedMappedRegistry<net.dragonmounts.neo.compat.registry.DragonType> REGISTRY = makeDefaultedRegistry(DRAGON_TYPE, DEFAULT_KEY);
-    public static final Codec<net.dragonmounts.neo.compat.registry.DragonType> CODEC = REGISTRY.byNameCodec();
-    public static final StreamCodec<RegistryFriendlyByteBuf, net.dragonmounts.neo.compat.registry.DragonType> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_TYPE);
-    public static final EntityDataSerializer<net.dragonmounts.neo.compat.registry.DragonType> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);
+    public static final DefaultedMappedRegistry<DragonType> REGISTRY = makeDefaultedRegistry(DRAGON_TYPE, DEFAULT_KEY);
+    public static final Codec<DragonType> CODEC = REGISTRY.byNameCodec();
+    public static final StreamCodec<RegistryFriendlyByteBuf, DragonType> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_TYPE);
+    public static final EntityDataSerializer<DragonType> SERIALIZER = EntityDataSerializer.forValueType(STREAM_CODEC);
     public final int color;
     public final boolean convertible;
     public final ResourceLocation identifier;
@@ -76,7 +76,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final ParticleOptions sneezeParticle;
     public final ParticleOptions eggParticle;
     public final MapColor scaleColor;
-    public final net.dragonmounts.neo.compat.registry.DragonVariant.Manager variants = new DragonVariant.Manager(this);
+    public final DragonVariant.Manager variants = new DragonVariant.Manager(this);
     public final TranslatableContents name;
     public final ArmorMaterial material;
     public final ToolMaterial tier;
@@ -221,7 +221,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     @Override
     public boolean equals(Object other) {
         return this == other || (
-                other instanceof net.dragonmounts.neo.compat.registry.DragonType that && Objects.equals(this.identifier, that.identifier)
+                other instanceof DragonType that && Objects.equals(this.identifier, that.identifier)
         );
     }
 
@@ -231,11 +231,11 @@ public class DragonType implements TooltipProvider, DragonTypified {
     }
 
     @Override
-    public final net.dragonmounts.neo.compat.registry.DragonType getDragonType() {
+    public final DragonType getDragonType() {
         return this;
     }
 
-    public static <T extends LivingEntity & DragonTypified.Mutable> void convertByLightning(T entity, net.dragonmounts.neo.compat.registry.DragonType type) {
+    public static <T extends LivingEntity & DragonTypified.Mutable> void convertByLightning(T entity, DragonType type) {
         entity.setDragonType(type, false);
         entity.playSound(SoundEvents.END_PORTAL_SPAWN, 2, 1);
         entity.playSound(SoundEvents.PORTAL_TRIGGER, 2, 1);

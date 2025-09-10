@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 
@@ -41,17 +41,16 @@ public class DragonHeadWallBlock extends DragonHeadBlock {
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return AABBS.get(state.getValue(HORIZONTAL_FACING));
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         var pos = context.getClickedPos();
         var level = context.getLevel();
         for (var direction : context.getNearestLookingDirections()) {
             if (direction.getAxis().isHorizontal() && !level.getBlockState(pos.relative(direction)).canBeReplaced(context)) {
-                //noinspection DataFlowIssue
                 return super.getStateForPlacement(context).setValue(HORIZONTAL_FACING, direction.getOpposite());
             }
         }
@@ -59,23 +58,22 @@ public class DragonHeadWallBlock extends DragonHeadBlock {
     }
 
     @Override
-    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(HORIZONTAL_FACING, rotation.rotate(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(HORIZONTAL_FACING);
+        super.createBlockStateDefinition(builder.add(HORIZONTAL_FACING));
     }
 
     @Override
-    protected @NotNull MapCodec<? extends DragonHeadWallBlock> codec() {
+    protected MapCodec<? extends DragonHeadWallBlock> codec() {
         return CODEC;
     }
 }

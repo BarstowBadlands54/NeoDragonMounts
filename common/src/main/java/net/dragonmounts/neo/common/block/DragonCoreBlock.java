@@ -33,7 +33,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
@@ -68,7 +67,7 @@ public class DragonCoreBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (player.isSpectator()) return InteractionResult.CONSUME;
         if (level.getBlockEntity(pos) instanceof DragonCoreBlockEntity core) {
@@ -105,14 +104,14 @@ public class DragonCoreBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected @NotNull VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+    protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof DragonCoreBlockEntity core && !core.isClosed()
                 ? OPEN_SHAPE
                 : Shapes.block();
     }
 
     @Override
-    protected @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return level.getBlockEntity(pos) instanceof DragonCoreBlockEntity core ? Shapes.create(core.getBoundingBox()) : Shapes.block();
     }
 
@@ -149,17 +148,17 @@ public class DragonCoreBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+    public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(HORIZONTAL_FACING, rotation.rotate(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+    public BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(HORIZONTAL_FACING)));
     }
 
     @Override
-    public @NotNull MapCodec<DragonCoreBlock> codec() {
+    public MapCodec<DragonCoreBlock> codec() {
         return CODEC;
     }
 

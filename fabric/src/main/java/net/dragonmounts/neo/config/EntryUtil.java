@@ -14,27 +14,27 @@ public class EntryUtil {
         return "options.neodragonmounts." + key + ".tooltip";
     }
 
-    public static net.dragonmounts.neo.config.BooleanEntry config(String key, boolean fallback) {
+    public static BooleanEntry config(String key, boolean fallback) {
         return config(key, fallback, translate(key));
     }
 
-    public static net.dragonmounts.neo.config.BooleanEntry config(String key, boolean fallback, String name) {
+    public static BooleanEntry config(String key, boolean fallback, String name) {
         return new BooleanEntry(key, name, tooltip(key), fallback);
     }
 
-    public static net.dragonmounts.neo.config.DoubleEntry config(String key, double fallback) {
-        return config(key, fallback, net.dragonmounts.neo.config.DoubleEntry.MIN_DOUBLE, Double.MAX_VALUE);
+    public static DoubleEntry config(String key, double fallback) {
+        return config(key, fallback, DoubleEntry.MIN_DOUBLE, Double.MAX_VALUE);
     }
 
-    public static net.dragonmounts.neo.config.DoubleEntry config(String key, double fallback, double min, double max) {
+    public static DoubleEntry config(String key, double fallback, double min, double max) {
         return config(key, fallback, min, max, null);
     }
 
-    public static net.dragonmounts.neo.config.DoubleEntry config(String key, double fallback, double min, double max, DoubleConsumer onChanged) {
+    public static DoubleEntry config(String key, double fallback, double min, double max, DoubleConsumer onChanged) {
         return new DoubleEntry(key, translate(key), tooltip(key), fallback, min, max, onChanged);
     }
 
-    public static void register(HashBiMap<net.dragonmounts.neo.config.ConfigEntry<?>, Integer> registry, net.dragonmounts.neo.config.ConfigEntry<?> entry) {
+    public static void register(HashBiMap<ConfigEntry<?>, Integer> registry, ConfigEntry<?> entry) {
         registry.put(entry, registry.size());
     }
 

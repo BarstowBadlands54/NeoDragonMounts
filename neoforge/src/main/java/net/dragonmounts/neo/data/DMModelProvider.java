@@ -7,7 +7,7 @@ import net.dragonmounts.neo.common.init.DMBlocks;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.dragonmounts.neo.common.init.DragonVariants;
 import net.dragonmounts.neo.common.item.*;
-import net.dragonmounts.neo.compat.registry.BlockHolder;
+import net.dragonmounts.neo.compat.registry.*;
 import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -104,7 +104,7 @@ public class DMModelProvider extends ModelProvider {
         generateSpawnEgg(items, DMItems.WATER_DRAGON_SPAWN_EGG, 0x4F6AA6, 0x223464);
         generateSpawnEgg(items, DMItems.WITHER_DRAGON_SPAWN_EGG, 0x839292, 0x383F40);
         generateSpawnEgg(items, DMItems.ZOMBIE_DRAGON_SPAWN_EGG, 0x56562E, 0xA7BF2F);
-        for (var type : net.dragonmounts.neo.compat.registry.DragonType.REGISTRY) {
+        for (var type : DragonType.REGISTRY) {
             generateFlatItem(items, type, DragonAmuletItem.class);
             generateFlatItem(items, type, DragonEssenceItem.class);
             generateFlatItem(items, type, DragonScalesItem.class);
@@ -119,11 +119,11 @@ public class DMModelProvider extends ModelProvider {
         }
     }
 
-    public static void generateFlatItem(ItemModelGenerators gen, net.dragonmounts.neo.compat.registry.ItemHolder<?> item) {
+    public static void generateFlatItem(ItemModelGenerators gen, ItemHolder<?> item) {
         gen.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
     }
 
-    public static void generateSpawnEgg(ItemModelGenerators gen, net.dragonmounts.neo.compat.registry.ItemHolder<?> item, int primaryColor, int secondaryColor) {
+    public static void generateSpawnEgg(ItemModelGenerators gen, ItemHolder<?> item, int primaryColor, int secondaryColor) {
         gen.generateSpawnEgg(item.get(), primaryColor, secondaryColor);
     }
 
@@ -169,8 +169,8 @@ public class DMModelProvider extends ModelProvider {
         );
     }
 
-    public static void generateDragonScaleArmors(ItemModelGenerators gen, net.dragonmounts.neo.compat.registry.DragonType type) {
-        var suit = type.getInstance(net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit.class, null);
+    public static void generateDragonScaleArmors(ItemModelGenerators gen, DragonType type) {
+        var suit = type.getInstance(DragonScaleArmorSuit.class, null);
         if (suit == null) return;
         var assets = suit.type.material.assetId();
         gen.generateTrimmableItem(suit.getHelmet(), assets, "helmet", false);
@@ -179,7 +179,7 @@ public class DMModelProvider extends ModelProvider {
         gen.generateTrimmableItem(suit.getBoots(), assets, "boots", false);
     }
 
-    public static void generateDragonHeads(BlockModelGenerators gen, Collection<net.dragonmounts.neo.compat.registry.DragonVariant> variants) {
+    public static void generateDragonHeads(BlockModelGenerators gen, Collection<DragonVariant> variants) {
         var state = gen.blockStateOutput;
         var item = gen.itemModelOutput;
         variants.forEach(variant -> {
@@ -190,13 +190,13 @@ public class DMModelProvider extends ModelProvider {
         });
     }
 
-    public static void generateFlatItem(ItemModelGenerators gen, net.dragonmounts.neo.compat.registry.DragonType type, Class<? extends Item> clazz) {
+    public static void generateFlatItem(ItemModelGenerators gen, DragonType type, Class<? extends Item> clazz) {
         var item = type.getInstance(clazz, null);
         if (item == null) return;
         gen.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
     }
 
-    public static void generateHandheldItem(ItemModelGenerators gen, net.dragonmounts.neo.compat.registry.DragonType type, Class<? extends Item> clazz) {
+    public static void generateHandheldItem(ItemModelGenerators gen, DragonType type, Class<? extends Item> clazz) {
         var item = type.getInstance(clazz, null);
         if (item == null) return;
         gen.generateFlatItem(item, ModelTemplates.FLAT_HANDHELD_ITEM);

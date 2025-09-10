@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.minecraft.network.FriendlyByteBuf.readNbt;
@@ -44,5 +45,13 @@ public record S2CSyncConfigPayload(List<Entry> entries) implements CustomPacketP
         return TYPE;
     }
 
-    public record Entry(int id, Tag value) {}
+    public record Entry(int id, Tag value) {
+        public static Entry of(Map.Entry<ConfigEntry<?>, Integer> pair) {
+            var id = pair.getValue();
+            if (id == null) throw new NullPointerException();
+            var entry = pair.getKey();
+            if (entry == null) throw new NullPointerException();
+            return new Entry(id, entry.dump());
+        }
+    }
 }

@@ -10,9 +10,4 @@ public class BlockUtil {
         state.updateNeighbourShapes(level, pos, flag);
         level.updateNeighborsAt(pos, state.getBlock());
     }
-
-    @SuppressWarnings("deprecation")
-    public static boolean isSolid(Level level, BlockPos pos) {
-        return level.getBlockState(pos).isSolid();
-    }
 }

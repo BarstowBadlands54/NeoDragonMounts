@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -72,11 +74,11 @@ jar {
     manifest {
         attributes([
                 'Specification-Title'   : mod_name,
-                'Specification-Vendor'  : mod_author,
+                'Specification-Vendor'  : mod_authors,
                 'Specification-Version' : project.jar.archiveVersion,
                 'Implementation-Title'  : project.name,
                 'Implementation-Version': project.jar.archiveVersion,
-                'Implementation-Vendor' : mod_author,
+                'Implementation-Vendor' : mod_authors,
                 'Built-On-Minecraft'    : minecraft_version
         ])
     }
@@ -84,23 +86,35 @@ jar {
 
 processResources {
     exclude ".cache"
-    var expandProps = [
-            'version'                      : version,
+    var config = layout.projectDirectory.file("../run/build.json")
+    if (config.asFile.exists()) {
+        inputs.file config
+        var json = new JsonSlurper().parseText(providers.fileContents(config).asText.get())
+        var suffix = json.suffix as String
+        if (json.weekly) {
+            project.version = "$project.version-${'%dw%02d'.formatted(Calendar.instance.get(Calendar.YEAR) % 100, Calendar.instance.get(Calendar.WEEK_OF_YEAR))}${suffix ?: 'a'}"
+        } else if (suffix != null && !suffix.isBlank()) {
+            project.version = "$project.version-$suffix"
+        }
+    }
+    var basicProps = [
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
             'minecraft_version_range'      : minecraft_version_range,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
-            'mod_author'                   : mod_author,
+            'mod_authors'                  : mod_authors,
             'mod_id'                       : mod_id,
             'license'                      : license,
-            'description'                  : project.description,
+            'description'                  : project.mod_description,
             'neoforge_version'             : neoforge_version,
             'neoforge_loader_version_range': neoforge_loader_version_range,
             'credits'                      : credits,
             'java_version'                 : java_version
     ]
+    var expandProps = new LinkedHashMap(basicProps)
+    expandProps['version'] = project.version
 
     var jsonExpandProps = expandProps.collectEntries {
         key, value -> [(key): value instanceof String ? value.replace("\n", "\\\\n") : value]
@@ -114,7 +128,7 @@ processResources {
         expand jsonExpandProps
     }
 
-    inputs.properties(expandProps)
+    inputs.properties(basicProps)
 }
 
 publishing {

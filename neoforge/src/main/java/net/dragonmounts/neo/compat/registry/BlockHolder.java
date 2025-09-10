@@ -15,10 +15,10 @@ import java.util.function.Function;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class BlockHolder<T extends Block> extends DeferredHolder<T, Block> implements ItemLike {
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.BlockHolder<?>> BLOCKS = new ObjectArrayList<>();
+    private static final ObjectArrayList<BlockHolder<?>> BLOCKS = new ObjectArrayList<>();
 
-    public static <T extends Block> net.dragonmounts.neo.compat.registry.BlockHolder<T> registerBlock(String name, Function<Properties, T> factory) {
-        var holder = new net.dragonmounts.neo.compat.registry.BlockHolder<>(makeKey(Registries.BLOCK, name), factory);
+    public static <T extends Block> BlockHolder<T> registerBlock(String name, Function<Properties, T> factory) {
+        var holder = new BlockHolder<>(makeKey(Registries.BLOCK, name), factory);
         BLOCKS.add(holder);
         return holder;
     }

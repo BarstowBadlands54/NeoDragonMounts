@@ -46,8 +46,8 @@ public class RegistryHandler {
         return Registry.register(BuiltInRegistries.ACTIVITY, makeId(name), new Activity(name));
     }
 
-    public static <T extends net.dragonmounts.neo.compat.registry.ArmorEffect> T registerArmorEffect(ResourceLocation identifier, T effect) {
-        return Registry.register(net.dragonmounts.neo.compat.registry.ArmorEffect.REGISTRY, identifier, effect);
+    public static <T extends ArmorEffect> T registerArmorEffect(ResourceLocation identifier, T effect) {
+        return Registry.register(ArmorEffect.REGISTRY, identifier, effect);
     }
 
     public static void registerItemCategory(ItemCategory category, String title, Supplier<ItemStack> icon) {

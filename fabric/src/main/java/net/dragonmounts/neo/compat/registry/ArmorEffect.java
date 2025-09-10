@@ -8,7 +8,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.ARMOR_EFFECT;
 import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeSimpleRegistry;
 
 public interface ArmorEffect {
-    MappedRegistry<net.dragonmounts.neo.compat.registry.ArmorEffect> REGISTRY = makeSimpleRegistry(ARMOR_EFFECT);
+    MappedRegistry<ArmorEffect> REGISTRY = makeSimpleRegistry(ARMOR_EFFECT);
 
     boolean activate(ArmorEffectManager manager, Player player, int level);
 }

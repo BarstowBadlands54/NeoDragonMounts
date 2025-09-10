@@ -11,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DragonEggBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.BLOCK_TRANSLATION_KEY_PREFIX;
 
@@ -43,12 +42,11 @@ public class HatchableDragonEggBlock extends DragonEggBlock implements DragonTyp
 
     @Override
     protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        if (player.level().dimension().equals(Level.END)) return 0.0F;
-        return super.getDestroyProgress(state, player, level, pos);
+        return player.level().dimension().equals(Level.END) ? 0.0F : super.getDestroyProgress(state, player, level, pos);
     }
 
     @Override
-    public @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (level.dimension().equals(Level.END)) return super.useWithoutItem(state, level, pos, player, hit);
         return spawn(level, pos, this.type, false);

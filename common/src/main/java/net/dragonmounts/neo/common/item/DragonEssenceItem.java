@@ -148,8 +148,8 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
             } else {
                 dragon.setDragonType(this.type, true);
             }
-            dragon.setLifeStage(DragonLifeStage.HATCHLING, true, false);
             applyScores(level.getScoreboard(), stack, dragon);
+            dragon.setLifeStage(DragonLifeStage.HATCHLING, true, false);
         });
     }
 

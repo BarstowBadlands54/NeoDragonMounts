@@ -13,16 +13,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ArrayUtil {
-    /**
-     * @see net.minecraft.world.ContainerHelper#removeItem(List, int, int)
-     */
+    /// @see net.minecraft.world.ContainerHelper#removeItem(List, int, int)
     public static ItemStack removeItem(ItemStack[] stacks, int index, int amount) {
         return index >= 0 && index < stacks.length ? stacks[index].split(amount) : ItemStack.EMPTY;
     }
 
-    /**
-     * @see net.minecraft.world.ContainerHelper#takeItem(List, int)
-     */
+    /// @see net.minecraft.world.ContainerHelper#takeItem(List, int)
     public static ItemStack takeItem(ItemStack[] stacks, int index) {
         if (index >= 0 && index < stacks.length) {
             var stack = stacks[index];

@@ -6,15 +6,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class ItemHolder<T extends Item> extends ObjectHolder<T, Item> implements ItemLike {
-    public static <T extends Item> net.dragonmounts.neo.compat.registry.ItemHolder<T> registerItem(String name, Function<Item.Properties, T> factory) {
-        return new net.dragonmounts.neo.compat.registry.ItemHolder<>(makeKey(Registries.ITEM, name), factory);
+    public static <T extends Item> ItemHolder<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        return new ItemHolder<>(makeKey(Registries.ITEM, name), factory);
     }
 
     public ItemHolder(ResourceKey<Item> key, Function<Item.Properties, T> factory) {
@@ -26,7 +25,7 @@ public class ItemHolder<T extends Item> extends ObjectHolder<T, Item> implements
     }
 
     @Override
-    public @NotNull Item asItem() {
+    public Item asItem() {
         return this.value;
     }
 }

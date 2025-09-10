@@ -20,36 +20,36 @@ import static net.dragonmounts.neo.config.EntryUtil.config;
 import static net.dragonmounts.neo.config.EntryUtil.register;
 
 public class ServerConfig extends ConfigHolder<CommandSourceStack> {
-    public static final net.dragonmounts.neo.config.ServerConfig INSTANCE = new net.dragonmounts.neo.config.ServerConfig(DragonMountsShared.NAMESPACE, "server.dat");
-    protected final HashBiMap<net.dragonmounts.neo.config.ConfigEntry<?>, Integer> entries;
-    public final net.dragonmounts.neo.config.BooleanEntry debug;
-    public final net.dragonmounts.neo.config.BooleanEntry isEggPushable;
-    public final net.dragonmounts.neo.config.BooleanEntry isEggOverridden;
-    public final net.dragonmounts.neo.config.BooleanEntry ignitingBreath;
-    public final net.dragonmounts.neo.config.BooleanEntry destructiveBreath;
-    public final net.dragonmounts.neo.config.BooleanEntry smeltingBreath;
-    public final net.dragonmounts.neo.config.BooleanEntry quenchingBreath;
+    public static final ServerConfig INSTANCE = new ServerConfig(DragonMountsShared.NAMESPACE, "server.dat");
+    protected final HashBiMap<ConfigEntry<?>, Integer> entries;
+    public final BooleanEntry debug;
+    public final BooleanEntry isEggPushable;
+    public final BooleanEntry isEggOverridden;
+    public final BooleanEntry ignitingBreath;
+    public final BooleanEntry destructiveBreath;
+    public final BooleanEntry smeltingBreath;
+    public final BooleanEntry quenchingBreath;
     public final BooleanEntry frostyBreath;
-    public final net.dragonmounts.neo.config.DoubleEntry baseArmor;
-    public final net.dragonmounts.neo.config.DoubleEntry baseArmorToughness;
-    public final net.dragonmounts.neo.config.DoubleEntry baseBodySize;
-    public final net.dragonmounts.neo.config.DoubleEntry baseDamage;
-    public final net.dragonmounts.neo.config.DoubleEntry baseFlyingSpeed;
-    public final net.dragonmounts.neo.config.DoubleEntry baseFollowRange;
-    public final net.dragonmounts.neo.config.DoubleEntry baseHealth;
-    public final net.dragonmounts.neo.config.DoubleEntry baseJumpStrength;
-    public final net.dragonmounts.neo.config.DoubleEntry baseKnockback;
-    public final net.dragonmounts.neo.config.DoubleEntry baseKnockbackResistance;
-    public final net.dragonmounts.neo.config.DoubleEntry baseMovementSpeed;
-    public final net.dragonmounts.neo.config.DoubleEntry baseStepHeight;
-    public final net.dragonmounts.neo.config.DoubleEntry baseTemptRange;
+    public final DoubleEntry baseArmor;
+    public final DoubleEntry baseArmorToughness;
+    public final DoubleEntry baseBodySize;
+    public final DoubleEntry baseDamage;
+    public final DoubleEntry baseFlyingSpeed;
+    public final DoubleEntry baseFollowRange;
+    public final DoubleEntry baseHealth;
+    public final DoubleEntry baseJumpStrength;
+    public final DoubleEntry baseKnockback;
+    public final DoubleEntry baseKnockbackResistance;
+    public final DoubleEntry baseMovementSpeed;
+    public final DoubleEntry baseStepHeight;
+    public final DoubleEntry baseTemptRange;
     public final DoubleEntry baseWaterMovementEfficiency;
     private AttributeSupplier dragonAttributes;
     private AttributeSupplier dragonEggAttributes;
 
     protected ServerConfig(String mod, String file) {
         super(mod, file);
-        var registry = HashBiMap.<net.dragonmounts.neo.config.ConfigEntry<?>, Integer>create();
+        var registry = HashBiMap.<ConfigEntry<?>, Integer>create();
         register(registry, this.debug =
                 config("debug", false)
         );
@@ -120,16 +120,16 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
         this.load();
     }
 
-    public net.dragonmounts.neo.config.ConfigEntry<?> getEntry(int id) {
+    public ConfigEntry<?> getEntry(int id) {
         return this.entries.inverse().get(id);
     }
 
     @Override
-    public Collection<net.dragonmounts.neo.config.ConfigEntry<?>> getEntries() {
+    public Collection<ConfigEntry<?>> getEntries() {
         return this.entries.keySet();
     }
 
-    public void broadcast(net.dragonmounts.neo.config.ConfigEntry<?> entry) {
+    public void broadcast(ConfigEntry<?> entry) {
         var server = DragonMounts.getRunningServer();
         if (server == null) return;
         Integer id = this.entries.get(entry);
@@ -171,7 +171,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
     public void sync(ServerPlayer player) {
         var entries = new ObjectArrayList<S2CSyncConfigPayload.Entry>();
         for (var entry : this.entries.entrySet()) {
-            entries.add(new S2CSyncConfigPayload.Entry(entry.getValue(), entry.getKey().dump()));
+            entries.add(S2CSyncConfigPayload.Entry.of(entry));
         }
         ServerNetworkHandler.sendTo(player, new S2CSyncConfigPayload(entries));
     }

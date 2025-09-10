@@ -8,7 +8,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.COOLDOWN_CATEGORY;
 import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeSimpleRegistry;
 
 public class CooldownCategory {
-    public static final MappedRegistry<net.dragonmounts.neo.compat.registry.CooldownCategory> REGISTRY = makeSimpleRegistry(COOLDOWN_CATEGORY);
+    public static final MappedRegistry<CooldownCategory> REGISTRY = makeSimpleRegistry(COOLDOWN_CATEGORY);
 
     public final ResourceLocation identifier;
     private final int id;

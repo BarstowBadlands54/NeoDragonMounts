@@ -29,7 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -77,7 +76,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
     }
 
     @Override
-    public @NotNull ItemStack saveEntity(T entity, DataComponentPatch patch) {
+    public ItemStack saveEntity(T entity, DataComponentPatch patch) {
         var type = entity.getType();
         if (type.canSerialize()) {
             var stack = new ItemStack(this);

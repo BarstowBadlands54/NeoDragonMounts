@@ -9,10 +9,10 @@ import net.minecraft.world.effect.MobEffect;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class EffectHolder<T extends MobEffect> extends DeferredHolder<T, MobEffect> {
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.EffectHolder<?>> EFFECTS = new ObjectArrayList<>();
+    private static final ObjectArrayList<EffectHolder<?>> EFFECTS = new ObjectArrayList<>();
 
-    public static <T extends MobEffect> net.dragonmounts.neo.compat.registry.EffectHolder<T> registerMobEffect(String name, T effect) {
-        var holder = new net.dragonmounts.neo.compat.registry.EffectHolder<>(makeKey(Registries.MOB_EFFECT, name), effect);
+    public static <T extends MobEffect> EffectHolder<T> registerMobEffect(String name, T effect) {
+        var holder = new EffectHolder<>(makeKey(Registries.MOB_EFFECT, name), effect);
         EFFECTS.add(holder);
         return holder;
     }

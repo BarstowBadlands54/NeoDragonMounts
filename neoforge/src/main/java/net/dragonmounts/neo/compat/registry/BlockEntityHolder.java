@@ -15,10 +15,10 @@ import java.util.Set;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class BlockEntityHolder<T extends BlockEntity> extends DeferredHolder<BlockEntityType<T>, BlockEntityType<?>> {
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.BlockEntityHolder<?>> ENTITIES = new ObjectArrayList<>();
+    private static final ObjectArrayList<BlockEntityHolder<?>> ENTITIES = new ObjectArrayList<>();
 
-    public static <T extends BlockEntity> net.dragonmounts.neo.compat.registry.BlockEntityHolder<T> registerBlockEntity(String name, BlockEntityType.BlockEntitySupplier<T> factory, net.dragonmounts.neo.compat.registry.BlockHolder<?>... blocks) {
-        var holder = new net.dragonmounts.neo.compat.registry.BlockEntityHolder<>(makeKey(Registries.BLOCK_ENTITY_TYPE, name), factory, blocks);
+    public static <T extends BlockEntity> BlockEntityHolder<T> registerBlockEntity(String name, BlockEntityType.BlockEntitySupplier<T> factory, BlockHolder<?>... blocks) {
+        var holder = new BlockEntityHolder<>(makeKey(Registries.BLOCK_ENTITY_TYPE, name), factory, blocks);
         ENTITIES.add(holder);
         return holder;
     }
@@ -29,7 +29,7 @@ public class BlockEntityHolder<T extends BlockEntity> extends DeferredHolder<Blo
         }
     }
 
-    public final Set<net.dragonmounts.neo.compat.registry.BlockHolder<?>> blocks;
+    public final Set<BlockHolder<?>> blocks;
     public final BlockEntityType.BlockEntitySupplier<? extends T> factory;
 
     public BlockEntityHolder(ResourceKey<BlockEntityType<?>> key, BlockEntityType.BlockEntitySupplier<? extends T> factory, BlockHolder<?>... blocks) {

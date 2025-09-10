@@ -55,53 +55,53 @@ public final class DragonTypeBuilder {
                 .addImmunity(DamageTypes.DRAGON_BREATH); // ignore damage from vanilla ender dragon. I kinda disabled this because it wouldn't make any sense, feel free to re enable
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder notConvertible() {
+    public DragonTypeBuilder notConvertible() {
         this.convertible = false;
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder putAttributeModifier(Holder<Attribute> attribute, ResourceLocation identifier, double value, AttributeModifier.Operation operation) {
+    public DragonTypeBuilder putAttributeModifier(Holder<Attribute> attribute, ResourceLocation identifier, double value, AttributeModifier.Operation operation) {
         this.attributes.put(attribute, new AttributeModifier(identifier, value, operation));
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder addImmunity(ResourceKey<DamageType> type) {
+    public DragonTypeBuilder addImmunity(ResourceKey<DamageType> type) {
         this.immunities.add(type);
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder addHabitat(Block block) {
+    public DragonTypeBuilder addHabitat(Block block) {
         this.blocks.add(block);
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder addHabitat(ResourceKey<Biome> biome) {
+    public DragonTypeBuilder addHabitat(ResourceKey<Biome> biome) {
         this.biomes.add(biome);
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder setSneezeParticle(SimpleParticleType particle) {
+    public DragonTypeBuilder setSneezeParticle(SimpleParticleType particle) {
         this.sneezeParticle = particle;
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder setEggParticle(SimpleParticleType particle) {
+    public DragonTypeBuilder setEggParticle(SimpleParticleType particle) {
         this.eggParticle = particle;
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder setMaterial(TagKey<Item> material) {
+    public DragonTypeBuilder setMaterial(TagKey<Item> material) {
         this.scales = material;
         return this;
     }
 
-    public net.dragonmounts.neo.compat.registry.DragonTypeBuilder setScaleColor(MapColor color) {
+    public DragonTypeBuilder setScaleColor(MapColor color) {
         this.scaleColor = color;
         return this;
     }
 
     public <T extends DragonType> T register(
-            BiFunction<ResourceLocation, net.dragonmounts.neo.compat.registry.DragonTypeBuilder, T> factory,
+            BiFunction<ResourceLocation, DragonTypeBuilder, T> factory,
             ResourceLocation identifier
     ) {
         return factory.apply(identifier, this);

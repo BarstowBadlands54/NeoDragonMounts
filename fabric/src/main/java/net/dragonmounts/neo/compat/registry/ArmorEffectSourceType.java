@@ -12,11 +12,11 @@ import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeDefaulted
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 
 public record ArmorEffectSourceType<T extends ArmorEffectSource>(MapCodec<T> codec) {
-    public static final MappedRegistry<net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<?>> REGISTRY;
-    public static final net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<ListBasedArmorEffectSource> COMPONENT =
-            new net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<>(ListBasedArmorEffectSource.CODEC);
-    public static final net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<ArmorEffectSource> BUILTIN =
-            new net.dragonmounts.neo.compat.registry.ArmorEffectSourceType<>(MapCodec.unit(ListBasedArmorEffectSource::empty));
+    public static final MappedRegistry<ArmorEffectSourceType<?>> REGISTRY;
+    public static final ArmorEffectSourceType<ListBasedArmorEffectSource> COMPONENT =
+            new ArmorEffectSourceType<>(ListBasedArmorEffectSource.CODEC);
+    public static final ArmorEffectSourceType<ArmorEffectSource> BUILTIN =
+            new ArmorEffectSourceType<>(MapCodec.unit(ListBasedArmorEffectSource::empty));
 
     static {
         var key = withDefaultNamespace("component");

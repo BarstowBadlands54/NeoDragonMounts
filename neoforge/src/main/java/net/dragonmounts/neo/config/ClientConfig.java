@@ -15,17 +15,17 @@ import static net.dragonmounts.neo.config.EntryUtil.config;
 import static net.dragonmounts.neo.config.EntryUtil.formatName;
 
 public class ClientConfig extends ConfigHolder<CommandSourceStack> {
-    public static final net.dragonmounts.neo.config.ClientConfig INSTANCE = new net.dragonmounts.neo.config.ClientConfig();
-    protected final List<net.dragonmounts.neo.config.ConfigEntry<?>> entries;
+    public static final ClientConfig INSTANCE = new ClientConfig();
+    protected final List<ConfigEntry<?>> entries;
     public final ModConfigSpec spec;
-    public final net.dragonmounts.neo.config.BooleanEntry debug;
-    public final net.dragonmounts.neo.config.DoubleEntry cameraDistance;
+    public final BooleanEntry debug;
+    public final DoubleEntry cameraDistance;
     public final DoubleEntry cameraOffset;
-    public final net.dragonmounts.neo.config.BooleanEntry convergePitchAngle;
-    public final net.dragonmounts.neo.config.BooleanEntry convergeYawAngle;
-    public final net.dragonmounts.neo.config.BooleanEntry hoverState;
-    public final net.dragonmounts.neo.config.BooleanEntry toggleDescending;
-    public final net.dragonmounts.neo.config.BooleanEntry toggleBreathing;
+    public final BooleanEntry convergePitchAngle;
+    public final BooleanEntry convergeYawAngle;
+    public final BooleanEntry hoverState;
+    public final BooleanEntry toggleDescending;
+    public final BooleanEntry toggleBreathing;
     public final BooleanEntry pauseOnFluting;
 
     private ClientConfig() {
@@ -45,7 +45,7 @@ public class ClientConfig extends ConfigHolder<CommandSourceStack> {
     }
 
     @Override
-    public Collection<net.dragonmounts.neo.config.ConfigEntry<?>> getEntries() {
+    public Collection<ConfigEntry<?>> getEntries() {
         return this.entries;
     }
 

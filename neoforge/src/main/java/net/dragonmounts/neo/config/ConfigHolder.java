@@ -8,7 +8,7 @@ import java.util.Collection;
 public abstract class ConfigHolder<S> {
     public abstract ModConfigSpec getSpec();
 
-    public abstract Collection<net.dragonmounts.neo.config.ConfigEntry<?>> getEntries();
+    public abstract Collection<ConfigEntry<?>> getEntries();
 
     protected abstract <T> ArgumentBuilder<S, ?> buildCommand(ConfigEntry<T> entry);
 

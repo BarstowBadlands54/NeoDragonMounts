@@ -13,10 +13,10 @@ import java.util.function.Function;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class ItemHolder<T extends Item> extends DeferredHolder<T, Item> implements ItemLike {
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.ItemHolder<?>> ITEMS = new ObjectArrayList<>();
+    private static final ObjectArrayList<ItemHolder<?>> ITEMS = new ObjectArrayList<>();
 
-    public static <T extends Item> net.dragonmounts.neo.compat.registry.ItemHolder<T> registerItem(String name, Function<Item.Properties, T> factory) {
-        var holder = new net.dragonmounts.neo.compat.registry.ItemHolder<>(makeKey(Registries.ITEM, name), factory);
+    public static <T extends Item> ItemHolder<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        var holder = new ItemHolder<>(makeKey(Registries.ITEM, name), factory);
         ITEMS.add(holder);
         return holder;
     }

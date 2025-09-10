@@ -19,10 +19,10 @@ import java.util.function.Supplier;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class EntityHolder<T extends Entity> extends DeferredHolder<EntityType<T>, EntityType<?>> {
-    private static final Object2ObjectOpenHashMap<net.dragonmounts.neo.compat.registry.EntityHolder<? extends LivingEntity>, Supplier<AttributeSupplier.Builder>> ATTRIBUTES = new Object2ObjectOpenHashMap<>();
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.EntityHolder<?>> ENTITIES = new ObjectArrayList<>();
+    private static final Object2ObjectOpenHashMap<EntityHolder<? extends LivingEntity>, Supplier<AttributeSupplier.Builder>> ATTRIBUTES = new Object2ObjectOpenHashMap<>();
+    private static final ObjectArrayList<EntityHolder<?>> ENTITIES = new ObjectArrayList<>();
 
-    public static <T extends Entity> net.dragonmounts.neo.compat.registry.EntityHolder<T> registerEntity(
+    public static <T extends Entity> EntityHolder<T> registerEntity(
             String name,
             MobCategory category,
             EntityType.EntityFactory<T> factory,
@@ -30,12 +30,12 @@ public class EntityHolder<T extends Entity> extends DeferredHolder<EntityType<T>
     ) {
         var builder = EntityType.Builder.of(factory, category);
         init.accept(builder);
-        var holder = new net.dragonmounts.neo.compat.registry.EntityHolder<>(makeKey(Registries.ENTITY_TYPE, name), builder);
+        var holder = new EntityHolder<>(makeKey(Registries.ENTITY_TYPE, name), builder);
         ENTITIES.add(holder);
         return holder;
     }
 
-    public static <T extends LivingEntity> net.dragonmounts.neo.compat.registry.EntityHolder<T> registerLivingEntity(
+    public static <T extends LivingEntity> EntityHolder<T> registerLivingEntity(
             String name,
             MobCategory category,
             EntityType.EntityFactory<T> factory,

@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeKey;
 
 public class EntityHolder<T extends Entity> extends ObjectHolder<EntityType<T>, EntityType<?>> {
-    public static <T extends Entity> net.dragonmounts.neo.compat.registry.EntityHolder<T> registerEntity(
+    public static <T extends Entity> EntityHolder<T> registerEntity(
             String name,
             MobCategory category,
             EntityType.EntityFactory<T> factory,
@@ -25,10 +25,10 @@ public class EntityHolder<T extends Entity> extends ObjectHolder<EntityType<T>, 
         var builder = EntityType.Builder.of(factory, category);
         init.accept(builder);
         var key = makeKey(Registries.ENTITY_TYPE, name);
-        return new net.dragonmounts.neo.compat.registry.EntityHolder<>(key, builder);
+        return new EntityHolder<>(key, builder);
     }
 
-    public static <T extends LivingEntity> net.dragonmounts.neo.compat.registry.EntityHolder<T> registerLivingEntity(
+    public static <T extends LivingEntity> EntityHolder<T> registerLivingEntity(
             String name,
             MobCategory category,
             EntityType.EntityFactory<T> factory,
@@ -41,7 +41,7 @@ public class EntityHolder<T extends Entity> extends ObjectHolder<EntityType<T>, 
         );
         init.accept(builder);
         var key = makeKey(Registries.ENTITY_TYPE, name);
-        return new net.dragonmounts.neo.compat.registry.EntityHolder<>(key, builder);
+        return new EntityHolder<>(key, builder);
     }
 
     public EntityHolder(ResourceKey<EntityType<?>> key, EntityType.Builder<T> builder) {

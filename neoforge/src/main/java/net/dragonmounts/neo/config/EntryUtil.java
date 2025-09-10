@@ -16,7 +16,7 @@ public class EntryUtil {
         return "options.neodragonmounts." + key;
     }
 
-    public static net.dragonmounts.neo.config.BooleanEntry config(
+    public static BooleanEntry config(
             ModConfigSpec.Builder builder,
             String key,
             boolean fallback,
@@ -25,7 +25,7 @@ public class EntryUtil {
         return config(builder, key, fallback, translate(key), desc);
     }
 
-    public static net.dragonmounts.neo.config.BooleanEntry config(
+    public static BooleanEntry config(
             ModConfigSpec.Builder builder,
             String key,
             boolean fallback,
@@ -35,7 +35,7 @@ public class EntryUtil {
         return new BooleanEntry(builder.translation(name).comment(desc).define(key, fallback));
     }
 
-    public static net.dragonmounts.neo.config.DoubleEntry config(
+    public static DoubleEntry config(
             ModConfigSpec.Builder builder,
             String key,
             double fallback,
@@ -46,7 +46,7 @@ public class EntryUtil {
         return config(builder, key, fallback, min, max, desc, null);
     }
 
-    public static net.dragonmounts.neo.config.DoubleEntry config(
+    public static DoubleEntry config(
             ModConfigSpec.Builder builder,
             String key,
             double fallback,
@@ -58,17 +58,17 @@ public class EntryUtil {
         return new DoubleEntry(builder.translation(translate(key)).comment(desc).defineInRange(key, fallback, min, max), min, max, onChanged);
     }
 
-    public static void register(HashBiMap<net.dragonmounts.neo.config.ConfigEntry<?>, Integer> registry, net.dragonmounts.neo.config.ConfigEntry<?> entry) {
+    public static void register(HashBiMap<ConfigEntry<?>, Integer> registry, ConfigEntry<?> entry) {
         registry.put(entry, registry.size());
     }
 
-    public static <T> void override(net.dragonmounts.neo.config.ConfigEntry<T> entry, Tag data) {
+    public static <T> void override(ConfigEntry<T> entry, Tag data) {
         entry.override(entry.load(data));
     }
 
     protected static void setSaved(ModConfigEvent event) {
         switch (event.getConfig().getType()) {
-            case SERVER -> ServerConfig.INSTANCE.getEntries().forEach(net.dragonmounts.neo.config.ConfigEntry::setSaved);
+            case SERVER -> ServerConfig.INSTANCE.getEntries().forEach(ConfigEntry::setSaved);
             case CLIENT -> ClientConfig.INSTANCE.getEntries().forEach(ConfigEntry::setSaved);
         }
     }

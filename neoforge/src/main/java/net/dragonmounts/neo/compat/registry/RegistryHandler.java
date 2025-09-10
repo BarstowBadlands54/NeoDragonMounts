@@ -50,8 +50,8 @@ public class RegistryHandler {
         return register(ACTIVITIES, makeId(name), new Activity(name));
     }
 
-    public static <T extends net.dragonmounts.neo.compat.registry.ArmorEffect> T registerArmorEffect(ResourceLocation identifier, T effect) {
-        if (effect instanceof net.dragonmounts.neo.compat.registry.CooldownCategory category) {
+    public static <T extends ArmorEffect> T registerArmorEffect(ResourceLocation identifier, T effect) {
+        if (effect instanceof CooldownCategory category) {
             COOLDOWN_CATEGORIES.add(category);
         }
         return register(ARMOR_EFFECTS, identifier, effect);
@@ -106,7 +106,7 @@ public class RegistryHandler {
         return register(STRUCTURE_PIECES, makeId(name), piece);
     }
 
-    public static <T extends net.dragonmounts.neo.compat.registry.ArmorEffect> T registerArmorEffect(String name, Function<ResourceLocation, T> factory) {
+    public static <T extends ArmorEffect> T registerArmorEffect(String name, Function<ResourceLocation, T> factory) {
         var identifier = makeId(name);
         return registerArmorEffect(identifier, factory.apply(identifier));
     }
@@ -121,7 +121,7 @@ public class RegistryHandler {
 
     //---------------------------------------- impl ----------------------------------------
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<Activity>>> ACTIVITIES = new ObjectArrayList<>();
-    private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<net.dragonmounts.neo.compat.registry.ArmorEffect>>> ARMOR_EFFECTS = new ObjectArrayList<>();
+    private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<ArmorEffect>>> ARMOR_EFFECTS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<DataComponentType<?>>>> COMPONENTS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<ConsumeEffect.Type<?>>>> CONSUMERS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<MemoryModuleType<?>>>> MEMORIES = new ObjectArrayList<>();
@@ -131,7 +131,7 @@ public class RegistryHandler {
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<SoundEvent>>> SOUNDS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<StructureType<?>>>> STRUCTURES = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<StructurePieceType>>> STRUCTURE_PIECES = new ObjectArrayList<>();
-    private static final ObjectArrayList<net.dragonmounts.neo.compat.registry.CooldownCategory> COOLDOWN_CATEGORIES = new ObjectArrayList<>();
+    private static final ObjectArrayList<CooldownCategory> COOLDOWN_CATEGORIES = new ObjectArrayList<>();
 
     private static <T, V extends T> V register(List<Consumer<RegisterEvent.RegisterHelper<T>>> holder, ResourceLocation key, V value) {
         holder.add(registry -> registry.register(key, value));
@@ -140,10 +140,10 @@ public class RegistryHandler {
 
     public static void registerRegistries(NewRegistryEvent event) {
         event.register(ArmorEffect.REGISTRY);
-        event.register(net.dragonmounts.neo.compat.registry.ArmorEffectSourceType.REGISTRY);
+        event.register(ArmorEffectSourceType.REGISTRY);
         event.register(CooldownCategory.REGISTRY);
-        event.register(net.dragonmounts.neo.compat.registry.DragonType.REGISTRY);
-        event.register(net.dragonmounts.neo.compat.registry.DragonVariant.REGISTRY);
+        event.register(DragonType.REGISTRY);
+        event.register(DragonVariant.REGISTRY);
     }
 
     public static void registerEntries(RegisterEvent event) {
@@ -153,17 +153,17 @@ public class RegistryHandler {
         if (register(event, Registries.ITEM, ItemHolder::registerEntries)) return;
         if (register(event, Registries.MOB_EFFECT, EffectHolder::registerEntries)) return;
         event.register(Registries.ACTIVITY, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.ACTIVITIES) {
+            for (var value : RegistryHandler.ACTIVITIES) {
                 value.accept(registry);
             }
         });
         event.register(Registries.CONSUME_EFFECT_TYPE, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.CONSUMERS) {
+            for (var value : RegistryHandler.CONSUMERS) {
                 value.accept(registry);
             }
         });
         event.register(Registries.DATA_COMPONENT_TYPE, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.COMPONENTS) {
+            for (var value : RegistryHandler.COMPONENTS) {
                 value.accept(registry);
             }
         });
@@ -172,27 +172,27 @@ public class RegistryHandler {
         ));
         event.register(Registries.MENU, DMScreenHandlers::register);
         event.register(Registries.PARTICLE_TYPE, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.PARTICLES) {
+            for (var value : RegistryHandler.PARTICLES) {
                 value.accept(registry);
             }
         });
         event.register(Registries.RECIPE_SERIALIZER, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.RECIPES) {
+            for (var value : RegistryHandler.RECIPES) {
                 value.accept(registry);
             }
         });
         event.register(Registries.SOUND_EVENT, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.SOUNDS) {
+            for (var value : RegistryHandler.SOUNDS) {
                 value.accept(registry);
             }
         });
         event.register(Registries.STRUCTURE_TYPE, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.STRUCTURES) {
+            for (var value : RegistryHandler.STRUCTURES) {
                 value.accept(registry);
             }
         });
         event.register(Registries.STRUCTURE_PIECE, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.STRUCTURE_PIECES) {
+            for (var value : RegistryHandler.STRUCTURE_PIECES) {
                 value.accept(registry);
             }
         });
@@ -204,16 +204,16 @@ public class RegistryHandler {
             registry.register(makeId("dragon_variant"), DragonVariant.SERIALIZER);
         });
         event.register(DragonMountsShared.ARMOR_EFFECT, registry -> {
-            for (var value : net.dragonmounts.neo.compat.registry.RegistryHandler.ARMOR_EFFECTS) {
+            for (var value : RegistryHandler.ARMOR_EFFECTS) {
                 value.accept(registry);
             }
         });
         event.register(DragonMountsShared.ARMOR_EFFECT_SOURCE, registry -> {
-            registry.register(withDefaultNamespace("component"), net.dragonmounts.neo.compat.registry.ArmorEffectSourceType.COMPONENT);
+            registry.register(withDefaultNamespace("component"), ArmorEffectSourceType.COMPONENT);
             registry.register(makeId("builtin"), ArmorEffectSourceType.BUILTIN);
         });
         event.register(DragonMountsShared.COOLDOWN_CATEGORY, registry -> {
-            for (var category : net.dragonmounts.neo.compat.registry.RegistryHandler.COOLDOWN_CATEGORIES) {
+            for (var category : RegistryHandler.COOLDOWN_CATEGORIES) {
                 registry.register(category.identifier, category);
             }
         });

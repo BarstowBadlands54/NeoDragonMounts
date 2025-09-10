@@ -8,7 +8,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.COOLDOWN_CATEGORY;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class CooldownCategory {
-    public static final Registry<net.dragonmounts.neo.compat.registry.CooldownCategory> REGISTRY = new RegistryBuilder<>(COOLDOWN_CATEGORY).sync(true).create();
+    public static final Registry<CooldownCategory> REGISTRY = new RegistryBuilder<>(COOLDOWN_CATEGORY).sync(true).create();
 
     public final ResourceLocation identifier;
 
