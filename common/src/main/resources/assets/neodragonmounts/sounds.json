@@ -142,6 +142,7 @@
   },
   "entity.dragon.breath_start.juvenile": {
     "sounds": [
+      "neodragonmounts:entity/dragon/breath_start/juvenile",
       "neodragonmounts:entity/dragon/breath_start/juvenile"
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"

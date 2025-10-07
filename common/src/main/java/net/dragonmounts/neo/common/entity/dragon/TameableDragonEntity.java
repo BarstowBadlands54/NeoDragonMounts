@@ -192,7 +192,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return 120;
     }
 
-    protected final void setFlying(boolean flying) {
+    public final void setFlying(boolean flying) {
         this.entityData.set(DATA_FLYING, flying);
         this.setNoGravity(flying);
     }

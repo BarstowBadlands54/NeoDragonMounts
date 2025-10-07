@@ -114,7 +114,7 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder(BuiltinFactory.COMPAT);
+        var builder = builder(BuiltinFactory.COMPAT).withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
         var glow = makeId(TEXTURES_ROOT + "forest/glow.png");
         FOREST_FEMALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/female_body.png"), glow);
         FOREST_MALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/male_body.png"), glow);

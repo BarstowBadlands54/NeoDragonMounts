@@ -28,7 +28,7 @@ public class BreathNode {
     private static final float INITIAL_SPEED = 1.2F; // blocks per tick at full speed
     private static final float NODE_DIAMETER_IN_BLOCKS = 2.0F;
     private static final float YOUNG_AGE = 0.25F;
-    private static final float OLD_AGE = 0.75F;
+    private static final float OLD_AGE = 0.74F;
 
     public final BreathPower power;
     public final float lifespan;
