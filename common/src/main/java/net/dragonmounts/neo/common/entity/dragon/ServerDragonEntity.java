@@ -7,6 +7,8 @@ import net.dragonmounts.neo.common.block.DragonCoreBlock;
 import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.ai.control.DragonHeadLocator;
 import net.dragonmounts.neo.common.entity.ai.navigation.DragonPathNavigation;
+import net.dragonmounts.neo.common.entity.ai.navigation.HybridDragonNavigator;
+import net.dragonmounts.neo.common.entity.ai.navigation.RRTStarNavigator;
 import net.dragonmounts.neo.common.entity.breath.impl.ServerBreathHelper;
 import net.dragonmounts.neo.common.init.*;
 import net.dragonmounts.neo.common.inventory.DragonInventory;
@@ -41,6 +43,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -85,9 +88,14 @@ public class ServerDragonEntity extends TameableDragonEntity {
         return this.headLocator.getHeadRelativeOffset(x, y, z);
     }
 
+//    @Override
+//    protected PathNavigation createNavigation(Level level) {
+//        return new RRTStarNavigator(this, level);
+//    }
+
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return new DragonPathNavigation(this, level);
+        return new HybridDragonNavigator(this, level);
     }
 
     @Override
@@ -209,9 +217,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
         } else {
             this.checkCrystals();
         }
+
         if (this.shearCooldown > 0) {
             this.setSheared(this.shearCooldown - 1);
         }
+
         this.headLocator.tick();
         this.headLocator.calculateHeadAndNeck(
                 this.neckSegments,
@@ -219,6 +229,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 this.yHeadRot - this.yBodyRot
         );
         this.breathHelper.tick();
+
+        // ---- Base logic ----
         if (this.isAgeLocked()) {
             int age = this.age;
             this.age = 0;
@@ -227,17 +239,50 @@ public class ServerDragonEntity extends TameableDragonEntity {
         } else {
             super.aiStep();
         }
-        if (this.isNearGround(0.25)) {
+
+        // ---- Flight state logic ----
+        boolean nearGround = this.isNearGround(0.25);
+        if (nearGround) {
             this.flightTicks = 0;
         } else {
             ++this.flightTicks;
         }
-        this.setFlying(++this.flightTicks > LIFTOFF_THRESHOLD && !this.isBaby() && (
-                this.fluidHeight.isEmpty() || DoubleIterators.all(
+
+        boolean shouldFly =
+                ++this.flightTicks > LIFTOFF_THRESHOLD
+                        && !this.isBaby()
+                        && (this.fluidHeight.isEmpty()
+                        || DoubleIterators.all(
                         this.fluidHeight.values().doubleIterator(),
                         value -> value == 0.0
-                ) || this.isRiddenByPlayer()
-        ));
+                )
+                        || this.isRiddenByPlayer());
+
+        this.setFlying(shouldFly);
+
+        // ---- Server-only navigation handling ----
+        if (!this.level().isClientSide) {
+            this.goalSelector.tick();
+            this.targetSelector.tick();
+
+            // ✅ Ensure navigation ticks every server tick
+            PathNavigation nav = this.getNavigation();
+            if (nav != null) {
+                try {
+                    nav.tick();
+                } catch (Exception e) {
+                    System.err.println("[HybridNav] Exception during navigation tick: " + e);
+                }
+
+                System.out.printf("[DragonNavTick] nav=%s done=%s flying=%s pos=%s%n",
+                        nav.getClass().getSimpleName(), nav.isDone(), this.isFlying(), this.position());
+            }
+
+            // ✅ Safety: re-enable gravity if grounded
+            if (this.onGround() && this.isNoGravity() && !(nav instanceof RRTStarNavigator)) {
+                this.setNoGravity(false);
+            }
+        }
     }
 
     @Override

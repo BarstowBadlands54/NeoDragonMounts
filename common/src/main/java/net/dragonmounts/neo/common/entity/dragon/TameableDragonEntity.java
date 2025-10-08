@@ -7,8 +7,11 @@ import net.dragonmounts.neo.common.api.DragonTypified;
 import net.dragonmounts.neo.common.api.DynamicAttributeEntity;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.component.DragonFood;
+import net.dragonmounts.neo.common.entity.ai.behavior.DragonAutoLandGoal;
+import net.dragonmounts.neo.common.entity.ai.behavior.DragonFlightGoal;
 import net.dragonmounts.neo.common.entity.ai.control.DragonBodyControl;
 import net.dragonmounts.neo.common.entity.ai.control.DragonMoveControl;
+import net.dragonmounts.neo.common.entity.ai.navigation.RRTStarNavigator;
 import net.dragonmounts.neo.common.entity.breath.DragonBreathHelper;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.dragonmounts.neo.common.init.DMSounds;
@@ -26,6 +29,7 @@ import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.dragonmounts.neo.mixin.MobAccessor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -46,6 +50,9 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
@@ -65,6 +72,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.EnumSet;
 import java.util.Optional;
 
 /**
@@ -144,6 +152,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         super(type, level);
         this.setPersistenceRequired();
         this.moveControl = new DragonMoveControl(this);
+        this.setNoGravity(false);
     }
 
     @Override
@@ -533,6 +542,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return true;
     }
 
+
     @Override
     public boolean isSaddleable() {
         return !this.isBaby() && this.isTame();
@@ -686,4 +696,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public AttributeSupplier getDynamicAttributes() {
         return ServerConfig.INSTANCE.getDragonAttributes();
     }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new DragonFlightGoal(this));
+        this.goalSelector.addGoal(1, new DragonAutoLandGoal(this));
+    }
+
+
 }
