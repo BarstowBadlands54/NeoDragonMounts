@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
@@ -58,6 +59,9 @@ public final class DragonTypeBuilder {
     public DragonTypeBuilder addImmunity(ResourceKey<DamageType> type) {
         return Dummy.get();
     }
+    public DragonTypeBuilder addEffectImmunity(Holder<MobEffect> potioneffect) {
+        return Dummy.get();
+    }
 
     public DragonTypeBuilder addHabitat(Block block) {
         return Dummy.get();
@@ -89,4 +93,6 @@ public final class DragonTypeBuilder {
     ) {
         return Dummy.get();
     }
+
+
 }
