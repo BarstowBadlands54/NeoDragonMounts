@@ -171,6 +171,12 @@
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
+  "entity.dragon.breath_start.forest": {
+    "sounds": [
+      "neodragonmounts:entity/dragon/breath_start/forest"
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
+  },
   "entity.dragon.breath_loop.adult": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_loop/adult"
@@ -207,6 +213,12 @@
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
+  "entity.dragon.breath_loop.forest": {
+    "sounds": [
+      "neodragonmounts:entity/dragon/breath_loop/forest"
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
+  },
   "entity.dragon.breath_stop.adult": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_stop/adult"
@@ -240,6 +252,12 @@
   "entity.dragon.breath_stop.water": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_stop/water"
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
+  },
+  "entity.dragon.breath_stop.forest": {
+    "sounds": [
+      "neodragonmounts:entity/dragon/breath_stop/forest"
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },

@@ -134,16 +134,16 @@ public class ForestBreath extends DragonBreath {
 
     @Override
     public SoundEvent getStartSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_START_ICE;
+        return DMSounds.DRAGON_BREATH_START_FOREST;
     }
 
     @Override
     public SoundEvent getLoopSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_LOOP_ICE;
+        return DMSounds.DRAGON_BREATH_LOOP_FOREST;
     }
 
     @Override
     public SoundEvent getStopSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_STOP_ICE;
+        return DMSounds.DRAGON_BREATH_STOP_FOREST;
     }
 }
