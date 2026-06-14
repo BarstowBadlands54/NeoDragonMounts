@@ -6,7 +6,6 @@ import net.dragonmounts.neo.common.client.variant.VariantAppearance;
 import net.dragonmounts.neo.common.util.ArrayUtil;
 import net.dragonmounts.neo.common.util.Segment;
 import net.dragonmounts.neo.compat.registry.DragonVariant;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;

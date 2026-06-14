@@ -20,7 +20,7 @@ public class TameableDragonLayer extends RenderLayer<DragonRenderState, DragonMo
     }
 
     @Override
-    public void render(PoseStack matrices, MultiBufferSource buffers, int light, DragonRenderState state, float yRot, float xRot) {
+    public void render(PoseStack matrices, MultiBufferSource buffers, int light, DragonRenderState state, float yRot, float xRot, float v2, float v3, float v4, float v5) {
         var appearance = state.variant.appearance;
         var model = appearance.getModel();
         if (!state.isInvisible) {

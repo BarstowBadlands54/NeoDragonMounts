@@ -8,7 +8,7 @@ public class DragonCoreModel extends Model {
     public final ModelPart lid;
 
     public DragonCoreModel(ModelPart root) {
-        super(root, RenderType::entityCutoutNoCull);
+        super(RenderType::entityCutoutNoCull);
         this.lid = root.getChild("lid");
     }
 
