@@ -1,8 +1,6 @@
 package net.dragonmounts.neo.common.client;
 
 import net.dragonmounts.neo.common.client.breath.impl.ClientBreathHelper;
-import net.dragonmounts.neo.common.client.model.dragon.DragonAnimator;
-import net.dragonmounts.neo.common.client.model.dragon.MouthState;
 import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
@@ -26,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ClientDragonEntity extends TameableDragonEntity {
-    public final DragonAnimator animator = new DragonAnimator(this);
+//    public final DragonAnimator animator = new DragonAnimator(this);
     public int controlFlags;
     private float pendingJumpPower;
     private boolean wasOnGround;
@@ -41,9 +39,9 @@ public class ClientDragonEntity extends TameableDragonEntity {
         return new ClientBreathHelper(this);
     }
 
-    @Override
     public final @NotNull Vec3 getHeadRelativeOffset(float x, float y, float z) {
-        return this.animator.getHeadRelativeOffset(x, y, z);
+        ClientDragonEntity DragonHeadLocator = this;
+        return DragonHeadLocator.getHeadRelativeOffset(x, y, z);
     }
 
     /**
@@ -70,7 +68,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
             this.checkCrystals();
         }
         super.aiStep();
-        this.animator.tick();
+//        this.animator.tick();
         this.breathHelper.tick();
         if (!this.isAgeLocked()) {
             if (this.age < 0) {
@@ -139,14 +137,14 @@ public class ClientDragonEntity extends TameableDragonEntity {
     public void handleEntityEvent(byte id) {
         switch (id) {
             case ON_ATTACK -> {
-                this.playSound(SoundEvents.GENERIC_EAT.value(), 1.0F, 0.7F);
-                this.animator.transitMouthState(MouthState.ATTACKING, false);
+                this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 0.7F);
+//                this.animator.transitMouthState(MouthState.ATTACKING, false);
             }
             case ON_ROAR -> {
                 SoundEvent sound = this.getVariant().type.getRoarSound(this);
                 if (sound == null) break;
                 this.playSound(sound, Mth.clamp(this.getAgeScale(), 0.3F, 0.6F), 1.0F);
-                this.animator.transitMouthState(MouthState.ROARING, false);
+//                this.animator.transitMouthState(MouthState.ROARING, false);
             }
             default -> super.handleEntityEvent(id);
         }

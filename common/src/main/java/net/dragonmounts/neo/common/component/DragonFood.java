@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.dragonmounts.neo.common.component.impl.ContorlGrowthConsumeEffect;
 import net.dragonmounts.neo.common.init.DMDataComponents;
 import net.dragonmounts.neo.common.tag.DMItemTags;
+import net.minecraft.advancements.critereon.ConsumeItemTrigger;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,7 +15,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -30,7 +30,7 @@ public record DragonFood(
         Holder<SoundEvent> majorSound,
         Optional<Holder<SoundEvent>> minorSound,
         Optional<ItemStack> particles,
-        List<ConsumeEffect> effects
+        List<ContorlGrowthConsumeEffect> effects
 ) {
     public static final DragonFood RAW_MEAT = new DragonFood(1500, 2.0F, 0.25F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
     public static final DragonFood COOKED_MEAT = new DragonFood(2500, 3.0F, 0.375F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
@@ -43,7 +43,7 @@ public record DragonFood(
             SoundEvent.CODEC.optionalFieldOf("major_sound", SoundEvents.GENERIC_EAT).forGetter(DragonFood::majorSound),
             SoundEvent.CODEC.optionalFieldOf("minor_sound").forGetter(DragonFood::minorSound),
             ItemStack.CODEC.optionalFieldOf("override_particles").forGetter(DragonFood::particles),
-            ConsumeEffect.CODEC.listOf().optionalFieldOf("side_effects", Collections.emptyList()).forGetter(DragonFood::effects)
+            ContorlGrowthConsumeEffect.CODEC.codec().listOf().optionalFieldOf("side_effects", Collections.emptyList()).forGetter(DragonFood::effects)
     ).apply(instance, DragonFood::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonFood> STREAM_CODEC = StreamCodec.ofMember(DragonFood::encode, DragonFood::decode);
 
@@ -109,8 +109,8 @@ public record DragonFood(
     }
 
     static {
-        var minorDrink = Optional.<Holder<SoundEvent>>of(SoundEvents.GENERIC_DRINK);
-        var emptyEffects = Collections.<ConsumeEffect>emptyList();
+        var minorDrink = SoundEvents.GENERIC_DRINK;
+        var emptyEffects = Collections.<ContorlGrowthConsumeEffect>emptyList();
         setFallback(Items.HONEY_BOTTLE, new DragonFood(
                 100,
                 1.0F,
@@ -118,7 +118,7 @@ public record DragonFood(
                 true,
                 true,
                 SoundEvents.HONEY_DRINK,
-                Optional.empty(),
+                null,
                 Optional.of(ItemStack.EMPTY),
                 Collections.singletonList(new ContorlGrowthConsumeEffect(true))
         ));
@@ -129,7 +129,7 @@ public record DragonFood(
                 true,
                 true,
                 SoundEvents.GENERIC_EAT,
-                Optional.empty(),
+                null,
                 Optional.empty(),
                 Collections.singletonList(new ContorlGrowthConsumeEffect(false))
         ));

@@ -26,11 +26,9 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.component.TooltipProvider;
-import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
@@ -64,7 +62,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final DragonVariant.Manager variants = new DragonVariant.Manager(this);
     public final TranslatableContents name;
     public final ArmorMaterial material;
-    public final ToolMaterial tier;
+    public final Tier tier;
 
     public DragonType(ResourceLocation identifier, DragonTypeBuilder builder) {
         this.identifier = identifier;
@@ -112,7 +110,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     /// Do **NOT** directly access client only class here!
     public void tickClient(ClientDragonEntity dragon) {}
 
-    public <T extends LivingEntity & DragonTypified.Mutable> void onThunderHit(T entity, LightningBolt bolt) {}
+    public <T extends LivingEntity & Mutable> void onThunderHit(T entity, LightningBolt bolt) {}
 
     public boolean isInHabitat(LivingEntity entity) {
         return false;
@@ -170,5 +168,5 @@ public class DragonType implements TooltipProvider, DragonTypified {
         return this;
     }
 
-    public static <T extends LivingEntity & DragonTypified.Mutable> void convertByLightning(T entity, DragonType type) {}
+    public static <T extends LivingEntity & Mutable> void convertByLightning(T entity, DragonType type) {}
 }

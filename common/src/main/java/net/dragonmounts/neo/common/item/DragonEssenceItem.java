@@ -17,7 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +44,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
 
     public final DragonType type;
 
-    public DragonEssenceItem(DragonType type, Item.Properties props) {
+    public DragonEssenceItem(DragonType type, Properties props) {
         super(props.stacksTo(1).component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
     }
@@ -62,7 +62,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
                     stack,
                     player,
                     spawnPos,
-                    EntitySpawnReason.BUCKET,
+                    MobSpawnType.BUCKET,
                     true,
                     !Objects.equals(pos, spawnPos) && direction == Direction.UP
             ));
@@ -83,7 +83,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
         if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
         var stack = player.getItemInHand(hand);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
-            world.addFreshEntityWithPassengers(this.loadEntity(world, stack, player, pos, EntitySpawnReason.BUCKET, false, false));
+            world.addFreshEntityWithPassengers(this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
             stack.consume(1, player);
             player.awardStat(Stats.ITEM_USED.get(this));
@@ -135,7 +135,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
             ItemStack stack,
             @Nullable Player player,
             BlockPos pos,
-            EntitySpawnReason reason,
+            MobSpawnType reason,
             boolean yOffset,
             boolean extraOffset
     ) {

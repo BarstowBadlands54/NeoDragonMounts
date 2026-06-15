@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
@@ -70,7 +70,7 @@ public class DragonNestPiece extends TemplateStructurePiece {
     protected void handleDataMarker(String name, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox box) {
         switch (name) {
             case "Sentry" -> {
-                var shulker = EntityType.SHULKER.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+                var shulker = EntityType.SHULKER.create(level.getLevel(), MobSpawnType.STRUCTURE);
                 if (shulker != null) {
                     shulker.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                     level.addFreshEntity(shulker);

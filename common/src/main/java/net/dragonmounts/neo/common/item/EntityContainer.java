@@ -7,7 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -53,8 +53,8 @@ public interface EntityContainer<T extends Entity> {
     ItemStack saveEntity(T entity, DataComponentPatch patch);
 
     /**
-     * @see net.minecraft.world.entity.EntityType#spawn(ServerLevel, ItemStack, Player, BlockPos, EntitySpawnReason, boolean, boolean)
-     * @see EntityUtil#finalizeSpawn(ServerLevel, Entity, BlockPos, EntitySpawnReason, boolean, boolean)
+     * @see net.minecraft.world.entity.EntityType#spawn(ServerLevel, ItemStack, Player, BlockPos, MobSpawnType, boolean, boolean)
+     * @see EntityUtil#finalizeSpawn(ServerLevel, Entity, BlockPos, MobSpawnType, boolean, boolean)
      */
     @Nullable
     Entity loadEntity(
@@ -62,7 +62,7 @@ public interface EntityContainer<T extends Entity> {
             ItemStack stack,
             @Nullable Player player,
             BlockPos pos,
-            EntitySpawnReason reason,
+            MobSpawnType reason,
             boolean yOffset,
             boolean extraOffset
     );

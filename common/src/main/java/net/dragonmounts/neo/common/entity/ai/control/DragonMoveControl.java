@@ -21,8 +21,8 @@ public class DragonMoveControl extends MoveControl {
     @Override
     public void tick() {
         var dragon = this.dragon;
-        if (this.operation == MoveControl.Operation.MOVE_TO) {
-            this.operation = MoveControl.Operation.WAIT;
+        if (this.operation == Operation.MOVE_TO) {
+            this.operation = Operation.WAIT;
             var pos = dragon.position();
             double distX = this.wantedX - pos.x, distY = this.wantedY - pos.y, distZ = this.wantedZ - pos.z;
             double squared = distX * distX + distZ * distZ;
@@ -51,7 +51,7 @@ public class DragonMoveControl extends MoveControl {
                         && !state.is(BlockTags.FENCES)
                 ) {
                     dragon.getJumpControl().jump();
-                    this.operation = MoveControl.Operation.JUMPING;
+                    this.operation = Operation.JUMPING;
                 } else if (distY > 0.5F) {
                     // a small jump
                     dragon.setYya(dragon.yya + 0.5F);
@@ -77,8 +77,8 @@ public class DragonMoveControl extends MoveControl {
             }
         } else if (dragon.onGround()) {
             super.tick();
-        } else if (this.operation == MoveControl.Operation.JUMPING) {
-            this.operation = MoveControl.Operation.WAIT;
+        } else if (this.operation == Operation.JUMPING) {
+            this.operation = Operation.WAIT;
             dragon.setSpeed((float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED)));
         } else {
             dragon.setYya(0.0F);

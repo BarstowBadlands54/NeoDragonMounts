@@ -1,8 +1,8 @@
 package net.dragonmounts.neo.common.util;
 
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.equipment.ArmorType;
 
 public record ArmorSuitInfo<T, I extends Item>(
         ResourceKey<Item> helmet,
@@ -12,6 +12,6 @@ public record ArmorSuitInfo<T, I extends Item>(
         Factory<T, I> factory
 ) {
     public interface Factory<T, I extends Item> {
-        I makeArmor(T suit, ArmorType slot, Item.Properties props);
+        I makeArmor(T suit, ArmorItem.Type slot, Item.Properties props);
     }
 }

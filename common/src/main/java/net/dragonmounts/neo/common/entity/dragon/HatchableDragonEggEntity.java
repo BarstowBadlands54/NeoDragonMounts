@@ -40,6 +40,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MaceItem;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -48,6 +50,7 @@ import net.minecraft.world.level.entity.EntityInLevelCallback;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -130,7 +133,7 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         if (tag.contains(DragonType.DATA_PARAMETER_KEY)) {
-            this.setDragonType(DragonType.REGISTRY.getValue(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))), false);
+            this.setDragonType(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))), false);
         }
         if (tag.contains(DragonVariant.DATA_PARAMETER_KEY)) {
             this.variant = tag.getString(DragonVariant.DATA_PARAMETER_KEY);
@@ -152,11 +155,11 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
         this.isVanilla = vanilla;
     }
 
-    protected void spawnScales(ServerLevel level, int amount) {
+    protected void spawnScales(int amount) {
         if (amount > 0) {
             var scales = this.getDragonType().getInstance(DragonScalesItem.class, null);
-            if (scales != null && level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-                this.spawnAtLocation(level, new ItemStack(scales, amount), 1.25F);
+            if (scales != null && level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+                this.spawnAtLocation(new ItemStack(scales, amount), 1.25F);
             }
         }
     }
@@ -172,7 +175,7 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
 
     public void hatch() {
         if (this.level() instanceof ServerLevel level) {
-            this.spawnScales(level, this.random.nextInt(4) + 4);
+            this.spawnScales(this.random.nextInt(4) + 4);
             this.hatched = true;
             ((ScoreboardAccessor) this.level().getScoreboard()).neodragonmounts$preventRemoval(this);
         }
@@ -201,7 +204,7 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.discard();
             this.level().setBlockAndUpdate(this.blockPosition(), block.defaultBlockState());
-            return InteractionResult.SUCCESS_SERVER;
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
@@ -232,7 +235,7 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
                             random.nextBoolean() ? 0b10 | flag : flag
                     ));
                     if (crack) {
-                        this.spawnScales(server, 1);
+                        this.spawnScales(1);
                     }
                 }
             }
@@ -260,7 +263,7 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
         double oz = (random.nextDouble() - 0.5) * 2;
         level.addParticle(type.eggParticle, px, py, pz, ox, oy, oz);
         if ((++this.age & 1) == 0 && type != DragonTypes.ENDER) {
-            level.addParticle(new DustParticleOptions(type.color, 1.0F), px, py + 0.8, pz, ox, oy, oz);
+            level.addParticle(new DustParticleOptions(new Vector3f(type.color, type.color, type.color), 1.0F), px, py + 0.8, pz, ox, oy, oz);
         }
     }
 
@@ -279,34 +282,36 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
     }
 
     @Override
-    public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
-        return super.isInvulnerableTo(level, source) || this.getDragonType().isInvulnerableTo(source);
+    public boolean isInvulnerableTo(DamageSource source) {
+        return super.isInvulnerableTo(source) || this.getDragonType().isInvulnerableTo(source);
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        if (source.is(DamageTypes.MACE_SMASH)) {
-            if (super.hurtServer(level, source, Math.max(20F, amount * 3F))) {
-                this.spawnScales(level, 1);
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.getDirectEntity() instanceof Player player &&
+                player.getMainHandItem().is(Items.MACE) &&
+                MaceItem.canSmashAttack(player)) {
+            if (super.hurt(source, Math.max(20F, amount * 3F))) {
+                this.spawnScales(1);
                 return true;
             }
             return false;
         } else {
             var weapon = source.getWeaponItem();
             if (weapon != null && (weapon.is(ItemTags.MACE_ENCHANTABLE))) {
-                if (super.hurtServer(level, source, amount * 3F)) {
-                    this.spawnScales(level, 1);
+                if (super.hurt(source, amount * 3F)) {
+                    this.spawnScales( 1);
                     return true;
                 }
                 return false;
             }
         }
-        return super.hurtServer(level, source, amount);
+        return super.hurt(source, amount);
     }
 
     @Override
-    protected Entity.MovementEmission getMovementEmission() {
-        return Entity.MovementEmission.NONE;
+    protected MovementEmission getMovementEmission() {
+        return MovementEmission.NONE;
     }
 
     @Override
@@ -379,7 +384,8 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
 
     @Override
     protected @Nullable SoundEvent getHurtSound(DamageSource source) {
-        return source.is(DamageTypes.MACE_SMASH) ? DMSounds.DRAGON_EGG_SHATTER : DMSounds.DRAGON_EGG_CRACK;
+//        return source.is(DamageTypes.MACE_SMASH) ? DMSounds.DRAGON_EGG_SHATTER : DMSounds.DRAGON_EGG_CRACK;
+        return DMSounds.DRAGON_EGG_CRACK;
     }
 
     public void syncShake(int amplitude, int axis, boolean crack) {

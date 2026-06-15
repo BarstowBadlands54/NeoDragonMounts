@@ -64,6 +64,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Optional;
 
@@ -79,7 +85,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         FlyingAnimal,
         Saddleable,
         DynamicAttributeEntity,
-        DragonTypified.Mutable {
+        DragonTypified.Mutable,
+        GeoEntity {
     public static TameableDragonEntity construct(EntityType<? extends TameableDragonEntity> type, Level level) {
         return level instanceof ServerLevel server ? new ServerDragonEntity(type, server) : new ClientDragonEntity(type, level);
     }
@@ -98,7 +105,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                 .add(Attributes.FLYING_SPEED, config.baseFlyingSpeed.get())
                 .add(Attributes.SCALE, config.baseBodySize.get())
                 .add(Attributes.JUMP_STRENGTH, config.baseJumpStrength.get())
-                .add(Attributes.TEMPT_RANGE, config.baseTemptRange.get())
                 .add(Attributes.WATER_MOVEMENT_EFFICIENCY, config.baseWaterMovementEfficiency.get());
     }
 
@@ -305,24 +311,29 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    protected void dropEquipment(ServerLevel level) {
+    protected void dropEquipment() {
         this.inventory.dropContents(false, 0);
     }
 
     @Override
-    public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
+    public boolean isInvulnerableTo(DamageSource source) {
         var entity = source.getEntity();
-        return (entity != null && (entity == this || this.hasPassenger(entity))) || super.isInvulnerableTo(level, source) || this.getDragonType().isInvulnerableTo(source);
+        return (entity != null && (entity == this || this.hasPassenger(entity))) || super.isInvulnerableTo(source) || this.getDragonType().isInvulnerableTo(source);
     }
 
     @Override
-    protected int calculateFallDamage(float distance, float damageMultiplier) {return 0;}
+    protected int calculateFallDamage(float distance, float damageMultiplier) {
+        return 0;
+    }
 
     @Override
-    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {return false;}
+    public boolean causeFallDamage(float distance, float multiplier, DamageSource source) {
+        return false;
+    }
 
     @Override
-    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {}
+    protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
+    }
 
     public abstract void setLifeStage(DragonLifeStage stage, boolean reset, boolean sync);
 
@@ -406,11 +417,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return this.getDragonType().getDeathSound(this);
     }
 
+
     @Override
-    public Optional<ResourceKey<LootTable>> getLootTable() {
-        var forced = ((MobAccessor) this).getForcedLootTable();
-        return forced.isPresent() ? forced : Optional.of(this.getDragonType().getLootTable());
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.getDragonType().getLootTable();
     }
+
 
     //----------AgeableEntity----------
 
@@ -465,7 +477,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    protected int getBaseExperienceReward(ServerLevel level) {
+    protected int getBaseExperienceReward() {
         return 0;
     }
 
@@ -521,7 +533,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         if (scale == null) return false;
         level.playSound(player, this, DMSounds.DRAGON_PURR, source, 1.0F, 1.0F);
         var random = this.random;
-        var item = this.spawnAtLocation(level, new ItemStack(scale), 1.0F);
+        var item = this.spawnAtLocation(new ItemStack(scale), 1.0F);
         if (item != null) {
             item.setDeltaMovement(item.getDeltaMovement().add(
                     (random.nextFloat() - random.nextFloat()) * 0.1F,
@@ -544,7 +556,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData data) {
         if (data instanceof DragonSpawnData $data) {
             this.setLifeStage($data.stage, true, false);
         }
@@ -662,10 +674,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    public void handleStartJump(int power) {}
+    public void handleStartJump(int power) {
+    }
 
     @Override
-    public void handleStopJump() {}
+    public void handleStopJump() {
+    }
 
     @Override
     public TameableDragonEntity getScreenOpeningData(ServerPlayer player) {
@@ -686,4 +700,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public AttributeSupplier getDynamicAttributes() {
         return ServerConfig.INSTANCE.getDragonAttributes();
     }
+
+//    @Override
+//    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+//        controllers.add(new AnimationController<GeoAnimatable>(this, ""))
+//    }
+
 }

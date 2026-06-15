@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-/// @see net.minecraft.client.renderer.RenderStateShard.MultiTextureStateShard
+/// @see MultiTextureStateShard
 public class MaskedTextureStateShard extends RenderStateShard.EmptyTextureStateShard {
     public final ResourceLocation texture;
 

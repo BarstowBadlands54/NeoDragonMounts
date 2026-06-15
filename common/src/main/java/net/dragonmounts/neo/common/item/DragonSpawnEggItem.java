@@ -106,7 +106,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
             default:
                 var spawnPos = state.getCollisionShape(level, pos).isEmpty() ? pos : pos.relative(direction);
                 var player = context.getPlayer();
-                var entity = this.loadEntity(level, stack, player, spawnPos, EntitySpawnReason.SPAWN_ITEM_USE, true, !Objects.equals(pos, spawnPos) && direction == Direction.UP);
+                var entity = this.loadEntity(level, stack, player, spawnPos, MobSpawnType.SPAWN_ITEM_USE, true, !Objects.equals(pos, spawnPos) && direction == Direction.UP);
                 if (entity != null) {
                     if (entity instanceof TameableDragonEntity dragon) {
                         dragon.setDragonType(this.type, true);
@@ -133,7 +133,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
         if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
         var stack = player.getItemInHand(hand);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
-            var entity = this.loadEntity(world, stack, player, pos, EntitySpawnReason.SPAWN_ITEM_USE, false, false);
+            var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.SPAWN_ITEM_USE, false, false);
             if (entity == null) return InteractionResult.PASS;
             if (entity instanceof TameableDragonEntity dragon) {
                 dragon.setDragonType(this.type, true);
@@ -150,7 +150,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
     @Override
     public Optional<Mob> spawnOffspringFromSpawnEgg(Player player, Mob mob, EntityType<? extends Mob> type, ServerLevel level, Vec3 pos, ItemStack stack) {
         if (!this.spawnsEntity(level.registryAccess(), stack, type)) return Optional.empty();
-        Mob neo = mob instanceof AgeableMob old ? old.getBreedOffspring(level, old) : type.create(level, EntitySpawnReason.SPAWN_ITEM_USE);
+        Mob neo = mob instanceof AgeableMob old ? old.getBreedOffspring(level, old) : type.create(level, MobSpawnType.SPAWN_ITEM_USE);
         if (neo == null) return Optional.empty();
         neo.setBaby(true);
         if (!neo.isBaby()) return Optional.empty();
@@ -191,7 +191,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
             ItemStack stack,
             @Nullable Player player,
             BlockPos pos,
-            EntitySpawnReason reason,
+            MobSpawnType reason,
             boolean yOffset,
             boolean extraOffset
     ) {

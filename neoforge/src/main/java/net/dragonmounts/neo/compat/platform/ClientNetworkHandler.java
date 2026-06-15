@@ -3,7 +3,6 @@ package net.dragonmounts.neo.compat.platform;
 import net.dragonmounts.neo.common.capability.ArmorEffectManager;
 import net.dragonmounts.neo.common.capability.ArmorEffectManagerImpl;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
-import net.dragonmounts.neo.common.client.model.dragon.MouthState;
 import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.HatchableDragonEggEntity;
@@ -97,8 +96,8 @@ public class ClientNetworkHandler {
             if (minor != null) {
                 level.playLocalSound(dragon, minor.value(), SoundSource.NEUTRAL, 0.25F, 0.75F);
             }
-            dragon.animator.transitMouthState(MouthState.EATING, true);
-            dragon.animator.remainingEating = MouthState.EATING.duration;
+//            dragon.animator.transitMouthState(MouthState.EATING, true);
+//            dragon.animator.remainingEating = MouthState.EATING.duration;
             var particles = food.particles().orElse(stack);
             if (particles.isEmpty()) return;
             var pos = dragon.getHeadRelativeOffset(0.0F, -8.0F, 20.0F);

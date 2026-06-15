@@ -16,7 +16,7 @@ public class IconToggleButton extends ToggleButton {
             int x,
             int y,
             Component message,
-            Button.OnPress onPress,
+            OnPress onPress,
             Function<ToggleButton, MutableComponent> narration
     ) {
         super(x, y, 20, 20, message, onPress, narration);

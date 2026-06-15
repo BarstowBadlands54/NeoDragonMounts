@@ -38,7 +38,7 @@ public class BlockHolder<T extends Block> extends DeferredHolder<T, Block> imple
 
     @Override
     protected T create() {
-        return this.factory.apply(Properties.of().setId(this.key));
+        return this.factory.apply(Properties.of());
     }
 
     @Override

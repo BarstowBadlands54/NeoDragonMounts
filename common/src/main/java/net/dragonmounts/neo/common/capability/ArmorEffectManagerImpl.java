@@ -21,8 +21,8 @@ public final class ArmorEffectManagerImpl implements ArmorEffectManager {
     private static ArmorEffectManagerImpl LOCAL_MANAGER = null;
 
     public static void onPlayerClone(Player player, Player priorPlayer) {
-        var manager = ((ArmorEffectManager.Provider) player).neodragonmounts$getManager();
-        var priorManager = ((ArmorEffectManager.Provider) priorPlayer).neodragonmounts$getManager();
+        var manager = ((Provider) player).neodragonmounts$getManager();
+        var priorManager = ((Provider) priorPlayer).neodragonmounts$getManager();
         manager.cdRef = priorManager.cdRef;
         manager.cdKey = priorManager.cdKey;
         manager.cdDat = priorManager.cdDat;

@@ -1,16 +1,8 @@
 package net.dragonmounts.neo.common.init;
 
-import net.dragonmounts.neo.common.component.impl.ContorlGrowthConsumeEffect;
-import net.minecraft.world.item.consume_effects.ConsumeEffect;
-
-import static net.dragonmounts.neo.compat.registry.RegistryHandler.registerConsumeEffect;
-
+// 1.21.1 PORT: vanilla ConsumeEffect / ConsumeEffect.Type registry does not exist in 1.21.1.
+// ContorlGrowthConsumeEffect is now a plain record applied directly, so there is nothing to
+// register here. Kept as a no-op shell so any central init() call site still resolves.
 public class DMConsumeEffects {
-    public static final ConsumeEffect.Type<ContorlGrowthConsumeEffect> CONTROL_GROWTH = registerConsumeEffect(
-            "control_growth",
-            ContorlGrowthConsumeEffect.CODEC,
-            ContorlGrowthConsumeEffect.STREAM_CODEC
-    );
-
     public void init() {}
 }

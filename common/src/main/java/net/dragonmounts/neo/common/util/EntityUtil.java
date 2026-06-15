@@ -45,9 +45,9 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
     }
 
     /**
-     * @see EntityType#create(ServerLevel, Consumer, BlockPos, EntitySpawnReason, boolean, boolean)
+     * @see EntityType#create(ServerLevel, Consumer, BlockPos, MobSpawnType, boolean, boolean)
      */
-    public static void finalizeSpawn(ServerLevel level, Entity entity, BlockPos pos, EntitySpawnReason reason, boolean yOffset, boolean extraOffset) {
+    public static void finalizeSpawn(ServerLevel level, Entity entity, BlockPos pos, MobSpawnType reason, boolean yOffset, boolean extraOffset) {
         double offset, x = pos.getX() + 0.5D, y = pos.getY(), z = pos.getZ() + 0.5D;
         if (yOffset) {
             entity.setPos(x, y + 1.0D, z);

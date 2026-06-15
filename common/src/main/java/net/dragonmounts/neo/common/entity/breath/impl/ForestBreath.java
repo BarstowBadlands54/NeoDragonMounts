@@ -89,8 +89,7 @@ public class ForestBreath extends DragonBreath {
             return;
         }
 
-        target.hurtServer(
-                level,
+        target.hurt(
                 level.damageSources().mobAttack(this.dragon),
                 this.damage * hit.getHitDensity()
         );

@@ -11,9 +11,9 @@ import net.dragonmounts.neo.common.util.ItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.ArmorType;
 
 import java.util.Objects;
 
@@ -81,14 +81,34 @@ public final class DragonScaleArmorSuit implements DragonTypified, ArmorEffectSo
     private void register(Registry<Item> registry) {
         var info = this.info;
         var factory = info.factory();
+
         var key = info.helmet();
-        this.helmet = Registry.register(registry, key, factory.makeArmor(this, ArmorType.HELMET, new Item.Properties().setId(key)));
+        this.helmet = Registry.register(
+                registry,
+                key,
+                factory.makeArmor(this, ArmorItem.Type.HELMET, new Item.Properties())
+        );
+
         key = info.chestplate();
-        this.chestplate = Registry.register(registry, key, factory.makeArmor(this, ArmorType.CHESTPLATE, new Item.Properties().setId(key)));
+        this.chestplate = Registry.register(
+                registry,
+                key,
+                factory.makeArmor(this, ArmorItem.Type.CHESTPLATE, new Item.Properties())
+        );
+
         key = info.leggings();
-        this.leggings = Registry.register(registry, key, factory.makeArmor(this, ArmorType.LEGGINGS, new Item.Properties().setId(key)));
+        this.leggings = Registry.register(
+                registry,
+                key,
+                factory.makeArmor(this, ArmorItem.Type.LEGGINGS, new Item.Properties())
+        );
+
         key = info.boots();
-        this.boots = Registry.register(registry, key, factory.makeArmor(this, ArmorType.BOOTS, new Item.Properties().setId(key)));
+        this.boots = Registry.register(
+                registry,
+                key,
+                factory.makeArmor(this, ArmorItem.Type.BOOTS, new Item.Properties())
+        );
     }
 
     public DragonScaleArmorItem getHelmet() {

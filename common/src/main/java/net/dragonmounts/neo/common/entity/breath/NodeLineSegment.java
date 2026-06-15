@@ -113,7 +113,10 @@ public class NodeLineSegment {
             box = box.minmax(aabb);
             if (aabb.maxX - aabb.minX > 2 * CONTRACTION && aabb.maxY - aabb.minY > 2 * CONTRACTION && aabb.maxZ - aabb.minZ > 2 * CONTRACTION) {
                 var side = collision.side().getOpposite();
-                for (BlockPos pos : BlockPos.betweenClosed(aabb.contract(CONTRACTION, CONTRACTION, CONTRACTION))) {
+                AABB shrunk = aabb.contract(CONTRACTION, CONTRACTION, CONTRACTION);
+                for (BlockPos pos : BlockPos.betweenClosed(
+                        Mth.floor(shrunk.minX), Mth.floor(shrunk.minY), Mth.floor(shrunk.minZ),
+                        Mth.floor(shrunk.maxX), Mth.floor(shrunk.maxY), Mth.floor(shrunk.maxZ))) {
                     hitDensity.computeIfAbsent(pos.asLong(), fallback)
                             .addHitDensity(side, totalDensity);
                 }
@@ -231,20 +234,29 @@ public class NodeLineSegment {
      */
     @Nullable
     public static Direction getIntersectedFace(double xOrigin, double yOrigin, double zOrigin, double xHit, double yHit, double zHit) {
-        return AABB.getDirection(
-                Math.floor(xHit),
-                Math.floor(yHit),
-                Math.floor(zHit),
-                Math.ceil(xHit),
-                Math.ceil(yHit),
-                Math.ceil(zHit),
-                new Vec3(xOrigin, yOrigin, zOrigin),
-                new double[]{1.0},
-                null,
-                xHit - xOrigin,
-                yHit - yOrigin,
-                zHit - zOrigin
-        );
+        // 1.21.1 PORT: AABB.getDirection(...) is a private vanilla internal whose signature
+        // also differs from 1.21.4, so we compute the entry face directly. Standard ray/AABB
+        // slab logic: the entered face is the axis whose near plane is crossed latest (max t),
+        // matching vanilla's WEST/EAST, DOWN/UP, NORTH/SOUTH normal convention.
+        final double EPS = 1.0E-7;
+        double dx = xHit - xOrigin, dy = yHit - yOrigin, dz = zHit - zOrigin;
+        double minX = Math.floor(xHit), minY = Math.floor(yHit), minZ = Math.floor(zHit);
+        double maxX = Math.ceil(xHit),  maxY = Math.ceil(yHit),  maxZ = Math.ceil(zHit);
+        double bestT = Double.NEGATIVE_INFINITY;
+        Direction face = null;
+        if (Math.abs(dx) > EPS) {
+            double t = ((dx > 0.0 ? minX : maxX) - xOrigin) / dx;
+            if (t > bestT) { bestT = t; face = dx > 0.0 ? Direction.WEST : Direction.EAST; }
+        }
+        if (Math.abs(dy) > EPS) {
+            double t = ((dy > 0.0 ? minY : maxY) - yOrigin) / dy;
+            if (t > bestT) { bestT = t; face = dy > 0.0 ? Direction.DOWN : Direction.UP; }
+        }
+        if (Math.abs(dz) > EPS) {
+            double t = ((dz > 0.0 ? minZ : maxZ) - zOrigin) / dz;
+            if (t > bestT) { bestT = t; face = dz > 0.0 ? Direction.NORTH : Direction.SOUTH; }
+        }
+        return face;
     }
 
     private static final int TABLE_POINTS = 256;

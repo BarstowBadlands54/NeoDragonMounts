@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * <b>RELIES ON {@link net.minecraft.world.entity.ai.sensing.PlayerSensor}</b>, assuming {@link Attributes#TEMPT_RANGE} is smaller than {@link Attributes#FOLLOW_RANGE}
+ * <b>RELIES ON {@link net.minecraft.world.entity.ai.sensing.PlayerSensor}</b>, assuming {@link Attributes#FOLLOW_RANGE} is smaller than {@link Attributes#FOLLOW_RANGE}
  *
  * @see net.minecraft.world.entity.ai.sensing.TemptingSensor
  */
@@ -30,12 +30,12 @@ public class QuickTemptingSensor extends Sensor<PathfinderMob> {
     @Override
     protected void doTick(ServerLevel level, PathfinderMob entity) {
         boolean found = false;
-        var predicate = TEMPT_TARGETING.copy().range(entity.getAttributeValue(Attributes.TEMPT_RANGE));
+        var predicate = TEMPT_TARGETING.copy().range(entity.getAttributeValue(Attributes.FOLLOW_RANGE));
         var brain = entity.getBrain();
         for (var player : brain.getMemory(
                 MemoryModuleType.NEAREST_PLAYERS
         ).orElse(Collections.emptyList())) {
-            if (predicate.test(level, entity, player) && holdingTemptation(player, this.temptations) && !entity.hasPassenger(player)) {
+            if (predicate.test(entity, player) && holdingTemptation(player, this.temptations) && !entity.hasPassenger(player)) {
                 found = true;
                 brain.setMemory(MemoryModuleType.TEMPTING_PLAYER, player);
                 break;

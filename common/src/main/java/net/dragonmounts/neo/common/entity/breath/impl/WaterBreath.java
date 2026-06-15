@@ -68,7 +68,7 @@ public class WaterBreath extends DragonBreath {
         } else {
             target.playSound(SoundEvents.GENERIC_SPLASH, 0.4f, 1.0f);
         }
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), damage);
+        target.hurt(level.damageSources().mobAttack(this.dragon), damage);
         var direction = hit.getHitDirection();
         target.knockback(0.05F * density, -direction.x, -direction.z);
     }

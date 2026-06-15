@@ -36,13 +36,9 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.component.TooltipProvider;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
@@ -80,7 +76,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final DragonVariant.Manager variants = new DragonVariant.Manager(this);
     public final TranslatableContents name;
     public final ArmorMaterial material;
-    public final ToolMaterial tier;
+    public final Tier tier;
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
@@ -101,9 +97,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.eggParticle = builder.eggParticle;
         this.scaleColor = builder.scaleColor;
         this.name = new TranslatableContents(this.makeDescriptionId(), null, TranslatableContents.NO_ARGS);
-        this.material = builder.material == null
-                ? ArmorMaterials.ARMADILLO_SCUTE
-                : builder.material.build(builder.scales, ResourceKey.create(EquipmentAssets.ROOT_ID, identifier.withSuffix("_dragon_scale")));
+        this.material = builder.material.build(builder.scales, ResourceKey.create(EquipmentAssets.ROOT, identifier.withSuffix("_dragon_scale")));
         this.tier = builder.tier == null ? null : builder.tier.build(builder.scales);
     }
 

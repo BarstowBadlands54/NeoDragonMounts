@@ -41,13 +41,13 @@ public class DragonNestStructure extends Structure {
                     .forGetter(structure -> structure.configs)
     ).apply(instance, DragonNestStructure::new));
 
-    public DragonNestStructure(Structure.StructureSettings settings, List<NestConfig> configs) {
+    public DragonNestStructure(StructureSettings settings, List<NestConfig> configs) {
         super(settings);
         this.configs = configs;
     }
 
     @Override
-    public @NotNull Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context) {
+    public @NotNull Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         var random = context.random();
         var pos = context.chunkPos().getWorldPosition();
         var config = drawConfig(this.configs, random);
@@ -61,7 +61,7 @@ public class DragonNestStructure extends Structure {
         );
         if (height.isEmpty()) return Optional.empty();
         var location = new BlockPos(pos.getX(), height.getAsInt(), pos.getZ());
-        return Optional.of(new Structure.GenerationStub(location, builder -> builder.addPiece(new DragonNestPiece(
+        return Optional.of(new GenerationStub(location, builder -> builder.addPiece(new DragonNestPiece(
                 context.structureTemplateManager(), location, structure, rotation, mirror, pivot
         ))));
     }
@@ -72,7 +72,7 @@ public class DragonNestStructure extends Structure {
     }
 
     public static OptionalInt findSuitableY(
-            Structure.GenerationContext context,
+            GenerationContext context,
             NestConfig config,
             BoundingBox box,
             RandomSource random
@@ -81,7 +81,7 @@ public class DragonNestStructure extends Structure {
         var generator = context.chunkGenerator();
         var state = context.randomState();
         var level = context.heightAccessor();
-        int bottom = level.getMinY() + MIN_Y_INDEX;
+        int bottom = level.getMinBuildHeight() + MIN_Y_INDEX;
         int height;
         switch (placement) {
             case IN_MOUNTAIN: {
@@ -102,7 +102,7 @@ public class DragonNestStructure extends Structure {
                 height = Mth.randomBetweenInclusive(random, 27, 127 - box.getYSpan());
                 break;
             case IN_CLOUDS: {
-                int maxY = level.getMaxY();
+                int maxY = level.getMaxBuildHeight();
                 return OptionalInt.of(Math.max(
                         getGroundHeight(generator, level, box, placement.type, state) + MIN_Y_INDEX,
                         Mth.randomBetweenInclusive(random, maxY - 96, maxY - 48)

@@ -15,7 +15,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedItemContents;
+import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 
@@ -184,7 +184,7 @@ public class DragonInventory implements Container, StackedContentsCompatible {
     }
 
     @Override
-    public void fillStackedContents(StackedItemContents contents) {
+    public void fillStackedContents(StackedContents contents) {
         contents.accountStack(this.armor.get());
         contents.accountStack(this.chest.get());
         contents.accountStack(this.saddle.get());

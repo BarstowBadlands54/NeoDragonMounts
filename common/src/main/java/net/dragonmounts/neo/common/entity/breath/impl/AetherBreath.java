@@ -73,7 +73,7 @@ public class AetherBreath extends DragonBreath {
 //        Vec3d airMotion = MathX.multiply(airForceDirection, FORCE_MULTIPLIER);
         final double WT_ENTITY = 0.05;
         final double WT_AIR = 1 - WT_ENTITY;
-        target.hurtServer(level, level.damageSources().mobAttack(dragon), this.damage * density);
+        target.hurt(level.damageSources().mobAttack(dragon), this.damage * density);
         target.knockback(0.1F * density, -direction.x, -direction.z);
         /*
         if (density > 1.0) {

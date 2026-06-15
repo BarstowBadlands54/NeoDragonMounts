@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +69,7 @@ public class FluteItem extends Item {
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return stack.has(DMDataComponents.FLUTE_SOUND) ? ItemUseAnimation.TOOT_HORN : ItemUseAnimation.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return stack.has(DMDataComponents.FLUTE_SOUND) ? UseAnim.TOOT_HORN : UseAnim.NONE;
     }
 }

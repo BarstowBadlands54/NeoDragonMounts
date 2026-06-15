@@ -77,7 +77,7 @@ public class DragonAi {
 
     static void initIdleActivity(Brain<ServerDragonEntity> brain) {
         brain.addActivity(Activity.IDLE, 10, ImmutableList.of(
-                new Swim<>(0.8F),
+                new Swim(0.8F),
                 new AnimalMakeLoveEx(DMEntities.TAMEABLE_DRAGON.get(), 1.0F, 4, 6),
                 new FollowTemptation(entity -> 1.25F, entity -> 3.0),
                 new FollowOwner(1.0F, 14.0F, 10),
@@ -162,7 +162,7 @@ public class DragonAi {
         brain.setActiveActivityToFirstValid(PRIORITIZED_ACTIVITIES);
     }
 
-    public static Optional<? extends LivingEntity> findNearestValidAttackTarget(ServerLevel level, ServerDragonEntity dragon) {
+    public static Optional<? extends LivingEntity> findNearestValidAttackTarget(ServerDragonEntity dragon) {
         return BehaviorUtils.isBreeding(dragon) ? Optional.empty() : dragon.getBrain().getMemory(MemoryModuleType.NEAREST_ATTACKABLE);
     }
 

@@ -113,9 +113,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
             this.setLifeStage(DragonLifeStage.byName(tag.getString(DragonLifeStage.DATA_PARAMETER_KEY)), false, false);
         }
         if (tag.contains(DragonVariant.DATA_PARAMETER_KEY)) {
-            this.setVariant(DragonVariant.REGISTRY.getValue(tryParse(tag.getString(DragonVariant.DATA_PARAMETER_KEY))));
+            this.setVariant(DragonVariant.REGISTRY.get(tryParse(tag.getString(DragonVariant.DATA_PARAMETER_KEY))));
         } else if (tag.contains(DragonType.DATA_PARAMETER_KEY)) {
-            this.setVariant(DragonType.REGISTRY.getValue(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_FEMALE, true));
+            this.setVariant(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_FEMALE, true));
         } else {
             this.applyType(this.getDragonType());
         }
@@ -143,7 +143,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         var level = this.level();
         var state = DMBlocks.DRAGON_CORE.defaultBlockState().setValue(HORIZONTAL_FACING, this.getDirection());
         if (!DragonCoreBlock.tryPlaceAt(level, pos, state, stack)) {
-            int y = pos.getY(), max = Math.min(y + 5, level.getMaxY());
+            int y = pos.getY(), max = Math.min(y + 5, level.getMaxBuildHeight());
             var mutable = pos.mutable();
             while (++y < max) {
                 if (DragonCoreBlock.tryPlaceAt(level, mutable.setY(y), state, stack)) return;
@@ -198,8 +198,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel level) {
-        DragonAi.tickBrain(level, this);
+    protected void customServerAiStep() {
+        DragonAi.tickBrain((ServerLevel) level(), this);
     }
 
     @Override
@@ -243,23 +243,32 @@ public class ServerDragonEntity extends TameableDragonEntity {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         boolean isOwner = this.isOwnedBy(player);
-        var stack = player.getItemInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
+
         if (!this.isBreathing()) {
-            var food = DragonFood.getInstance(stack);
+            DragonFood food = DragonFood.getInstance(stack);
+
             if (food != null) {
-                if ((food.requiresOwner() && !isOwner) || (
-                        !food.canAlwaysFeed() && this.getHealth() >= this.getMaxHealth() && this.isTame()
-                )) return InteractionResult.FAIL;
-                var level = this.level();
-                var locked = this.isAgeLocked();
-                for (var effect : food.effects()) {
-                    effect.apply(level, stack, this);
+
+                if ((food.requiresOwner() && !isOwner) ||
+                        (!food.canAlwaysFeed() && this.getHealth() >= this.getMaxHealth() && this.isTame())) {
+                    return InteractionResult.FAIL;
                 }
+
+                Level level = this.level();
+                boolean locked = this.isAgeLocked();
+
+//                for (var effect : food.effects()) {
+//                    // effect MUST be your custom wrapper in 1.21.1
+//                    effect.apply(level, this);
+//                }
+
                 if (!locked) {
-                    // detoxification should not ripen the dragon
                     this.ageUp(food.age(), false);
                 }
+
                 this.heal(food.health());
+
                 if (isOwner) {
                     if (this.getLifeStage() == DragonLifeStage.ADULT && this.canFallInLove()) {
                         this.setInLove(player);
@@ -273,48 +282,62 @@ public class ServerDragonEntity extends TameableDragonEntity {
                         level.broadcastEntityEvent(this, ON_TAMING_FAIL);
                     }
                 }
-                int count = stack.getCount();
-                var remainder = stack.get(DataComponents.USE_REMAINDER);
-                stack.consume(1, player);
-                if (remainder != null) {
-                    player.setItemInHand(hand, remainder.convertIntoRemainder(
-                            stack,
-                            count,
-                            player.hasInfiniteMaterials(),
-                            player::handleExtraItemsCreatedOnUse
-                    ));
+
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
                 }
-                ServerNetworkHandler.sendTracking(this, new FeedDragonPayload(this.getId(), this.age, this.stage, stack));
-                return InteractionResult.SUCCESS_SERVER;
+
+                if (!stack.isEmpty()) {
+                    player.drop(stack, false);
+                } else {
+                    player.setItemInHand(hand, stack);
+                }
+
+                ServerNetworkHandler.sendTracking(
+                        this,
+                        new FeedDragonPayload(this.getId(), this.age, this.stage, stack)
+                );
+
+                return InteractionResult.SUCCESS;
             }
         }
+
         if (!isOwner) return InteractionResult.PASS;
-        if (this.inventory.onInteract(stack)) return InteractionResult.SUCCESS_SERVER;
+
+        if (this.inventory.onInteract(stack)) return InteractionResult.SUCCESS;
+
         if (stack.is(DMItemTags.BATONS)) {
             this.setOrderedToSit(!this.isOrderedToSit());
-            return InteractionResult.SUCCESS_SERVER;
+            return InteractionResult.SUCCESS;
         }
-        var result = stack.interactLivingEntity(player, this, hand);
+
+        InteractionResult result = stack.interactLivingEntity(player, this, hand);
         if (result.consumesAction()) return result;
+
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
+
         } else if (this.isBaby()) {
             this.setTarget(null);
             this.getNavigation().stop();
             this.setInSittingPose(false);
-            var tag = new CompoundTag();
+
+            CompoundTag tag = new CompoundTag();
             if (this.save(tag) && player.setEntityOnShoulder(tag)) {
                 this.discard();
             }
+
         } else if (this.isSaddled) {
             this.setOrderedToSit(false);
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this);
+
         } else {
             this.openCustomInventoryScreen(player);
         }
-        return InteractionResult.SUCCESS_SERVER;
+
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -324,16 +347,17 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        level.broadcastEntityEvent(this, ON_ATTACK);
-        return super.doHurtTarget(level, target);
+    public boolean doHurtTarget(Entity target) {
+        level().broadcastEntityEvent(this, ON_ATTACK);
+        return super.doHurtTarget(target);
     }
 
+
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
-        if (super.hurtServer(level, source, amount)) {
+    public boolean hurt(DamageSource source, float amount) {
+        if (super.hurt(source, amount)) {
             if (!this.isBreathing() && this.random.nextFloat() < 0.25F) {
-                level.broadcastEntityEvent(this, ON_ROAR);
+                level().broadcastEntityEvent(this, ON_ROAR);
             }
             if (!source.is(DamageTypes.IN_WALL)) {
                 // don't just sit there!
@@ -458,7 +482,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
     /// Never called from server side
     @Override
-    public void onPlayerJump(int power) {}
+    public void onPlayerJump(int power) {
+    }
 
     @Override
     protected void sendDebugPackets() {

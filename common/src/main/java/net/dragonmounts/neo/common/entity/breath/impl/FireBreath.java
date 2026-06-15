@@ -80,7 +80,7 @@ public class FireBreath extends DragonBreath {
         } else if (target.isInWaterOrRain()) {
             damage *= 1.5F;
         }
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), damage);
+        target.hurt(level.damageSources().mobAttack(this.dragon), damage);
     }
 
     protected boolean litBlock(ServerLevel level, BlockPos pos, BlockState state) {
@@ -99,8 +99,8 @@ public class FireBreath extends DragonBreath {
 
     protected void smeltBlock(ServerLevel level, BlockPos pos, BlockState state) {
         if (state.isAir()) return;
-        var input = new SingleRecipeInput(state.getCloneItemStack(level, pos, true));
-        level.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, level).ifPresent(holder -> {
+        var input = new SingleRecipeInput(state.getBlock().getCloneItemStack(level, pos, state));
+        level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, level).ifPresent(holder -> {
             var stack = holder.value().assemble(input, level.registryAccess());
             if (stack.isEmpty()) return;
             if (stack.getItem() instanceof BlockItem item && item != Items.AIR) {

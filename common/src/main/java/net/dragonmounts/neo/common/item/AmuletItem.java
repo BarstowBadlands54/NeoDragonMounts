@@ -16,7 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -55,7 +55,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
             ItemStack stack,
             @Nullable Player player,
             BlockPos pos,
-            EntitySpawnReason reason,
+            MobSpawnType reason,
             boolean yOffset,
             boolean extraOffset
     ) {
@@ -97,7 +97,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
             if (!(dragon.level() instanceof ServerLevel level)) return InteractionResult.SUCCESS;
             if (!this.isEmpty(stack)) {
                 var pos = dragon.blockPosition();
-                var entity = this.loadEntity(level, stack, player, pos, EntitySpawnReason.BUCKET, false, false);
+                var entity = this.loadEntity(level, stack, player, pos, MobSpawnType.BUCKET, false, false);
                 if (entity != null) {
                     level.addFreshEntityWithPassengers(entity);
                     level.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
@@ -128,7 +128,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
                     stack,
                     player,
                     spawnPos,
-                    EntitySpawnReason.BUCKET,
+                    MobSpawnType.BUCKET,
                     true,
                     !Objects.equals(pos, spawnPos) && direction == Direction.UP
             );
@@ -155,7 +155,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
         var pos = hit.getBlockPos();
         if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
-            var entity = this.loadEntity(world, stack, player, pos, EntitySpawnReason.BUCKET, false, false);
+            var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false);
             if (entity == null) return InteractionResult.PASS;
             world.addFreshEntityWithPassengers(entity);
             consumeStack(player, hand, stack, new ItemStack(DMItems.AMULET));
@@ -171,7 +171,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
         var stack = item.getItem();
         if (this.isEmpty(stack)) return;
         var level = (ServerLevel) item.level();
-        var entity = this.loadEntity(level, stack, null, item.getOnPos(), EntitySpawnReason.BUCKET, true, false);
+        var entity = this.loadEntity(level, stack, null, item.getOnPos(), MobSpawnType.BUCKET, true, false);
         if (entity != null) {
             level.addFreshEntityWithPassengers(entity);
         }

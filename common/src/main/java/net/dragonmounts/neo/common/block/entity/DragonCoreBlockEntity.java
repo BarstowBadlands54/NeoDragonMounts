@@ -33,7 +33,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 
 import static net.dragonmounts.neo.common.util.BlockUtil.updateNeighborStates;
@@ -41,7 +40,6 @@ import static net.dragonmounts.neo.common.util.BlockUtil.updateNeighborStates;
 /// @see net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity
 @SuppressWarnings("UnstableApiUsage")
 @MethodsReturnNonnullByDefault
-@NotNullByDefault
 public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, MenuProvider<BlockPos> {
     public static final int[] SLOTS = new int[]{0};
     private static final String TRANSLATION_KEY = "container.neodragonmounts.dragon_core";

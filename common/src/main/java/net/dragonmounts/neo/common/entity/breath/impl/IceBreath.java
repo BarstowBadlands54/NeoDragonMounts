@@ -72,7 +72,7 @@ public class IceBreath extends DragonBreath {
                     : target.getTicksFrozen() + 3
             ));
         }
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), damage);
+        target.hurt(level.damageSources().mobAttack(this.dragon), damage);
         var direction = hit.getHitDirection();
         target.knockback(0.075F * density, -direction.x, -direction.z);
     }

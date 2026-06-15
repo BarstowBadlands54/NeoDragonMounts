@@ -65,6 +65,6 @@ public class NetherBreath extends FireBreath {
         } else if (target.isInWaterOrRain()) {
             damage *= 2.0F;
         }
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), damage);
+        target.hurt(level.damageSources().mobAttack(this.dragon), damage);
     }
 }

@@ -89,7 +89,7 @@ public class BreathNodeEntity extends Entity implements BreathNodeHost {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
+    public boolean hurt(DamageSource damageSource, float amount) {
         return false;
     }
 

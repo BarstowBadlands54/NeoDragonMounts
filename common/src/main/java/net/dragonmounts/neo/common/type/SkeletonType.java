@@ -25,7 +25,7 @@ public class SkeletonType extends DragonType {
     }
 
     @Override
-    public <T extends LivingEntity & DragonTypified.Mutable> void onThunderHit(T entity, LightningBolt bolt) {
+    public <T extends LivingEntity & Mutable> void onThunderHit(T entity, LightningBolt bolt) {
         super.onThunderHit(entity, bolt);
         convertByLightning(entity, DragonTypes.WITHER);
     }

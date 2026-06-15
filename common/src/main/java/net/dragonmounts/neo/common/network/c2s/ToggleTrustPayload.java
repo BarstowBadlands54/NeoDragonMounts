@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public record ToggleTrustPayload(int dragon) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ToggleTrustPayload> TYPE = new CustomPacketPayload.Type<>(makeId("toggle_trust"));
+    public static final Type<ToggleTrustPayload> TYPE = new Type<>(makeId("toggle_trust"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ToggleTrustPayload> CODEC =
             CustomPacketPayload.codec(ToggleTrustPayload::encode, ToggleTrustPayload::decode);
 
@@ -21,7 +21,7 @@ public record ToggleTrustPayload(int dragon) implements CustomPacketPayload {
     }
 
     @Override
-    public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
+    public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 }

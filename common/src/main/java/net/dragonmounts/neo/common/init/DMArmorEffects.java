@@ -19,10 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -406,7 +403,7 @@ public class DMArmorEffects {
         if (manager.isActive(STORM) && manager.getCooldown(STORM) <= 0) {
             BlockPos pos = entity.blockPosition();
             if (level.canSeeSky(pos)) {
-                LightningBolt bolt = EntityType.LIGHTNING_BOLT.spawn(server, pos, EntitySpawnReason.TRIGGERED);
+                LightningBolt bolt = EntityType.LIGHTNING_BOLT.spawn(server, pos, MobSpawnType.TRIGGERED);
                 if (bolt == null) return InteractionResult.PASS;
                 bolt.setCause((ServerPlayer) player);
             }

@@ -75,7 +75,7 @@ public abstract class DragonBreath {
     }
 
     public void affectEntity(ServerLevel level, LivingEntity target, BreathAffectedEntity hit) {
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), this.damage * hit.getHitDensity());
+        target.hurt(level.damageSources().mobAttack(this.dragon), this.damage * hit.getHitDensity());
     }
 
     public SoundEvent getStartSound(DragonLifeStage stage) {
