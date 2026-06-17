@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "neodragonmounts:item/equipment/enchanted/enchanted_dragon_scale_sword"
+  }
+}

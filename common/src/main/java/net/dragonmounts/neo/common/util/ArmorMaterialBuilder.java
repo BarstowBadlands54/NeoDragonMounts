@@ -5,17 +5,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.EquipmentAsset;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
 public class ArmorMaterialBuilder {
-    public final EnumMap<ArmorType, Integer> defense = new EnumMap<>(ArmorType.class);
+    public final EnumMap<EquipmentSlot, Integer> defense = new EnumMap<>(EquipmentSlot.class);
     public int durabilityFactor;
     public int enchantmentValue = 1;
     public Holder<SoundEvent> sound = SoundEvents.ARMOR_EQUIP_GOLD;
@@ -23,7 +22,7 @@ public class ArmorMaterialBuilder {
     public float knockbackResistance = 0;
 
     public ArmorMaterialBuilder(int durabilityFactor) {
-        this.setDurabilityFactor(durabilityFactor).setDefense(ArmorType.BODY, 11);
+        this.setDurabilityFactor(durabilityFactor).setDefense(EquipmentSlot.BODY, 11);
     }
 
     public ArmorMaterialBuilder setDurabilityFactor(int durabilityFactor) {
@@ -31,7 +30,7 @@ public class ArmorMaterialBuilder {
         return this;
     }
 
-    public ArmorMaterialBuilder setDefense(ArmorType type, int defense) {
+    public ArmorMaterialBuilder setDefense(EquipmentSlot type, int defense) {
         this.defense.put(type, defense);
         return this;
     }
@@ -69,8 +68,7 @@ public class ArmorMaterialBuilder {
                 this.sound,
                 this.toughness,
                 this.knockbackResistance,
-                ingredient,
-                asset
+                ingredient
         );
     }
 }

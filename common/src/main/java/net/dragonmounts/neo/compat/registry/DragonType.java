@@ -61,7 +61,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final MapColor scaleColor;
     public final DragonVariant.Manager variants = new DragonVariant.Manager(this);
     public final TranslatableContents name;
-    public final ArmorMaterial material;
+    public final Holder<ArmorMaterial> material;
     public final Tier tier;
 
     public DragonType(ResourceLocation identifier, DragonTypeBuilder builder) {
@@ -169,4 +169,12 @@ public class DragonType implements TooltipProvider, DragonTypified {
     }
 
     public static <T extends LivingEntity & Mutable> void convertByLightning(T entity, DragonType type) {}
+
+    public ResourceLocation geoModel() {
+        return null;
+    }
+
+    public ResourceLocation texture() {
+        return null;
+    }
 }

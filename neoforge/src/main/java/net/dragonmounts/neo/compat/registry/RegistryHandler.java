@@ -25,7 +25,6 @@ import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -115,15 +114,10 @@ public class RegistryHandler {
         return register(COMPONENTS, makeId(name), operator.apply(new DataComponentType.Builder<>()).build());
     }
 
-    public static <T extends ConsumeEffect> ConsumeEffect.Type<T> registerConsumeEffect(String name, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> network) {
-        return register(CONSUMERS, makeId(name), new ConsumeEffect.Type<>(codec, network));
-    }
-
     //---------------------------------------- impl ----------------------------------------
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<Activity>>> ACTIVITIES = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<ArmorEffect>>> ARMOR_EFFECTS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<DataComponentType<?>>>> COMPONENTS = new ObjectArrayList<>();
-    private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<ConsumeEffect.Type<?>>>> CONSUMERS = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<MemoryModuleType<?>>>> MEMORIES = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<ParticleType<?>>>> PARTICLES = new ObjectArrayList<>();
     private static final ObjectArrayList<Consumer<RegisterEvent.RegisterHelper<RecipeSerializer<?>>>> RECIPES = new ObjectArrayList<>();
@@ -154,11 +148,6 @@ public class RegistryHandler {
         if (register(event, Registries.MOB_EFFECT, EffectHolder::registerEntries)) return;
         event.register(Registries.ACTIVITY, registry -> {
             for (var value : RegistryHandler.ACTIVITIES) {
-                value.accept(registry);
-            }
-        });
-        event.register(Registries.CONSUME_EFFECT_TYPE, registry -> {
-            for (var value : RegistryHandler.CONSUMERS) {
                 value.accept(registry);
             }
         });

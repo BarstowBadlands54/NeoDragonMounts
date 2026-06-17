@@ -24,12 +24,8 @@
     "AbstractClientPlayerMixin",
     "CameraMixin",
     "ClientPacketListenerMixin",
-    "CoreShadersMixin",
-    "CustomHeadLayerMixin",
     "DebugRendererMixin",
     "GuiGraphicsMixin",
-    "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin",
     "LocalPlayerMixin"
   ],
   "injectors": {

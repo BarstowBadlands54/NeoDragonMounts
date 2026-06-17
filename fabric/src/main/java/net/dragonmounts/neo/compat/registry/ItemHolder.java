@@ -17,7 +17,7 @@ public class ItemHolder<T extends Item> extends ObjectHolder<T, Item> implements
     }
 
     public ItemHolder(ResourceKey<Item> key, Function<Item.Properties, T> factory) {
-        super(BuiltInRegistries.ITEM, key, factory.apply(new Item.Properties().setId(key)));
+        super(BuiltInRegistries.ITEM, key, factory.apply(new Item.Properties()));
     }
 
     public final boolean is(ItemStack stack) {

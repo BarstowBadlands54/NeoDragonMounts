@@ -16,9 +16,9 @@ import java.util.concurrent.CompletableFuture;
 public class DMLootProvider extends LootTableProvider {
     public DMLootProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, Set.of(), List.of(
-                new LootTableProvider.SubProviderEntry(DMBlockLootProvider::new, LootContextParamSets.BLOCK),
-                new LootTableProvider.SubProviderEntry(DMChestLootProvider::new, LootContextParamSets.CHEST),
-                new LootTableProvider.SubProviderEntry(DMEntityLootProvider::new, LootContextParamSets.ENTITY)
+                new SubProviderEntry(DMBlockLootProvider::new, LootContextParamSets.BLOCK),
+                new SubProviderEntry(DMChestLootProvider::new, LootContextParamSets.CHEST),
+                new SubProviderEntry(DMEntityLootProvider::new, LootContextParamSets.ENTITY)
         ), registries);
     }
 

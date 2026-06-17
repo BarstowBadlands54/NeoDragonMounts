@@ -28,7 +28,8 @@ public class DMItemTagProvider extends ItemTagsProvider {
             CompletableFuture<HolderLookup.Provider> provider,
             CompletableFuture<TagLookup<Block>> block
     ) {
-        super(output, provider, block, DragonMountsShared.NAMESPACE);
+//        super(output, provider, block, DragonMountsShared.NAMESPACE);
+        super(output, provider, block, DragonMountsShared.NAMESPACE, null);
     }
 
     protected IntrinsicTagAppender<Item> addToParent(IntrinsicTagAppender<Item> parent, TagKey<Item> child) {

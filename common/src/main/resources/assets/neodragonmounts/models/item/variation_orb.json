@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "neodragonmounts:item/variation_orb"
+    "layer0": "neodragonmounts:item/equipment/variation_orb"
   },
   "display": {
     "gui": {

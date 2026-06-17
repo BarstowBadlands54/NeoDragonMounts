@@ -72,7 +72,7 @@ public class DragonVariants {
 
     static BlockHolder<DragonHeadStandingBlock> registerStandingHead(DragonHead head, String name) {
         return registerBlock(name, props ->
-                new DragonHeadStandingBlock(head.variant, configureDragonHead(props).overrideDescription(DragonHeadBlock.TRANSLATION_KEY))
+                new DragonHeadStandingBlock(head.variant, configureDragonHead(props))  // no .overrideDescription
         );
     }
 
@@ -80,9 +80,8 @@ public class DragonVariants {
         return registerBlock(name, props -> {
             var standing = head.standing.get();
             return new DragonHeadWallBlock(head.variant, configureDragonHead(props)
-                    .overrideLootTable(standing.getLootTable())
-                    .overrideDescription(standing.getDescriptionId())
-            );
+                    .dropsLike(standing)            // was .overrideLootTable(standing.getLootTable())
+            );                                            // .overrideDescription(...) removed
         });
     }
 
@@ -91,7 +90,7 @@ public class DragonVariants {
                 head.variant,
                 head.standing.get(),
                 head.wall.get(),
-                props.rarity(Rarity.UNCOMMON).overrideDescription(DragonHeadBlock.TRANSLATION_KEY)
+                props.rarity(Rarity.UNCOMMON)            // no .overrideDescription(...)
         ));
     }
 

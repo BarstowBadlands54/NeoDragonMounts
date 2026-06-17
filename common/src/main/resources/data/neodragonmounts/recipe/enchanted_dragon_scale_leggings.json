@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_leggings",
+  "key": {
+    "X": "neodragonmounts:enchanted_dragon_scales"
+  },
+  "pattern": [
+    "XXX",
+    "X X",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:enchanted_dragon_scale_leggings"
+  }
+}

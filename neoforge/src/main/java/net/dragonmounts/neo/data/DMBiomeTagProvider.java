@@ -13,7 +13,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class DMBiomeTagProvider extends BiomeTagsProvider {
     public DMBiomeTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider, DragonMountsShared.NAMESPACE);
+//        super(output, provider, DragonMountsShared.NAMESPACE);
+        super(output, provider, DragonMountsShared.NAMESPACE, null);
     }
 
     @Override

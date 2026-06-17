@@ -37,13 +37,8 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.TooltipProvider;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
@@ -79,7 +74,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final DragonVariant.Manager variants = new DragonVariant.Manager(this);
     public final TranslatableContents name;
     public final ArmorMaterial material;
-    public final ToolMaterial tier;
+    public final Tier tier;
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
@@ -100,9 +95,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.eggParticle = builder.eggParticle;
         this.scaleColor = builder.scaleColor;
         this.name = new TranslatableContents(this.makeDescriptionId(), null, TranslatableContents.NO_ARGS);
-        this.material = builder.material == null
-                ? ArmorMaterials.ARMADILLO_SCUTE
-                : builder.material.build(builder.scales, ResourceKey.create(EquipmentAssets.ROOT_ID, identifier.withSuffix("_dragon_scale")));
+        this.material = builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
         this.tier = builder.tier == null ? null : builder.tier.build(builder.scales);
     }
 
@@ -141,7 +134,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     /// Do **NOT** directly access client only class here!
     public void tickClient(ClientDragonEntity dragon) {}
 
-    public <T extends LivingEntity & DragonTypified.Mutable> void onThunderHit(T entity, LightningBolt bolt) {
+    public <T extends LivingEntity & Mutable> void onThunderHit(T entity, LightningBolt bolt) {
         if (entity instanceof HatchableDragonEggEntity) return;
         addOrMergeEffect(entity, MobEffects.DAMAGE_BOOST, 700, 0, false, true, true);//35s
     }
@@ -235,7 +228,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
         return this;
     }
 
-    public static <T extends LivingEntity & DragonTypified.Mutable> void convertByLightning(T entity, DragonType type) {
+    public static <T extends LivingEntity & Mutable> void convertByLightning(T entity, DragonType type) {
         entity.setDragonType(type, false);
         entity.playSound(SoundEvents.END_PORTAL_SPAWN, 2, 1);
         entity.playSound(SoundEvents.PORTAL_TRIGGER, 2, 1);

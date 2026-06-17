@@ -42,7 +42,7 @@ public class ItemHolder<T extends Item> extends DeferredHolder<T, Item> implemen
 
     @Override
     protected T create() {
-        return this.factory.apply(new Item.Properties().setId(this.key));
+        return this.factory.apply(new Item.Properties());
     }
 
     @Override

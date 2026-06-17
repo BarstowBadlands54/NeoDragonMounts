@@ -2,8 +2,10 @@ package net.dragonmounts.neo.common.util;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.SimpleTier;
 import org.jetbrains.annotations.Contract;
 
 public class ItemTierBuilder {
@@ -26,15 +28,15 @@ public class ItemTierBuilder {
     }
 
     @Contract("null -> fail")
-    public ToolMaterial build(TagKey<Item> ingredient) {
+    public Tier build(TagKey<Item> ingredient) {
         if (ingredient == null) throw new IllegalArgumentException();
-        return new ToolMaterial(
-                this.incorrectBlocks,
-                this.durability,
-                this.speed,
-                this.damage,
-                this.enchantmentValue,
-                ingredient
+        return new SimpleTier(
+                this.incorrectBlocks,        // TagKey<Block> incorrectBlocksForDrops
+                this.durability,             // int uses
+                this.speed,                  // float speed
+                this.damage,                 // float attackDamageBonus
+                this.enchantmentValue,       // int enchantmentValue
+                () -> Ingredient.of(ingredient)   // Supplier<Ingredient> repairIngredient
         );
     }
 }

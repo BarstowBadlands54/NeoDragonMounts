@@ -19,11 +19,8 @@
     "ScoreboardMixin"
   ],
   "client": [
-    "CustomHeadLayerMixin",
     "DebugRendererMixin",
     "GuiGraphicsMixin",
-    "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin",
     "LocalPlayerMixin"
   ],
   "injectors": {

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "neodragonmounts.dragon_scales",
+  "ingredients": [
+    "neodragonmounts:water_dragon_scale_block"
+  ],
+  "result": {
+    "count": 9,
+    "id": "neodragonmounts:water_dragon_scales"
+  }
+}

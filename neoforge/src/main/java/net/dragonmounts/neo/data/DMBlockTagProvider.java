@@ -23,7 +23,8 @@ public class DMBlockTagProvider extends BlockTagsProvider {
     public static final TagKey<Block> TORCHES = TagKey.create(Registries.BLOCK, fromNamespaceAndPath("c", "torches"));
 
     public DMBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
-        super(output, provider, DragonMountsShared.NAMESPACE);
+//        super(output, provider, DragonMountsShared.NAMESPACE);
+        super(output, provider, DragonMountsShared.NAMESPACE, null);
     }
 
     @Override
@@ -55,7 +56,6 @@ public class DMBlockTagProvider extends BlockTagsProvider {
                         Blocks.SWEET_BERRY_BUSH,
                         Blocks.LILY_PAD,
                         Blocks.MOSS_CARPET,
-                        Blocks.PALE_MOSS_CARPET,
                         Blocks.SUGAR_CANE,
                         Blocks.CACTUS,
                         // Nether:

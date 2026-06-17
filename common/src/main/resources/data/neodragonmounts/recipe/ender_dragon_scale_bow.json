@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_bow",
+  "key": {
+    "#": "neodragonmounts:ender_dragon_scales",
+    "X": "#c:strings"
+  },
+  "pattern": [
+    " #X",
+    "# X",
+    " #X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:ender_dragon_scale_bow"
+  }
+}

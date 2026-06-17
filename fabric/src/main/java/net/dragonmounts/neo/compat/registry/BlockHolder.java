@@ -19,7 +19,7 @@ public class BlockHolder<T extends Block> extends ObjectHolder<T, Block> impleme
     }
 
     public BlockHolder(ResourceKey<Block> key, Function<Properties, T> factory) {
-        super(BuiltInRegistries.BLOCK, key, factory.apply(Properties.of().setId(key)));
+        super(BuiltInRegistries.BLOCK, key, factory.apply(Properties.of()));
     }
 
     @Override

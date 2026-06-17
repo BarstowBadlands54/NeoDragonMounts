@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: Dragon Mounts 2
+Specification-Vendor: 
+Specification-Version: 0.1.0
+Implementation-Title: neoforge
+Implementation-Version: 0.1.0
+Implementation-Vendor: 
+Built-On-Minecraft: 1.21.4
+

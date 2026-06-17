@@ -50,13 +50,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Provider
         this.neodragonmounts$manager.readNBT(tag.getCompound(DATA_PARAMETER_KEY));
     }
 
-    @Inject(method = "hurtServer", at = @At(
+    @Inject(method = "hurt", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/world/entity/player/Player;removeEntitiesOnShoulder()V",
             shift = At.Shift.AFTER
     ))
     public void handleSonicBoom(
-            ServerLevel level,
             DamageSource source,
             float amount,
             CallbackInfoReturnable<Boolean> info,
@@ -65,7 +64,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Provider
         if (damage.get() == 0.0F || !source.is(SONIC_BOOM)) return;
         int amplifier = this.neodragonmounts$manager.getLevel(DMArmorEffects.SCULK, true);
         if (amplifier < 2) return;
-        if (amplifier > 3 && !this.neodragonmounts$reflecting && source.getEntity() instanceof LivingEntity attacker) {
+        if (amplifier > 3 && !this.neodragonmounts$reflecting
+                && source.getEntity() instanceof LivingEntity attacker
+                && this.level() instanceof ServerLevel level) {
             if (!attacker.closerThan(this, 24, 32)) return;
             this.neodragonmounts$reflecting = true;
             var start = this.position().add(this.getAttachments().get(EntityAttachment.WARDEN_CHEST, 0, this.getYRot()));
@@ -75,7 +76,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Provider
                 var pos = start.add(direction.scale(j));
                 level.sendParticles(ParticleTypes.SONIC_BOOM, pos.x, pos.y, pos.z, 1, 0.0, 0.0, 0.0, 0.0);
             }
-            if (attacker.hurtServer(level, level.damageSources().sonicBoom(this), damage.get() * 0.75F)) {
+            if (attacker.hurt(level.damageSources().sonicBoom(this), damage.get() * 0.75F)) {
                 double resistance = attacker.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE), horizontal = 2.5 - 2.5 * resistance;
                 attacker.push(direction.x() * horizontal, direction.y() * (0.5 - 0.5 * resistance), direction.z() * horizontal);
             }

@@ -27,7 +27,6 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -109,9 +108,6 @@ public class RegistryHandler {
         return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, makeId(name), operator.apply(new DataComponentType.Builder<>()).build());
     }
 
-    public static <T extends ConsumeEffect> ConsumeEffect.Type<T> registerConsumeEffect(String name, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> network) {
-        return Registry.register(BuiltInRegistries.CONSUME_EFFECT_TYPE, makeId(name), new ConsumeEffect.Type<>(codec, network));
-    }
 
     public static <T extends AbstractContainerMenu, D> ExtendedScreenHandlerType<T, D> registerMenu(
             String name,

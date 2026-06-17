@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_shield",
+  "key": {
+    "W": "neodragonmounts:fire_dragon_scales",
+    "X": "#c:ingots/iron"
+  },
+  "pattern": [
+    "WXW",
+    "WWW",
+    " W "
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:fire_dragon_scale_shield"
+  }
+}

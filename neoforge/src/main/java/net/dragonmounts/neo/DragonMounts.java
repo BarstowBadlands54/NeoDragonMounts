@@ -29,6 +29,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -58,8 +59,7 @@ public class DragonMounts {
         modbus.addListener(DragonMounts::registerAttributes);
         modbus.addListener(DragonMounts::initNetwork);
         modbus.addListener(DragonMounts::modifyCreativeTab);
-        modbus.addListener(DragonMounts::gatherClientData);
-        modbus.addListener(DragonMounts::gatherServerData);
+        modbus.addListener(DragonMounts::gatherData);
         modbus.addListener(EntryUtil::onLoad);
         modbus.addListener(EntryUtil::onReload);
         DMEntities.init();
@@ -165,11 +165,11 @@ public class DragonMounts {
                 if (iceFlag) {
                     addOrMergeEffect(target, MobEffects.MOVEMENT_SLOWDOWN, 200, 1, false, true, true);
                     entity.invulnerableTime = 0;
-                    entity.hurtServer(level, freeze, 1F);
+                    entity.hurt(freeze, 1F);
                 }
             } else if (iceFlag) {
                 entity.invulnerableTime = 0;
-                entity.hurtServer(level, freeze, 1F);
+                entity.hurt(freeze, 1F);
             }
             if (netherFlag) {
                 int current = entity.getRemainingFireTicks();
@@ -196,27 +196,33 @@ public class DragonMounts {
         }
     }
 
-    public static void gatherCommonData(GatherDataEvent event) {
-        event.createDatapackRegistryObjects(new RegistrySetBuilder()
+    public static void gatherData(GatherDataEvent event) {
+        var generator = event.getGenerator();
+        var output = generator.getPackOutput();
+        var existing = event.getExistingFileHelper();
+        var lookup = event.getLookupProvider();
+
+        // datapack registries (structures)
+        generator.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(
+                output, lookup,
+                new RegistrySetBuilder()
                         .add(Registries.STRUCTURE, DMStructures::bootstrap)
                         .add(Registries.STRUCTURE_SET, DMStructureSets::bootstrap),
                 Collections.singleton(DragonMountsShared.NAMESPACE)
-        );
-        event.createProvider(DMRecipeProvider.Factory::new);
-        event.createProvider(DMLootProvider::new);
-        event.createProvider(DMBiomeTagProvider::new);
-        event.createProvider(DMEntityTagProvider::new);
-        event.createProvider(DMStructureTagProvider::new);
-        event.createBlockAndItemTags(DMBlockTagProvider::new, DMItemTagProvider::new);
-    }
+        ));
 
-    public static void gatherClientData(GatherDataEvent.Client event) {
-        event.createProvider(DMModelProvider::new);
-        event.createProvider(DMEquipmentAssetProvider::from);
-        gatherCommonData(event);
-    }
+        // ---- server data ----
+        generator.addProvider(event.includeServer(), new DMRecipeProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new DMLootProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new DMBiomeTagProvider(output, lookup, existing));
+        generator.addProvider(event.includeServer(), new DMEntityTagProvider(output, lookup, existing));
+        generator.addProvider(event.includeServer(), new DMStructureTagProvider(output, lookup, existing));
+        var blockTags = new DMBlockTagProvider(output, lookup, existing);
+        generator.addProvider(event.includeServer(), blockTags);
+        generator.addProvider(event.includeServer(), new DMItemTagProvider(output, lookup, blockTags.contentsGetter(), existing));
 
-    public static void gatherServerData(GatherDataEvent.Server event) {
-        gatherCommonData(event);
+        // ---- client data ----
+        generator.addProvider(event.includeClient(), new DMModelProvider(output, existing));
+        generator.addProvider(event.includeClient(), new DMBlockStateProvider(output, existing));
     }
 }

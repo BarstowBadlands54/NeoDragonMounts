@@ -37,14 +37,16 @@ import static net.minecraft.data.recipes.SimpleCookingRecipeBuilder.blasting;
 import static net.minecraft.data.recipes.SimpleCookingRecipeBuilder.smelting;
 import static net.minecraft.data.recipes.SmithingTransformRecipeBuilder.smithing;
 
-public class DMRecipeProvider extends RecipeProvider {
-    protected DMRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
-        super(registries, output);
+public class DMRecipeProvider extends FabricRecipeProvider {
+    private RecipeOutput exporter;
+
+    public DMRecipeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        super(output, registriesFuture);
     }
 
     @Override
-    public void buildRecipes() {
-        var output = this.output;
+    public void buildRecipes(RecipeOutput output) {
+        this.exporter = output;
         var registry = Registries.RECIPE;
         smelting(Ingredient.of(DMItems.COPPER_DRAGON_ARMOR), RecipeCategory.MISC, Items.COPPER_INGOT, 0.7F, 200)
                 .unlockedBy("has_armor", has(DMItems.COPPER_DRAGON_ARMOR))
@@ -66,7 +68,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .save(output, makeKey(registry, "gold_ingot_form_blasting"));
         cook(100, (desc, time, method) -> method.cook(
                 Ingredient.of(DMItems.DRAGON_MEAT), RecipeCategory.FOOD, DMItems.COOKED_DRAGON_MEAT, 0.35F, time
-        ).unlockedBy("has_meat", has(DMItems.DRAGON_MEAT)).save(this.output, makeKey(Registries.RECIPE, "cooked_dragon_meat_form_" + desc)));
+        ).unlockedBy("has_meat", has(DMItems.DRAGON_MEAT)).save(this.exporter, makeKey(Registries.RECIPE, "cooked_dragon_meat_form_" + desc)));
         this.dragonArmor(ConventionalItemTags.COPPER_INGOTS, ConventionalItemTags.STORAGE_BLOCKS_COPPER, DMItems.COPPER_DRAGON_ARMOR);
         this.dragonArmor(ConventionalItemTags.IRON_INGOTS, ConventionalItemTags.STORAGE_BLOCKS_IRON, DMItems.IRON_DRAGON_ARMOR);
         this.dragonArmor(ConventionalItemTags.GOLD_INGOTS, ConventionalItemTags.STORAGE_BLOCKS_GOLD, DMItems.GOLDEN_DRAGON_ARMOR);
@@ -170,7 +172,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" ##")
                 .group("neodragonmounts.dragon_armor")
                 .unlockedBy("has_block", has(block))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     void dragonScaleAxe(Item scales, Item result) {
@@ -183,7 +185,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" #")
                 .group("neodragonmounts.dragon_scale_axe")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleArmors(Item scales, DragonScaleArmorSuit suit) {
@@ -195,7 +197,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("X X")
                 .group("neodragonmounts.dragon_scale_helmet")
                 .unlockedBy("has_dragon_scales", hasScales)
-                .save(this.output);
+                .save(this.exporter);
         this.shaped(RecipeCategory.COMBAT, suit.getChestplate())
                 .define('X', scales)
                 .pattern("X X")
@@ -203,7 +205,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("XXX")
                 .group("neodragonmounts.dragon_scale_chestplate")
                 .unlockedBy("has_dragon_scales", hasScales)
-                .save(this.output);
+                .save(this.exporter);
         this.shaped(RecipeCategory.COMBAT, suit.getLeggings())
                 .define('X', scales)
                 .pattern("XXX")
@@ -211,14 +213,14 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("X X")
                 .group("neodragonmounts.dragon_scale_leggings")
                 .unlockedBy("has_dragon_scales", hasScales)
-                .save(this.output);
+                .save(this.exporter);
         this.shaped(RecipeCategory.COMBAT, suit.getBoots())
                 .define('X', scales)
                 .pattern("X X")
                 .pattern("X X")
                 .group("neodragonmounts.dragon_scale_boots")
                 .unlockedBy("has_dragon_scales", hasScales)
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleBlock(Item scales, ItemLike result) {
@@ -227,7 +229,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .requires(result)
                 .group("neodragonmounts.dragon_scales")
                 .unlockedBy(getHasName(result), this.has(result))
-                .save(this.output, ResourceKey.create(Registries.RECIPE, BuiltInRegistries.ITEM.getKey(scales)));
+                .save(this.exporter, ResourceKey.create(Registries.RECIPE, BuiltInRegistries.ITEM.getKey(scales)));
         this.shaped(RecipeCategory.BUILDING_BLOCKS, result)
                 .define('#', scales)
                 .pattern("###")
@@ -235,7 +237,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("###")
                 .group("neodragonmounts.dragon_scale_block")
                 .unlockedBy(getHasName(scales), this.has(scales))
-                .save(this.output, ResourceKey.create(Registries.RECIPE, BuiltInRegistries.ITEM.getKey(result.asItem())));
+                .save(this.exporter, ResourceKey.create(Registries.RECIPE, BuiltInRegistries.ITEM.getKey(result.asItem())));
     }
 
     private void dragonScaleBow(Item scales, Item result) {
@@ -248,7 +250,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" #X")
                 .group("neodragonmounts.dragon_scale_bow")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleHoe(Item scales, Item result) {
@@ -261,7 +263,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" #")
                 .group("neodragonmounts.dragon_scale_hoe")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScalePickaxe(Item scales, Item result) {
@@ -274,7 +276,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" # ")
                 .group("neodragonmounts.dragon_scale_pickaxe")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleShield(Item scales, Item result) {
@@ -287,7 +289,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern(" W ")
                 .group("neodragonmounts.dragon_scale_shield")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleShovel(Item scales, Item result) {
@@ -300,7 +302,7 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("#")
                 .group("neodragonmounts.dragon_scale_shovel")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
     private void dragonScaleSword(Item scales, Item result) {
@@ -312,29 +314,9 @@ public class DMRecipeProvider extends RecipeProvider {
                 .pattern("X")
                 .pattern("#")
                 .unlockedBy("has_dragon_scales", has(scales))
-                .save(this.output);
+                .save(this.exporter);
     }
 
-    public static class Factory extends FabricRecipeProvider {
-        public Factory(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
-            super(output, registriesFuture);
-        }
-
-        @Override
-        protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
-            return new DMRecipeProvider(registries, output);
-        }
-
-        @Override
-        protected ResourceLocation getRecipeIdentifier(ResourceLocation identifier) {
-            return makeId(identifier.getPath());
-        }
-
-        @Override
-        public @NotNull String getName() {
-            return "Dragon Mounts Recipes";
-        }
-    }
 
     public interface CookingMethod {
         RecipeBuilder cook(Ingredient ingredient, RecipeCategory category, ItemLike result, float experience, int time);

@@ -12,7 +12,7 @@ public class DragonScaleSwordItem extends SwordItem implements DragonTypified {
     public final DragonType type;
 
     public DragonScaleSwordItem(DragonType type, float damage, float speed, Properties props) {
-        super(type.tier, damage, speed, props.component(DMDataComponents.DRAGON_TYPE, type));
+        super(type.tier, props.component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
     }
 

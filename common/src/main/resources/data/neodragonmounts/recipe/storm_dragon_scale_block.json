@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "neodragonmounts.dragon_scale_block",
+  "key": {
+    "#": "neodragonmounts:storm_dragon_scales"
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:storm_dragon_scale_block"
+  }
+}

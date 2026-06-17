@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_scale_boots",
+  "key": {
+    "X": "neodragonmounts:forest_dragon_scales"
+  },
+  "pattern": [
+    "X X",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:forest_dragon_scale_boots"
+  }
+}

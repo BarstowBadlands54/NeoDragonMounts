@@ -26,7 +26,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialBlockRendererRegistry;
+// 1.21.1: SpecialBlockRendererRegistry (Fabric 1.21.4 API) absent
+// import net.fabricmc.fabric.api.client.rendering.v1.SpecialBlockRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -37,7 +38,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.special.SpecialModelRenderers;
+// 1.21.1: special-model system removed — core/head item render needs a BEWLR
+// import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -74,6 +76,10 @@ public class DragonMountsClient implements
         for (var model : BuiltinFactory.values()) {
             EntityModelLayerRegistry.registerModelLayer(model.location, model::makeModel);
         }
+        /* TODO 1.21.1: 1.21.4 special-model API (SpecialModelRenderers / SpecialBlockRendererRegistry /
+           DragonCoreRenderer.Unbaked / DragonHeadRenderer.Unbaked) is absent. Re-implement core/head item
+           rendering via a BlockEntityWithoutLevelRenderer once common's DragonCoreRenderer/DragonHeadRenderer
+           are ported off SpecialModelRenderer.
         SpecialModelRenderers.ID_MAPPER.put(makeId("dragon_core"), DragonCoreRenderer.Unbaked.CODEC);
         SpecialModelRenderers.ID_MAPPER.put(makeId("dragon_head"), DragonHeadRenderer.Unbaked.CODEC);
         SpecialBlockRendererRegistry.register(DMBlocks.DRAGON_CORE.get(), new DragonCoreRenderer.Unbaked(0.0F, Direction.SOUTH));
@@ -83,6 +89,7 @@ public class DragonMountsClient implements
             SpecialBlockRendererRegistry.register(head.standing.get(), renderer);
             SpecialBlockRendererRegistry.register(head.wall.get(), renderer);
         }
+        */
         ClientTickEvents.START_CLIENT_TICK.register(this);
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_CORE.get(), DragonCoreRenderer::new);
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer.INSTANCE);

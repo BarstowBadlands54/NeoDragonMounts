@@ -45,7 +45,7 @@ public class EntityHolder<T extends Entity> extends ObjectHolder<EntityType<T>, 
     }
 
     public EntityHolder(ResourceKey<EntityType<?>> key, EntityType.Builder<T> builder) {
-        super(BuiltInRegistries.ENTITY_TYPE, key, builder.build(key));
+        super(BuiltInRegistries.ENTITY_TYPE, key, builder.build(key.location().toString()));
     }
 
     @SuppressWarnings("unchecked")

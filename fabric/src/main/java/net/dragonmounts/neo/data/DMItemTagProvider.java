@@ -24,7 +24,7 @@ public class DMItemTagProvider extends FabricTagProvider.ItemTagProvider {
     public DMItemTagProvider(
             FabricDataOutput output,
             CompletableFuture<HolderLookup.Provider> provider,
-            FabricTagProvider.BlockTagProvider block
+            BlockTagProvider block
     ) {
         super(output, provider, block);
     }

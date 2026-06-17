@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "neodragonmounts:enchanted_dragon_scale"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "neodragonmounts:enchanted_dragon_scale"
+      }
+    ]
+  }
+}
