@@ -1,20 +1,22 @@
 package net.dragonmounts.neo.common.util;
 
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
+import java.util.List;
 
 public class ArmorMaterialBuilder {
-    public final EnumMap<EquipmentSlot, Integer> defense = new EnumMap<>(EquipmentSlot.class);
+    public final EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
     public int durabilityFactor;
     public int enchantmentValue = 1;
     public Holder<SoundEvent> sound = SoundEvents.ARMOR_EQUIP_GOLD;
@@ -22,7 +24,7 @@ public class ArmorMaterialBuilder {
     public float knockbackResistance = 0;
 
     public ArmorMaterialBuilder(int durabilityFactor) {
-        this.setDurabilityFactor(durabilityFactor).setDefense(EquipmentSlot.BODY, 11);
+        this.setDurabilityFactor(durabilityFactor).setDefense(ArmorItem.Type.BODY, 11);
     }
 
     public ArmorMaterialBuilder setDurabilityFactor(int durabilityFactor) {
@@ -30,7 +32,7 @@ public class ArmorMaterialBuilder {
         return this;
     }
 
-    public ArmorMaterialBuilder setDefense(EquipmentSlot type, int defense) {
+    public ArmorMaterialBuilder setDefense(ArmorItem.Type type, int defense) {
         this.defense.put(type, defense);
         return this;
     }
@@ -58,17 +60,17 @@ public class ArmorMaterialBuilder {
     @Contract("null, _ -> fail")
     public ArmorMaterial build(
             TagKey<Item> ingredient,
-            @NotNull ResourceKey<EquipmentAsset> asset
+            @NotNull ResourceLocation assetName
     ) {
         if (ingredient == null) throw new IllegalArgumentException();
         return new ArmorMaterial(
-                this.durabilityFactor,
-                new EnumMap<>(this.defense),
-                this.enchantmentValue,
-                this.sound,
-                this.toughness,
-                this.knockbackResistance,
-                ingredient
+                new EnumMap<>(this.defense),                  // Map<ArmorItem.Type, Integer> defense
+                this.enchantmentValue,                        // int enchantmentValue
+                this.sound,                                   // Holder<SoundEvent> equipSound
+                () -> Ingredient.of(ingredient),              // Supplier<Ingredient> repairIngredient
+                List.of(new ArmorMaterial.Layer(assetName)),  // List<ArmorMaterial.Layer> layers
+                this.toughness,                               // float toughness
+                this.knockbackResistance                      // float knockbackResistance
         );
     }
 }

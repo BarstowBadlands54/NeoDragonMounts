@@ -6,13 +6,6 @@ import software.bernie.geckolib.model.GeoModel;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
-/**
- * GeckoLib model resolver. Per-breed it returns:
- *  - which .geo.json (the breed's DragonShape)
- *  - which body texture (the breed's VariantAppearance texture)
- *  - the single shared animation file
- * GeckoLib bakes/caches each geo by ResourceLocation, so every shape loads once.
- */
 public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
     private static final ResourceLocation ANIMATIONS =
             makeId("animations/entity/dragon/dragon.animation.json");

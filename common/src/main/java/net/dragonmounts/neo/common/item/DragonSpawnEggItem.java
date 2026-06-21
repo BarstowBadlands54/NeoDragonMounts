@@ -20,6 +20,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +53,9 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
     public final DragonType type;
 
     public DragonSpawnEggItem(EntityType<? extends TameableDragonEntity> defaultType, DragonType dragonType, Properties props) {
-        super(defaultType, props.component(DMDataComponents.DRAGON_TYPE, dragonType));
+        // 1.21.1 bakes the spawn-egg background/highlight colors into the ctor (1.21.4 made them data-driven).
+        // TODO: replace these placeholders with the per-breed egg colors (source from DragonType if available).
+        super(defaultType, 0xFFFFFF, 0xFFFFFF, props.component(DMDataComponents.DRAGON_TYPE, dragonType));
         this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(dragonType.name)});
         this.type = dragonType;
     }
@@ -83,7 +86,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
         EntityType<?> type;
         switch (level.getBlockEntity(pos)) {
             case TrialSpawnerBlockEntity spawner:
-                type = this.getType(level.registryAccess(), stack);
+                type = this.getType(stack);
                 if (DMEntities.TAMEABLE_DRAGON.is(type)) {
                     var impl = spawner.getTrialSpawner();
                     this.putDragonData(impl.getData().getOrCreateNextSpawnData(impl, random), type, random);
@@ -92,7 +95,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
                 }
                 break;
             case SpawnerBlockEntity spawner:
-                type = this.getType(level.registryAccess(), stack);
+                type = this.getType(stack);
                 if (DMEntities.TAMEABLE_DRAGON.is(type)) {
                     this.putDragonData(spawner.getSpawner().getOrCreateNextSpawnData(level, random, pos), type, random);
                 } else {
@@ -100,13 +103,13 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
                 }
                 break;
             case Spawner spawner:
-                spawner.setEntityId(this.getType(level.registryAccess(), stack), random);
+                spawner.setEntityId(this.getType(stack), random);
                 break;
             case null:
             default:
                 var spawnPos = state.getCollisionShape(level, pos).isEmpty() ? pos : pos.relative(direction);
                 var player = context.getPlayer();
-                var entity = this.loadEntity(level, stack, player, spawnPos, MobSpawnType.SPAWN_ITEM_USE, true, !Objects.equals(pos, spawnPos) && direction == Direction.UP);
+                var entity = this.loadEntity(level, stack, player, spawnPos, MobSpawnType.SPAWN_EGG, true, !Objects.equals(pos, spawnPos) && direction == Direction.UP);
                 if (entity != null) {
                     if (entity instanceof TameableDragonEntity dragon) {
                         dragon.setDragonType(this.type, true);
@@ -125,16 +128,16 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResult.PASS;
-        if (!(level instanceof ServerLevel world)) return InteractionResult.SUCCESS;
-        var pos = hit.getBlockPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
+        var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (!(level instanceof ServerLevel world)) return InteractionResultHolder.success(stack);
+        var pos = hit.getBlockPos();
+        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.pass(stack);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
-            var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.SPAWN_ITEM_USE, false, false);
-            if (entity == null) return InteractionResult.PASS;
+            var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.SPAWN_EGG, false, false);
+            if (entity == null) return InteractionResultHolder.pass(stack);
             if (entity instanceof TameableDragonEntity dragon) {
                 dragon.setDragonType(this.type, true);
             }
@@ -142,15 +145,15 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
             stack.consume(1, player);
             player.awardStat(Stats.ITEM_USED.get(this));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, entity.position());
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
-        return InteractionResult.FAIL;
+        return InteractionResultHolder.fail(stack);
     }
 
     @Override
     public Optional<Mob> spawnOffspringFromSpawnEgg(Player player, Mob mob, EntityType<? extends Mob> type, ServerLevel level, Vec3 pos, ItemStack stack) {
-        if (!this.spawnsEntity(level.registryAccess(), stack, type)) return Optional.empty();
-        Mob neo = mob instanceof AgeableMob old ? old.getBreedOffspring(level, old) : type.create(level, MobSpawnType.SPAWN_ITEM_USE);
+        if (!this.spawnsEntity(stack, type)) return Optional.empty();
+        Mob neo = mob instanceof AgeableMob old ? old.getBreedOffspring(level, old) : type.create(level);
         if (neo == null) return Optional.empty();
         neo.setBaby(true);
         if (!neo.isBaby()) return Optional.empty();
@@ -195,7 +198,7 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
             boolean yOffset,
             boolean extraOffset
     ) {
-        var type = this.getType(level.registryAccess(), stack);
+        var type = this.getType(stack);
         var entity = type.create(level, null, pos, reason, yOffset, extraOffset);
         if (entity == null) return null;
         mergeEntityData(entity, level, player, stack.getOrDefault(DataComponents.ENTITY_DATA, CustomData.EMPTY));

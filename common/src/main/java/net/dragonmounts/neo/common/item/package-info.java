@@ -1,3 +1,3 @@
 @net.minecraft.MethodsReturnNonnullByDefault
-@org.jetbrains.annotations.NotNullByDefault
+@javax.annotation.ParametersAreNonnullByDefault
 package net.dragonmounts.neo.common.item;

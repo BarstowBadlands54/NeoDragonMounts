@@ -58,7 +58,7 @@ public class ShearsDispenseItemBehaviorEx extends ShearsDispenseItemBehavior {
                     continue;
                 case Shearable shearable:
                     if (shearable.readyForShearing()) {
-                        shearable.shear(level, SoundSource.BLOCKS, stack);
+                        shearable.shear(SoundSource.BLOCKS);
                         level.gameEvent(null, GameEvent.SHEAR, pos);
                         return true;
                     }

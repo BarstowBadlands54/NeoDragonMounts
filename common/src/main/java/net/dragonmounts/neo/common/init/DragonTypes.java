@@ -19,7 +19,7 @@ import net.minecraft.world.level.material.MapColor;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.dragonmounts.neo.compat.registry.DragonTypeBuilder.BONUS_ID;
-import static net.minecraft.world.item.equipment.ArmorType.*;
+import static net.minecraft.world.item.ArmorItem.Type.*;
 
 public class DragonTypes {
     public static final DragonType AETHER;

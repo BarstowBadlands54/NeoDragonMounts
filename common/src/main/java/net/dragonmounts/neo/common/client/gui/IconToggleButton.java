@@ -1,8 +1,6 @@
 package net.dragonmounts.neo.common.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +30,8 @@ public class IconToggleButton extends ToggleButton {
         } else {
             icon = this.getState() ? Icon.LOCKED : Icon.UNLOCKED;
         }
-        guiGraphics.blitSprite(RenderType::guiTextured, icon.sprite, this.getX(), this.getY(), this.width, this.height);
+        // 1.21.1 blitSprite has no RenderType provider arg
+        guiGraphics.blitSprite(icon.sprite, this.getX(), this.getY(), this.width, this.height);
     }
 
     enum Icon {

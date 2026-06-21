@@ -38,7 +38,7 @@ public class WitherBreath extends DragonBreath {
     @Override
     public void affectEntity(ServerLevel level, LivingEntity target, BreathAffectedEntity hit) {
         float density = hit.getHitDensity();
-        target.hurtServer(level, level.damageSources().mobAttack(this.dragon), this.damage * density);
+        target.hurt(level.damageSources().mobAttack(this.dragon), this.damage * density);
         EntityUtil.addOrMergeEffect(target, MobEffects.POISON, (int) (4 * density), 0, false, true, true);
     }
 }

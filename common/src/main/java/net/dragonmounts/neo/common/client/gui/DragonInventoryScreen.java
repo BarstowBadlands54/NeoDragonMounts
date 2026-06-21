@@ -14,7 +14,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -22,8 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.function.Function;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.dragonmounts.neo.common.inventory.FluteSlot.getItemName;
@@ -173,21 +170,21 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
 
     protected void renderBg(GuiGraphics graphics, float ticks, int x, int y) {
         int left = this.leftPos, top = this.topPos;
-        Function<ResourceLocation, RenderType> renderer = RenderType::guiTextured;
-        graphics.blit(renderer, INVENTORY, left + 148, top, 0, 0, 176, this.imageHeight, 256, 256);
+        // 1.21.1: no RenderType provider arg; blit(...) re-takes the blitOffset (z) int after y
+        graphics.blit(INVENTORY, left + 148, top, 0, 0, 0, 176, this.imageHeight, 256, 256);
         var dragon = (ClientDragonEntity) this.menu.dragon;
         if (dragon.hasChest()) {
-            graphics.blit(renderer, INVENTORY, left + 148, top + 73, 0, 140, 170, 55, 256, 256);
+            graphics.blit(INVENTORY, left + 148, top + 73, 0, 0, 140, 170, 55, 256, 256);
         }
-        graphics.blit(renderer, PANEL, left, top, 0, 0, 147, this.imageHeight, 256, 256);
+        graphics.blit(PANEL, left, top, 0, 0, 0, 147, this.imageHeight, 256, 256);
         if (this.menu.flute.hasItem()) {
-            graphics.blitSprite(renderer, TEXT_FIELD_SPRITE, left + 29, top + 8, 110, 16);
+            graphics.blitSprite(TEXT_FIELD_SPRITE, left + 29, top + 8, 110, 16);
         }
         left += 10;
-        graphics.blitSprite(renderer, ARMOR_SPRITE, left, top + 32, 9, 9);
-        graphics.blitSprite(renderer, HEALTH_SPRITE, left, top + 43, 9, 9);
-        dragon.animator.renderCrystalBeams = false;
+        graphics.blitSprite(ARMOR_SPRITE, left, top + 32, 9, 9);
+        graphics.blitSprite(HEALTH_SPRITE, left, top + 43, 9, 9);
+//        dragon.animator.renderCrystalBeams = false;
         InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, left + 164, top + 18, left + 270, top + 70, 10, 0.25F, x, y, dragon);
-        dragon.animator.renderCrystalBeams = true;
+//        dragon.animator.renderCrystalBeams = true;
     }
 }

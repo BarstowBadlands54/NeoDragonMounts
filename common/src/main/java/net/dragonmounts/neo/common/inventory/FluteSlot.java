@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import net.dragonmounts.neo.common.capability.FluteHolder;
 import net.dragonmounts.neo.common.component.FluteSound;
 import net.dragonmounts.neo.common.init.DMItems;
@@ -9,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -95,8 +97,9 @@ public class FluteSlot extends Slot {
     }
 
     @Override
-    public ResourceLocation getNoItemIcon() {
-        return ICON;
+    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+        // 1.21.1: getNoItemIcon returns (atlas, sprite); sprite is stitched into the block atlas
+        return Pair.of(InventoryMenu.BLOCK_ATLAS, ICON);
     }
 
     public boolean applyName(String name) {

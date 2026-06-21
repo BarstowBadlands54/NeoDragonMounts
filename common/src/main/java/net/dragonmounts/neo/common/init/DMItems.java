@@ -9,24 +9,15 @@ import net.dragonmounts.neo.compat.registry.BlockItemHolder;
 import net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.ItemHolder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.DispenserBlock;
 
 import java.util.function.Function;
@@ -37,7 +28,7 @@ import static net.dragonmounts.neo.compat.registry.ItemHolder.registerItem;
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 
 public class DMItems {
-    public static final ResourceLocation DRAGON_ARMOR_MODIFIER_NAME = withDefaultNamespace("armor." + ArmorType.BODY.getName());
+    public static final ResourceLocation DRAGON_ARMOR_MODIFIER_NAME = withDefaultNamespace("armor." + ArmorItem.Type.BODY.getName());
     public static final BlockItemHolder<DragonCoreBlock, ?> DRAGON_CORE = BlockItemHolder.registerItem(
             DMBlocks.DRAGON_CORE,
             (block, props) -> new BlockItem(block, props.rarity(Rarity.RARE))
@@ -145,10 +136,10 @@ public class DMItems {
     public static final ItemHolder<DragonScalesItem> DARK_DRAGON_SCALES = MISC_TAB.register("dark_dragon_scales", props -> makeDragonScales(DragonTypes.DARK, props));
     // Shears
     public static final ItemHolder<TieredShearsItem> DIAMOND_SHEARS = TOOL_TAB.register("diamond_shears", props ->
-            makeTieredShears(ToolMaterial.DIAMOND, props)
+            makeTieredShears(Tiers.DIAMOND, props)
     );
     public static final ItemHolder<TieredShearsItem> NETHERITE_SHEARS = TOOL_TAB.register("netherite_shears", props ->
-            makeTieredShears(ToolMaterial.NETHERITE, props.fireResistant())
+            makeTieredShears(Tiers.NETHERITE, props.fireResistant())
     );
     // Flute
     public static final ItemHolder<FluteItem> FLUTE = TOOL_TAB.register("flute", props ->
@@ -156,7 +147,7 @@ public class DMItems {
     );
     // Dragon Amulets
     public static final ItemHolder<AmuletItem<Entity>> AMULET = TOOL_TAB.register("amulet", props ->
-            new AmuletItem<>(Entity.class, props.overrideDescription(AmuletItem.TRANSLATION_KEY))
+            new AmuletItem<>(Entity.class, props)
     );
     public static final ItemHolder<DragonAmuletItem> FOREST_DRAGON_AMULET = registerItem("forest_dragon_amulet", props -> makeDragonAmulet(DragonTypes.FOREST, props));
     public static final ItemHolder<DragonAmuletItem> FIRE_DRAGON_AMULET = registerItem("fire_dragon_amulet", props -> makeDragonAmulet(DragonTypes.FIRE, props));
@@ -320,7 +311,7 @@ public class DMItems {
     public static final ItemHolder<DragonScaleShieldItem> NETHER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("nether_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.NETHER, props));
     public static final ItemHolder<DragonScaleShieldItem> ENDER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("ender_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.ENDER, props));
     public static final ItemHolder<DragonScaleShieldItem> ENCHANTED_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("enchanted_dragon_scale_shield", props ->
-            makeDragonScaleShield(DragonTypes.ENCHANTED, props.enchantable(DragonTypes.ENCHANTED.material.enchantmentValue()))
+            makeDragonScaleShield(DragonTypes.ENCHANTED, props)
     );
     public static final ItemHolder<DragonScaleShieldItem> SUNLIGHT_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("sunlight_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.SUNLIGHT, props));
     public static final ItemHolder<DragonScaleShieldItem> MOONLIGHT_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("moonlight_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.MOONLIGHT, props));
@@ -540,35 +531,29 @@ public class DMItems {
     }
 
     static DragonAmuletItem makeDragonAmulet(DragonType type, Properties props) {
-        var item = new DragonAmuletItem(type, props.overrideDescription(AmuletItem.TRANSLATION_KEY));
+        var item = new DragonAmuletItem(type, props);
         type.bindInstance(DragonAmuletItem.class, item);
         return item;
     }
 
     static Item makeDragonArmor(ArmorMaterial material, Properties props) {
         var builder = ItemAttributeModifiers.builder()
-                .add(Attributes.ARMOR, new AttributeModifier(DRAGON_ARMOR_MODIFIER_NAME, material.defense().getOrDefault(ArmorType.BODY, 0), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY)
+                .add(Attributes.ARMOR, new AttributeModifier(DRAGON_ARMOR_MODIFIER_NAME, material.defense().getOrDefault(ArmorItem.Type.BODY, 0), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY)
                 .add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(DRAGON_ARMOR_MODIFIER_NAME, material.toughness(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY);
         if (material.knockbackResistance() > 0.0F) {
             builder.add(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(DRAGON_ARMOR_MODIFIER_NAME, material.knockbackResistance(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY);
         }
-        return new Item(props.component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.BODY)
-                .setEquipSound(SoundEvents.HORSE_ARMOR)
-                .setAsset(material.assetId())
-                .setAllowedEntities(DMEntities.TAMEABLE_DRAGON.get())
-                .setDamageOnHurt(false)
-                .build()
-        ).stacksTo(1).attributes(builder.build()));
+        return new Item(props.stacksTo(1).attributes(builder.build()));
     }
 
     static DragonEssenceItem makeDragonEssence(DragonType type, Properties props) {
-        var item = new DragonEssenceItem(type, props.overrideDescription(DragonEssenceItem.TRANSLATION_KEY));
+        var item = new DragonEssenceItem(type, props);
         type.bindInstance(DragonEssenceItem.class, item);
         return item;
     }
 
     static DragonScaleAxeItem makeDragonScaleAxe(DragonType type, float damage, float speed, Properties props) {
-        var item = new DragonScaleAxeItem(type, damage, speed, props.overrideDescription(DragonScaleAxeItem.TRANSLATION_KEY));
+        var item = new DragonScaleAxeItem(type, damage, speed, props);
         type.bindInstance(DragonScaleAxeItem.class, item);
         return item;
     }
@@ -578,79 +563,73 @@ public class DMItems {
     }
 
     static DragonScaleBowItem makeDragonScaleBow(DragonType type, Properties props) {
-        var item = new DragonScaleBowItem(type, props.overrideDescription(DragonScaleBowItem.TRANSLATION_KEY));
+        var item = new DragonScaleBowItem(type, props);
         type.bindInstance(DragonScaleBowItem.class, item);
         return item;
     }
 
     static DragonScaleHoeItem makeDragonScaleHoe(DragonType type, Properties props) {
-        float damage = type.tier.attackDamageBonus();
-        var item = new DragonScaleHoeItem(type, -damage, damage - 3.0F, props.overrideDescription(DragonScaleHoeItem.TRANSLATION_KEY));
+        float damage = type.tier.getAttackDamageBonus();
+        var item = new DragonScaleHoeItem(type, -damage, damage - 3.0F, props);
         type.bindInstance(DragonScaleHoeItem.class, item);
         return item;
     }
 
     static DragonScalePickaxeItem makeDragonScalePickaxe(DragonType type, Properties props) {
-        var item = new DragonScalePickaxeItem(type, 1.0F, -2.8F, props.overrideDescription(DragonScalePickaxeItem.TRANSLATION_KEY));
+        var item = new DragonScalePickaxeItem(type, 1.0F, -2.8F, props);
         type.bindInstance(DragonScalePickaxeItem.class, item);
         return item;
     }
 
-    static DragonScaleArmorItem makeDragonScaleArmor(DragonScaleArmorSuit suit, ArmorType slot, Properties props) {
+    static DragonScaleArmorItem makeDragonScaleArmor(DragonScaleArmorSuit suit, ArmorItem.Type slot, Properties props) {
         if (suit.effect != null) {
             props.component(DMDataComponents.ARMOR_EFFECT_SOURCE, suit);
-        }
-        switch (slot) {
-            case HELMET -> props.overrideDescription(DragonScaleArmorSuit.HELMET_TRANSLATION_KEY);
-            case CHESTPLATE -> props.overrideDescription(DragonScaleArmorSuit.CHESTPLATE_TRANSLATION_KEY);
-            case LEGGINGS -> props.overrideDescription(DragonScaleArmorSuit.LEGGINGS_TRANSLATION_KEY);
-            case BOOTS -> props.overrideDescription(DragonScaleArmorSuit.BOOTS_TRANSLATION_KEY);
         }
         return new DragonScaleArmorItem(suit.type, suit.effect, slot, props);
     }
 
     static DragonScalesItem makeDragonScales(DragonType type, Properties props) {
-        var item = new DragonScalesItem(type, props.overrideDescription(DragonScalesItem.TRANSLATION_KEY));
+        var item = new DragonScalesItem(type, props);
         type.bindInstance(DragonScalesItem.class, item);
         return item;
     }
 
     static DragonScaleShieldItem makeDragonScaleShield(DragonType type, Properties props) {
-        var item = new DragonScaleShieldItem(type, props.overrideDescription(DragonScaleShieldItem.TRANSLATION_KEY));
+        var item = new DragonScaleShieldItem(type, props);
         type.bindInstance(DragonScaleShieldItem.class, item);
         return item;
     }
 
     static DragonScaleShovelItem makeDragonScaleShovel(DragonType type, Properties props) {
-        var item = new DragonScaleShovelItem(type, 1.5F, -3.0F, props.overrideDescription(DragonScaleShovelItem.TRANSLATION_KEY));
+        var item = new DragonScaleShovelItem(type, 1.5F, -3.0F, props);
         type.bindInstance(DragonScaleShovelItem.class, item);
         return item;
     }
 
     static DragonScaleSwordItem makeDragonScaleSword(DragonType type, Properties props) {
-        var item = new DragonScaleSwordItem(type, 3, -2.0F, props.overrideDescription(DragonScaleSwordItem.TRANSLATION_KEY));
+        var item = new DragonScaleSwordItem(type, 3, -2.0F, props);
         type.bindInstance(DragonScaleSwordItem.class, item);
         return item;
     }
 
     static DragonSpawnEggItem makeDragonSpawnEgg(DragonType type, Properties props) {
-        var item = new DragonSpawnEggItem(type, props.overrideDescription(DragonSpawnEggItem.TRANSLATION_KEY));
+        var item = new DragonSpawnEggItem(type, props);
         type.bindInstance(DragonSpawnEggItem.class, item);
         return item;
     }
 
-    static TieredShearsItem makeTieredShears(ToolMaterial tier, Properties props) {
+    static TieredShearsItem makeTieredShears(Tier tier, Properties props) {
         var item = new TieredShearsItem(tier, props);
         DispenserBlock.registerBehavior(item, TieredShearsItem.DISPENSE_ITEM_BEHAVIOR);
         return item;
     }
 
     static BlockItem makeDragonEggBlock(HatchableDragonEggBlock block, Properties props) {
-        return new BlockItem(block, props.component(DMDataComponents.DRAGON_TYPE, block.type).overrideDescription(HatchableDragonEggBlock.TRANSLATION_KEY));
+        return new BlockItem(block, props.component(DMDataComponents.DRAGON_TYPE, block.type));
     }
 
     static BlockItem makeDragonScaleBlock(DragonScaleBlock block, Properties props) {
-        return new BlockItem(block, props.component(DMDataComponents.DRAGON_TYPE, block.type).overrideDescription(DragonScaleBlock.TRANSLATION_KEY));
+        return new BlockItem(block, props.component(DMDataComponents.DRAGON_TYPE, block.type));
     }
 
     public static void init() {}

@@ -2,9 +2,6 @@ package net.dragonmounts.neo.common.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.dragonmounts.neo.common.block.entity.DragonCoreBlockEntity;
 import net.dragonmounts.neo.common.client.model.DragonCoreModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -13,12 +10,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemDisplayContext;
-import org.jetbrains.annotations.NotNull;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
@@ -36,12 +29,17 @@ public class DragonCoreRenderer implements BlockEntityRenderer<DragonCoreBlockEn
     }
 
     public DragonCoreRenderer(EntityModelSet models) {
-        this.model = new DragonCoreModel(models.bakeLayer(ModelLayers.SHULKER_BOX));
+        this.model = new DragonCoreModel(models.bakeLayer(ModelLayers.SHULKER));
     }
 
     @Override
     public void render(DragonCoreBlockEntity core, float ticks, PoseStack matrices, MultiBufferSource buffers, int light, int overlay) {
-        this.render(matrices, buffers, light, overlay, core.getBlockState().getValueOrElse(HORIZONTAL_FACING, Direction.SOUTH), core.getProgress(ticks));
+        this.render(
+                matrices, buffers, light, overlay,
+                // 1.21.1: no getValueOrElse on StateHolder; use getOptionalValue(...).orElse(...)
+                core.getBlockState().getOptionalValue(HORIZONTAL_FACING).orElse(Direction.SOUTH),
+                core.getProgress(ticks)
+        );
     }
 
     public void render(PoseStack matrices, MultiBufferSource buffers, int light, int overlay, Direction facing, float progress) {
@@ -55,33 +53,4 @@ public class DragonCoreRenderer implements BlockEntityRenderer<DragonCoreBlockEn
         this.model.renderToBuffer(matrices, buffers.getBuffer(RENDER_TYPE), light, overlay, -1);
         matrices.popPose();
     }
-
-    public record Special(
-            DragonCoreRenderer renderer,
-            float openness,
-            Direction facing
-    ) implements NoDataSpecialModelRenderer {
-        @Override
-        public void render(ItemDisplayContext context, PoseStack matrices, MultiBufferSource buffers, int light, int overlay, boolean foil) {
-            this.renderer.render(matrices, buffers, light, overlay, this.facing, this.openness);
-        }
-    }
-
-    public record Unbaked(float openness, Direction facing) implements SpecialModelRenderer.Unbaked {
-        public static final MapCodec<Unbaked> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Codec.FLOAT.optionalFieldOf("openness", 0.0F).forGetter(Unbaked::openness),
-                Direction.CODEC.optionalFieldOf("facing", Direction.UP).forGetter(Unbaked::facing)
-        ).apply(instance, Unbaked::new));
-
-        @Override
-        public @NotNull MapCodec<Unbaked> type() {
-            return CODEC;
-        }
-
-        @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet models) {
-            return new Special(new DragonCoreRenderer(models), this.openness, this.facing);
-        }
-    }
-
 }

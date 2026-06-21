@@ -153,7 +153,7 @@ public class DragonNodeEvaluator extends WalkNodeEvaluator {
     @Override
     public PathType getPathType(PathfindingContext context, int x, int y, int z) {
         var type = context.getPathTypeFromState(x, y, z);
-        if (type == PathType.OPEN && y >= context.level().getMinY() + 1) {
+        if (type == PathType.OPEN && y >= context.level().getMinBuildHeight() + 1) {
             switch (context.getPathTypeFromState(x, y - 1, z)) {
                 case WALKABLE, OPEN, WATER -> type = PathType.WALKABLE;
                 case DANGER_FIRE, LAVA -> {
@@ -233,7 +233,7 @@ public class DragonNodeEvaluator extends WalkNodeEvaluator {
 
     /// form super
     protected final @Nullable Node tryFindFirstNonWaterBelow(int x, int y, int z, @Nullable Node node) {
-        int min = this.mob.level().getMinY();
+        int min = this.mob.level().getMinBuildHeight();
         while (--y > min) {
             var type = this.getCachedPathType(x, y, z);
             if (type != PathType.WATER) return node;
@@ -245,7 +245,7 @@ public class DragonNodeEvaluator extends WalkNodeEvaluator {
     /// form super
     protected final Node tryFindFirstGroundNodeBelow(int x, int y, int z) {
         var mob = this.mob;
-        for (int i = y - 1, min = mob.level().getMinY(); i >= min; i--) {
+        for (int i = y - 1, min = mob.level().getMinBuildHeight(); i >= min; i--) {
             if (y - i > mob.getMaxFallDistance()) return this.getBlockedNode(x, i, z);
             var type = this.getCachedPathType(x, i, z);
             if (type != PathType.OPEN) {

@@ -24,28 +24,28 @@ public class ArmorEffectTooltip implements ClientTooltipComponent {
         for (var entry : this.entries) {
             width = entry.getWidth(font, width);
         }
-        this.heightCache = 0;
-        return this.widthCache = Math.min(width, Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
+        this.widthCache = Math.min(width, Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2);
+        // 1.21.1 getHeight() takes no Font; compute height here (font is available) and cache it.
+        int w = this.widthCache;
+        int height = 1 + font.wordWrapHeight(this.title, w);
+        for (var entry : this.entries) {
+            height += entry.getHeight(font, w);
+        }
+        this.heightCache = font.lineHeight + height;
+        return this.widthCache;
     }
 
     @Override
-    public int getHeight(Font font) {
-        if (this.heightCache == 0) {
-            int width = this.widthCache;
-            int height = 1 + font.wordWrapHeight(this.title, width);
-            for (var entry : this.entries) {
-                height += entry.getHeight(font, width);
-            }
-            this.heightCache = font.lineHeight + height;
-        }
+    public int getHeight() {
         return this.heightCache;
     }
 
     /**
-     * @see GuiGraphics#drawWordWrap(Font, FormattedText, int, int, int, int, boolean)
+     * @see GuiGraphics#drawWordWrap(Font, FormattedText, int, int, int, int)
      */
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
+        int width = this.widthCache;
         int line = font.lineHeight;
         for (var text : font.split(this.title, width)) {
             graphics.drawString(font, text, x, y, -1, true);

@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.dragonmounts.neo.common.component.impl.ContorlGrowthConsumeEffect;
 import net.dragonmounts.neo.common.init.DMDataComponents;
 import net.dragonmounts.neo.common.tag.DMItemTags;
-import net.minecraft.advancements.critereon.ConsumeItemTrigger;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.sounds.SoundEvent;
@@ -32,15 +32,20 @@ public record DragonFood(
         Optional<ItemStack> particles,
         List<ContorlGrowthConsumeEffect> effects
 ) {
-    public static final DragonFood RAW_MEAT = new DragonFood(1500, 2.0F, 0.25F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
-    public static final DragonFood COOKED_MEAT = new DragonFood(2500, 3.0F, 0.375F, false, false, SoundEvents.GENERIC_EAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+    // 1.21.1: SoundEvents.GENERIC_EAT etc. are raw SoundEvent (not Holder). Wrap as registry-backed holders.
+    private static Holder<SoundEvent> holder(SoundEvent sound) {
+        return BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound);
+    }
+
+    public static final DragonFood RAW_MEAT = new DragonFood(1500, 2.0F, 0.25F, false, false, holder(SoundEvents.GENERIC_EAT), Optional.empty(), Optional.empty(), Collections.emptyList());
+    public static final DragonFood COOKED_MEAT = new DragonFood(2500, 3.0F, 0.375F, false, false, holder(SoundEvents.GENERIC_EAT), Optional.empty(), Optional.empty(), Collections.emptyList());
     public static final Codec<DragonFood> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.optionalFieldOf("age", 0).forGetter(DragonFood::age),
             Codec.FLOAT.optionalFieldOf("health", 0.0F).forGetter(DragonFood::health),
             Codec.floatRange(0.0F, 1.0F).optionalFieldOf("taming_probability", 0.25F).forGetter(DragonFood::tamingProbability),
             Codec.BOOL.optionalFieldOf("requires_owner", false).forGetter(DragonFood::requiresOwner),
             Codec.BOOL.optionalFieldOf("can_always_feed", false).forGetter(DragonFood::canAlwaysFeed),
-            SoundEvent.CODEC.optionalFieldOf("major_sound", SoundEvents.GENERIC_EAT).forGetter(DragonFood::majorSound),
+            SoundEvent.CODEC.optionalFieldOf("major_sound", holder(SoundEvents.GENERIC_EAT)).forGetter(DragonFood::majorSound),
             SoundEvent.CODEC.optionalFieldOf("minor_sound").forGetter(DragonFood::minorSound),
             ItemStack.CODEC.optionalFieldOf("override_particles").forGetter(DragonFood::particles),
             ContorlGrowthConsumeEffect.CODEC.codec().listOf().optionalFieldOf("side_effects", Collections.emptyList()).forGetter(DragonFood::effects)
@@ -109,7 +114,7 @@ public record DragonFood(
     }
 
     static {
-        var minorDrink = SoundEvents.GENERIC_DRINK;
+        var minorDrink = Optional.of(holder(SoundEvents.GENERIC_DRINK));
         var emptyEffects = Collections.<ContorlGrowthConsumeEffect>emptyList();
         setFallback(Items.HONEY_BOTTLE, new DragonFood(
                 100,
@@ -117,7 +122,7 @@ public record DragonFood(
                 0.25F,
                 true,
                 true,
-                SoundEvents.HONEY_DRINK,
+                holder(SoundEvents.HONEY_DRINK),
                 null,
                 Optional.of(ItemStack.EMPTY),
                 Collections.singletonList(new ContorlGrowthConsumeEffect(true))
@@ -128,7 +133,7 @@ public record DragonFood(
                 0.0F,
                 true,
                 true,
-                SoundEvents.GENERIC_EAT,
+                holder(SoundEvents.GENERIC_EAT),
                 null,
                 Optional.empty(),
                 Collections.singletonList(new ContorlGrowthConsumeEffect(false))
@@ -139,7 +144,7 @@ public record DragonFood(
                 0.25F,
                 false,
                 false,
-                SoundEvents.GENERIC_EAT,
+                holder(SoundEvents.GENERIC_EAT),
                 minorDrink,
                 Optional.of(new ItemStack(Items.COD)),
                 emptyEffects
@@ -150,7 +155,7 @@ public record DragonFood(
                 0.25F,
                 false,
                 false,
-                SoundEvents.GENERIC_EAT,
+                holder(SoundEvents.GENERIC_EAT),
                 minorDrink,
                 Optional.of(new ItemStack(Items.SALMON)),
                 emptyEffects
@@ -161,7 +166,7 @@ public record DragonFood(
                 0.25F,
                 false,
                 false,
-                SoundEvents.GENERIC_EAT,
+                holder(SoundEvents.GENERIC_EAT),
                 minorDrink,
                 Optional.of(new ItemStack(Items.TROPICAL_FISH)),
                 emptyEffects
@@ -172,7 +177,7 @@ public record DragonFood(
                 0.375F,
                 false,
                 false,
-                SoundEvents.GENERIC_EAT,
+                holder(SoundEvents.GENERIC_EAT),
                 minorDrink,
                 Optional.empty(),
                 emptyEffects

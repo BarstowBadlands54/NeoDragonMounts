@@ -4,6 +4,7 @@ import net.dragonmounts.neo.common.api.DragonTypified;
 import net.dragonmounts.neo.common.init.DMDataComponents;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.ITEM_TRANSLATION_KEY_PREFIX;
@@ -15,11 +16,14 @@ public class DragonScaleShieldItem extends ShieldItem implements DragonTypified 
 
     public DragonScaleShieldItem(DragonType type, Properties props) {
         super(props.component(DMDataComponents.DRAGON_TYPE, type)
-                .durability(UNIT_DURABILITY * type.material.durability())
-                .repairable(type.material.repairIngredient())
-                .equippableUnswappable(EquipmentSlot.OFFHAND)
+                .durability(type.tier.getUses())
         );
         this.type = type;
+    }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return this.type.material.value().repairIngredient().get().test(repair);
     }
 
     @Override

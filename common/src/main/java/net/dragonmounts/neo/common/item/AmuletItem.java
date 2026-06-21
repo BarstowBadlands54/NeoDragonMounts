@@ -15,7 +15,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -61,7 +63,7 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
     ) {
         var data = stack.getOrDefault(DataComponents.ENTITY_DATA, CustomData.EMPTY);
         if (data.isEmpty()) return null;
-        var type = data.parseEntityType(level.registryAccess(), Registries.ENTITY_TYPE);
+        var type = EntityType.by(data.copyTag()).orElse(null);
         if (type == null) return null;
         var entity = type.create(level, null, pos, reason, yOffset, extraOffset);
         if (entity == null) return null;
@@ -146,24 +148,24 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
-        if (this.isEmpty(stack)) return InteractionResult.PASS;
+        if (this.isEmpty(stack)) return InteractionResultHolder.pass(stack);
         var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResult.PASS;
-        if (!(level instanceof ServerLevel world)) return InteractionResult.SUCCESS;
+        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (!(level instanceof ServerLevel world)) return InteractionResultHolder.success(stack);
         var pos = hit.getBlockPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
+        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.pass(stack);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
             var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false);
-            if (entity == null) return InteractionResult.PASS;
+            if (entity == null) return InteractionResultHolder.pass(stack);
             world.addFreshEntityWithPassengers(entity);
             consumeStack(player, hand, stack, new ItemStack(DMItems.AMULET));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
             player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
-        return InteractionResult.FAIL;
+        return InteractionResultHolder.fail(stack);
     }
 
     @Override

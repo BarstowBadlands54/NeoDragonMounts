@@ -24,7 +24,7 @@ public class DragonTargetSensor extends NearestLivingEntitySensor<ServerDragonEn
             @Nullable LivingEntity target,
             @Nullable LivingEntity owner
     ) {
-        if (target != null && dragon.wantsToAttack(target, owner) && Sensor.isEntityAttackable(level, dragon, target)) {
+        if (target != null && dragon.wantsToAttack(target, owner) && Sensor.isEntityAttackable(dragon, target)) {
             brain.setMemory(MemoryModuleType.NEAREST_ATTACKABLE, target);
             return true;
         }
@@ -52,7 +52,7 @@ public class DragonTargetSensor extends NearestLivingEntitySensor<ServerDragonEn
         brain.getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES)
                 .stream()
                 .flatMap(Collection::stream)
-                .filter(target -> target instanceof Enemy && Sensor.isEntityAttackable(level, dragon, target))
+                .filter(target -> target instanceof Enemy && Sensor.isEntityAttackable(dragon, target))
                 .findFirst()
                 .ifPresentOrElse(
                         target -> dragon.getBrain().setMemory(MemoryModuleType.NEAREST_ATTACKABLE, target),

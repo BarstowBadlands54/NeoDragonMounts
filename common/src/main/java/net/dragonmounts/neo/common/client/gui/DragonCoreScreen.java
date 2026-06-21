@@ -3,7 +3,6 @@ package net.dragonmounts.neo.common.client.gui;
 import net.dragonmounts.neo.common.inventory.DragonCoreHandler;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,6 +27,7 @@ public class DragonCoreScreen extends AbstractContainerScreen<DragonCoreHandler>
 
     @Override
     protected void renderBg(GuiGraphics graphics, float ticks, int x, int y) {
-        graphics.blit(RenderType::guiTextured, TEXTURE_LOCATION, this.leftPos, this.topPos, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
+        // 1.21.1: no RenderType provider arg; blit(...) re-takes the blitOffset (z) int after y
+        graphics.blit(TEXTURE_LOCATION, this.leftPos, this.topPos, 0, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
     }
 }

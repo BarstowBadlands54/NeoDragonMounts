@@ -63,7 +63,7 @@ public class TryFindGround<E extends PathfinderMob & FlyingAnimal> extends OneSh
                 }
             }
         }
-        int targetY = Math.max(level.getMinY() + level.getLogicalHeight() / 4, level.getSeaLevel());
+        int targetY = Math.max(level.getMinBuildHeight() + level.getLogicalHeight() / 4, level.getSeaLevel());
         int distance = current.getY() - targetY;
         if (distance > 32) {
             targetY = current.getY() - 32;

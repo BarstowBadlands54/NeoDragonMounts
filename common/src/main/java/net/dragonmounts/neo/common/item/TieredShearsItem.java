@@ -24,7 +24,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
@@ -41,10 +42,10 @@ import static net.minecraft.world.level.block.BeehiveBlock.dropHoneycomb;
 public class TieredShearsItem extends ShearsItem {
     public static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new ShearsDispenseItemBehaviorEx();
 
-    public static Tool createToolProperties(ToolMaterial tier) {
+    public static Tool createToolProperties(Tier tier) {
         var props = ShearsItem.createToolProperties();
         var vanilla = props.rules();
-        float factor = tier.speed() / ToolMaterial.IRON.speed();
+        float factor = tier.getSpeed() / Tiers.IRON.getSpeed();
         var list = ImmutableList.<Tool.Rule>builderWithExpectedSize(vanilla.size());
         for (var rule : vanilla) {
             list.add(new Tool.Rule(rule.blocks(), rule.speed().map(speed -> speed * factor), rule.correctForDrops()));
@@ -52,19 +53,28 @@ public class TieredShearsItem extends ShearsItem {
         return new Tool(list.build(), props.defaultMiningSpeed(), props.damagePerBlock());
     }
 
-    protected final ToolMaterial tier;
+    protected final Tier tier;
 
-    public TieredShearsItem(ToolMaterial tier, Properties props) {
-        super(props.durability((int) (tier.durability() * 0.952F))
+    public TieredShearsItem(Tier tier, Properties props) {
+        // 1.21.1 Properties has no repairable()/enchantable() (1.21.2). Handled via method overrides below.
+        super(props.durability((int) (tier.getUses() * 0.952F))
                 .component(DataComponents.TOOL, createToolProperties(tier))
-                .repairable(tier.repairItems())
-                .enchantable(tier.enchantmentValue())
         );
         this.tier = tier;
     }
 
-    public ToolMaterial getTier() {
+    public Tier getTier() {
         return this.tier;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return this.tier.getEnchantmentValue();
+    }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack stack, ItemStack repair) {
+        return this.tier.getRepairIngredient().test(repair) || super.isValidRepairItem(stack, repair);
     }
 
     /**
@@ -84,7 +94,7 @@ public class TieredShearsItem extends ShearsItem {
         switch (state.getBlock()) {
             case BeehiveBlock beehive:
                 int content = state.getValue(HONEY_LEVEL);
-                if (content < 5) return InteractionResult.TRY_WITH_EMPTY_HAND;
+                if (content < 5) return InteractionResult.PASS; // 1.21.1 has no TRY_WITH_EMPTY_HAND
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
                 dropHoneycomb(level, pos);
                 stack.hurtAndBreak(1, player, getSlotForHand(context.getHand()));
@@ -161,16 +171,16 @@ public class TieredShearsItem extends ShearsItem {
                     stack.hurtAndBreak(1, player, getSlotForHand(hand));
                     wolf.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
                     wolf.setBodyArmorItem(ItemStack.EMPTY);
-                    if (wolf.level() instanceof ServerLevel level) {
-                        wolf.spawnAtLocation(level, armor);
+                    if (!wolf.level().isClientSide) {
+                        wolf.spawnAtLocation(armor); // 1.21.1: spawnAtLocation(ItemStack), no ServerLevel arg
                     }
                     return InteractionResult.SUCCESS;
                 }
                 return super.interactLivingEntity(stack, player, entity, hand);
             case Shearable shearable:
                 if (shearable.readyForShearing()) {
-                    if (entity.level() instanceof ServerLevel level) {
-                        shearable.shear(level, SoundSource.PLAYERS, stack);
+                    if (!entity.level().isClientSide) {
+                        shearable.shear(SoundSource.PLAYERS); // 1.21.1: shear(SoundSource)
                         entity.gameEvent(GameEvent.SHEAR, player);
                         stack.hurtAndBreak(1, player, getSlotForHand(hand));
                     }

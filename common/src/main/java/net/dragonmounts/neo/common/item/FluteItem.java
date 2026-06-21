@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,15 +29,15 @@ public class FluteItem extends Item {
     }
 
     /// @see net.minecraft.world.item.ItemUtils#startUsingInstantly(Level, Player, InteractionHand)
-    public static InteractionResult startPlaying(Player player, InteractionHand hand) {
+    public static InteractionResultHolder<ItemStack> startPlaying(Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
         var sound = stack.get(DMDataComponents.FLUTE_SOUND);
-        if (sound == null) return InteractionResult.PASS;
+        if (sound == null) return InteractionResultHolder.pass(stack);
         if (player.isLocalPlayer()) {
             ClientUtil.openFluteScreen(sound.dragon());
         }
         player.startUsingItem(hand);
-        return InteractionResult.CONSUME;
+        return InteractionResultHolder.consume(stack);
     }
 
     public FluteItem(Properties props) {
@@ -50,11 +51,11 @@ public class FluteItem extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-        return player.isShiftKeyDown() ? InteractionResult.PASS : startPlaying(player, hand);
+        return player.isShiftKeyDown() ? InteractionResult.PASS : startPlaying(player, hand).getResult();
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         return startPlaying(player, hand);
     }
 
@@ -64,8 +65,7 @@ public class FluteItem extends Item {
     }
 
     @Override
-    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int time) {
-        return true;
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int time) {
     }
 
     @Override

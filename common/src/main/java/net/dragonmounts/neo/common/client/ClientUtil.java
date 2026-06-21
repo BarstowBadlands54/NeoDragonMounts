@@ -5,7 +5,6 @@ import net.dragonmounts.neo.common.entity.dragon.DragonModelContracts;
 import net.dragonmounts.neo.common.util.Segment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Range;
 
@@ -31,12 +30,20 @@ public class ClientUtil {
         Minecraft.getInstance().setScreen(new FluteScreen(uuid));
     }
 
-    public static PartPose scaledPose(float scaleX, float scaleY, float scaleZ) {
-        return new PartPose(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, scaleX, scaleY, scaleZ);
+    /**
+     * 1.21.1 {@link net.minecraft.client.model.geom.PartPose} cannot carry scale (the 9-arg
+     * constructor is 1.21.4). Scale lives on the baked {@link ModelPart} instead, so apply it
+     * after {@code bakeLayer(...)} rather than baking it into the LayerDefinition pose.
+     */
+    public static ModelPart applyScale(ModelPart part, float scaleX, float scaleY, float scaleZ) {
+        part.xScale = scaleX;
+        part.yScale = scaleY;
+        part.zScale = scaleZ;
+        return part;
     }
 
-    public static PartPose scaledPose(float scale) {
-        return scaledPose(scale, scale, scale);
+    public static ModelPart applyScale(ModelPart part, float scale) {
+        return applyScale(part, scale, scale, scale);
     }
 
     public static String toString(@Range(from = 0, to = CAPACITY - 1) int i) {

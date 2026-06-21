@@ -95,13 +95,13 @@ public class DragonCoreBlockEntity extends RandomizableContainerBlockEntity impl
     }
 
     public AABB getBoundingBox() {
-        return Shulker.getProgressAabb(1.0F, Direction.UP, 0.5F * this.getProgress(1.0F), BOTTOM_CENTER);
+        return Shulker.getProgressAabb(1.0F, Direction.UP, 0.5F * this.getProgress(1.0F));
     }
 
     protected void moveCollidedEntities(Level level, BlockPos pos, BlockState state) {
         if (state.getBlock() instanceof DragonCoreBlock) {
             var direction = Direction.UP;
-            var box = Shulker.getProgressDeltaAabb(1.0F, direction, this.progressOld, this.progress, pos.getBottomCenter());
+            var box = Shulker.getProgressDeltaAabb(1.0F, direction, this.progressOld, this.progress);
             var list = level.getEntities(null, box);
             if (!list.isEmpty()) {
                 for (var entity : list) {

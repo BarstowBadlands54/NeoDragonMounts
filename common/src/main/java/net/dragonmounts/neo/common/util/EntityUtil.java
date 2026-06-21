@@ -6,11 +6,8 @@ import net.dragonmounts.neo.compat.platform.PlatformCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -25,19 +22,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public abstract class EntityUtil extends /*to access protected methods*/ EntityType<Entity> {
     public static Vec2 getRiddenRotation(LivingEntity rider) {
@@ -45,7 +37,7 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
     }
 
     /**
-     * @see EntityType#create(ServerLevel, Consumer, BlockPos, MobSpawnType, boolean, boolean)
+     * @see EntityType#create(ServerLevel, java.util.function.Consumer, BlockPos, MobSpawnType, boolean, boolean)
      */
     public static void finalizeSpawn(ServerLevel level, Entity entity, BlockPos pos, MobSpawnType reason, boolean yOffset, boolean extraOffset) {
         double offset, x = pos.getX() + 0.5D, y = pos.getY(), z = pos.getZ() + 0.5D;
@@ -65,12 +57,13 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
     }
 
     /**
-     * @see EntityType#updateCustomEntityTag(Level, Player, Entity, CustomData)
+     * @see EntityType#updateCustomEntityTag(net.minecraft.world.level.Level, Player, Entity, CustomData)
      */
     public static void mergeEntityData(Entity entity, ServerLevel level, Player player, CustomData data) {
         MinecraftServer server = level.getServer();
-        EntityType<?> type = data.parseEntityType(server.registryAccess(), Registries.ENTITY_TYPE);
-        if (entity.getType() == type && (!type.onlyOpCanSetNbt() || player != null && server.getPlayerList().isOp(player.getGameProfile()))) {
+        // 1.21.1: CustomData has no parseEntityType; resolve via EntityType.by(tag). onlyOpCanSetNbt is on Entity, not EntityType.
+        EntityType<?> type = EntityType.by(data.copyTag()).orElse(null);
+        if (entity.getType() == type && (!entity.onlyOpCanSetNbt() || player != null && server.getPlayerList().isOp(player.getGameProfile()))) {
             data.loadInto(entity);
         }
     }
@@ -115,10 +108,7 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
     }
 
     public static ItemStack consumeStack(Player player, InteractionHand hand, ItemStack stack, ItemStack result) {
-        var remainder = stack.getComponents().get(DataComponents.USE_REMAINDER);
-        if (remainder != null) {
-            remainder.convertIntoRemainder(stack, 1, player.hasInfiniteMaterials(), player::handleExtraItemsCreatedOnUse);
-        }
+        // 1.21.1 has no USE_REMAINDER component / Player#handleExtraItemsCreatedOnUse (both added 1.21.2)
         stack.shrink(1);
         if (stack.isEmpty()) {
             player.setItemInHand(hand, result);
@@ -266,7 +256,8 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
         if (Math.abs(motion.y) > 0.0) {
             entity.verticalCollision = motion.y != movement.y;
             entity.verticalCollisionBelow = entity.verticalCollision && motion.y < 0.0;
-            entity.setOnGroundWithMovement(entity.verticalCollisionBelow, entity.horizontalCollision, movement);
+            // 1.21.1: setOnGroundWithMovement(boolean onGround, Vec3 movement) -- no horizontalCollision arg
+            entity.setOnGroundWithMovement(entity.verticalCollisionBelow, movement);
         }
         if (entity.horizontalCollision) {
             var delta = entity.getDeltaMovement();
@@ -278,7 +269,8 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
         }
     }
 
-    private EntityUtil(EntityFactory<Entity> a, MobCategory b, boolean c, boolean d, boolean e, boolean f, ImmutableSet<Block> g, EntityDimensions h, float i, int j, int k, String l, Optional<ResourceKey<LootTable>> m, FeatureFlagSet n) {
-        super(a, b, c, d, e, f, g, h, i, j, k, l, m, n);
+    // 1.21.1 EntityType ctor: no String descriptionId, no Optional<ResourceKey<LootTable>> lootTable
+    private EntityUtil(EntityFactory<Entity> a, MobCategory b, boolean c, boolean d, boolean e, boolean f, ImmutableSet<Block> g, EntityDimensions h, float i, int j, int k, FeatureFlagSet n) {
+        super(a, b, c, d, e, f, g, h, i, j, k, n);
     }
 }

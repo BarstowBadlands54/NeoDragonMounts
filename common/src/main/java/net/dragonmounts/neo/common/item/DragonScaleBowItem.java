@@ -6,6 +6,7 @@ import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.ITEM_TRANSLATION_KEY_PREFIX;
@@ -16,11 +17,19 @@ public class DragonScaleBowItem extends BowItem implements DragonTypified {
 
     public DragonScaleBowItem(DragonType type, Properties props) {
         super(props.component(DMDataComponents.DRAGON_TYPE, type)
-                .durability(type.tier.durability() >> 1)
-                .enchantable(type.tier.enchantmentValue())
-                .repairable(type.tier.repairItems())
+                .durability(type.tier.getUses() >> 1)
         );
         this.type = type;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return this.type.tier.getEnchantmentValue();
+    }
+
+    @Override
+    public boolean isValidRepairItem(ItemStack stack, ItemStack repairCandidate) {
+        return this.type.tier.getRepairIngredient().test(repairCandidate);
     }
 
     @Override

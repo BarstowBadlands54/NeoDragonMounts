@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import net.dragonmounts.neo.compat.platform.DMScreenHandlers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +9,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +37,9 @@ public class DragonCoreHandler extends AbstractContainerMenu {
             }
 
             @Override
-            public ResourceLocation getNoItemIcon() {
-                return ESSENCE_ICON;
+            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                // 1.21.1: getNoItemIcon returns (atlas, sprite); sprite is stitched into the block atlas
+                return Pair.of(InventoryMenu.BLOCK_ATLAS, ESSENCE_ICON);
             }
         });
         for (int i = 0; i < 3; ++i) {

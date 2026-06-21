@@ -1,17 +1,30 @@
 package net.dragonmounts.neo.common.client.renderer;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.ShaderDefines;
-import net.minecraft.client.renderer.ShaderProgram;
+import net.minecraft.client.renderer.ShaderInstance;
+import org.jetbrains.annotations.Nullable;
 
-import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
-
+/**
+ * 1.21.1 has no {@code ShaderProgram}/{@code ShaderDefines} handles. Core shaders are
+ * {@link ShaderInstance} objects that must be built during shader registration (they need a
+ * {@code ResourceProvider} and can throw {@code IOException}), so they cannot be {@code static final}.
+ * <p>
+ * These fields are populated by the loader-specific registration hooks (NeoForge
+ * {@code RegisterShadersEvent}, Fabric {@code CoreShaderRegistrationCallback}) and consumed by
+ * RenderTypes via {@code new RenderStateShard.ShaderStateShard(DMCoreShaders::getEntityCutoutDecal)}.
+ */
 public class DMCoreShaders {
-    public static final ShaderProgram RENDERTYPE_ENTITY_CUTOUT_DECAL = of("rendertype_entity_cutout_decal", DefaultVertexFormat.NEW_ENTITY);
-    public static final ShaderProgram RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL = of("rendertype_entity_translucent_emissive_decal", DefaultVertexFormat.NEW_ENTITY);
+    @Nullable
+    public static ShaderInstance rendertypeEntityCutoutDecal;
+    @Nullable
+    public static ShaderInstance rendertypeEntityTranslucentEmissiveDecal;
 
-    static ShaderProgram of(String name, VertexFormat format) {
-        return new ShaderProgram(makeId("core/" + name), format, ShaderDefines.EMPTY);
+    @Nullable
+    public static ShaderInstance getEntityCutoutDecal() {
+        return rendertypeEntityCutoutDecal;
+    }
+
+    @Nullable
+    public static ShaderInstance getEntityTranslucentEmissiveDecal() {
+        return rendertypeEntityTranslucentEmissiveDecal;
     }
 }

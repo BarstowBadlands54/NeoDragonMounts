@@ -12,8 +12,8 @@ public class DarkDragonsGraceEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
-        if (entity.getHealth() < entity.getMaxHealth() && level.getRawBrightness(entity.blockPosition(), 0) < 8) {
+    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
+        if (entity.getHealth() < entity.getMaxHealth() && entity.level().getRawBrightness(entity.blockPosition(), 0) < 8) {
             entity.heal(0.5F);
         }
         return true;

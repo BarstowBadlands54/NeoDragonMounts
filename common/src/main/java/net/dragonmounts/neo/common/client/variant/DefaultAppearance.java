@@ -4,12 +4,11 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.dragonmounts.neo.common.client.DMParticleSprites;
 import net.dragonmounts.neo.common.client.breath.BreathParticleFactory;
 import net.dragonmounts.neo.common.client.breath.impl.FlameBreathParticle;
-import net.dragonmounts.neo.common.client.model.dragon.DragonModel;
+import net.dragonmounts.neo.common.client.model.dragon.DragonGeoModel;
 import net.dragonmounts.neo.common.client.renderer.RenderStateAccessor;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.entity.breath.BreathParticleOption;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.RenderType;
@@ -33,7 +32,6 @@ public class DefaultAppearance implements VariantAppearance {
         throw new IllegalStateException("Duplicate key: " + asset);
     }
 
-    public final ModelLayerLocation modelLocation;
     public final BreathParticleFactory factory;
     public final ResourceLocation breath;
     public final ResourceLocation body;
@@ -44,17 +42,15 @@ public class DefaultAppearance implements VariantAppearance {
     public final RenderType chest;
     public final RenderType saddle;
     public final Map<ResourceLocation, ResourceLocation> armors;
-    private DragonModel model;
+    private DragonGeoModel model;
 
     public DefaultAppearance(
-            ModelLayerLocation modelLocation,
             ResourceLocation body,
             ResourceLocation glow,
             ResourceLocation breath,
             Map<ResourceLocation, ResourceLocation> armors,
             BreathParticleFactory factory
     ) {
-        this.modelLocation = modelLocation;
         this.factory = factory;
         this.breath = breath;
         this.armors = armors;
@@ -69,11 +65,11 @@ public class DefaultAppearance implements VariantAppearance {
 
     @Override
     public void onReload(EntityModelSet models) {
-        this.model = new DragonModel(models.bakeLayer(this.modelLocation));
+        this.model = new DragonGeoModel();
     }
 
     @Override
-    public DragonModel getModel() {
+    public DragonGeoModel getModel() {
         return this.model;
     }
 
@@ -124,13 +120,11 @@ public class DefaultAppearance implements VariantAppearance {
     }
 
     public static class Builder {
-        public final ModelLayerLocation model;
         public BreathParticleFactory factory = FlameBreathParticle.FACTORY;
         public ResourceLocation breath = DMParticleSprites.FLAME_BREATH;
         public Map<ResourceLocation, ResourceLocation> armors = Collections.emptyMap();
 
-        public Builder(ModelLayerLocation model) {
-            this.model = model;
+        public Builder() {
         }
 
         public Builder setArmorCategory(@Nullable String category) {
@@ -157,7 +151,7 @@ public class DefaultAppearance implements VariantAppearance {
         }
 
         public DefaultAppearance build(ResourceLocation body, ResourceLocation glow) {
-            return new DefaultAppearance(this.model, body, glow, this.breath, this.armors, this.factory);
+            return new DefaultAppearance(body, glow, this.breath, this.armors, this.factory);
         }
     }
 

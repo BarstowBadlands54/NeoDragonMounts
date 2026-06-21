@@ -72,7 +72,9 @@ public class DragonCoreBlock extends BaseEntityBlock {
         if (player.isSpectator()) return InteractionResult.CONSUME;
         if (level.getBlockEntity(pos) instanceof DragonCoreBlockEntity core) {
             AnimationStatus status = core.getAnimationStatus();
-            if (status != AnimationStatus.CLOSING && (status != AnimationStatus.CLOSED || level.noCollision(Shulker.getProgressDeltaAabb(1.0F, Direction.UP, 0.0F, 0.5F, pos.getBottomCenter()).deflate(1.0E-6)))) {
+            // 1.21.1: getProgressDeltaAabb has no Vec3 arg; it returns an origin-relative box, so offset it.
+            // scale 1.0 + bottom-center recentering (-0.5) cancels to the block's own corner -> .move(pos)
+            if (status != AnimationStatus.CLOSING && (status != AnimationStatus.CLOSED || level.noCollision(Shulker.getProgressDeltaAabb(1.0F, Direction.UP, 0.0F, 0.5F).move(pos.getX(), pos.getY(), pos.getZ()).deflate(1.0E-6)))) {
                 player.openMenu(core);
             }
             return InteractionResult.CONSUME;
@@ -116,7 +118,7 @@ public class DragonCoreBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state) {
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 

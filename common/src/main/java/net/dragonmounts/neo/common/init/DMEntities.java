@@ -14,7 +14,7 @@ public class DMEntities {
             "dragon_breath",
             MobCategory.MISC,
             BreathNodeEntity::new,
-            builder -> builder.noSummon().noLootTable().sized(0.2F, 0.2F).clientTrackingRange(0)
+            builder -> builder.noSummon().sized(0.2F, 0.2F).clientTrackingRange(0)
     );
     public static final EntityHolder<HatchableDragonEggEntity> HATCHABLE_DRAGON_EGG = registerLivingEntity(
             "dragon_egg",

@@ -1,6 +1,6 @@
 package net.dragonmounts.neo.common.client.variant;
 
-import net.dragonmounts.neo.common.client.model.dragon.DragonModel;
+import net.dragonmounts.neo.common.client.model.dragon.DragonGeoModel;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.entity.breath.BreathParticleOption;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -22,7 +22,7 @@ public interface VariantAppearance {
 
     void onReload(EntityModelSet models);
 
-    DragonModel getModel();
+    DragonGeoModel getModel();
 
     RenderType getBase(@Nullable DragonRenderer state);
 

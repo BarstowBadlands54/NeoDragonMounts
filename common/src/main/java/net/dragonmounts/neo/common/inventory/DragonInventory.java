@@ -2,12 +2,10 @@ package net.dragonmounts.neo.common.inventory;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.init.DMEntities;
 import net.dragonmounts.neo.common.tag.DMItemTags;
 import net.dragonmounts.neo.common.util.ArrayUtil;
 import net.dragonmounts.neo.compat.platform.PlatformItemTags;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -32,8 +30,9 @@ public class DragonInventory implements Container, StackedContentsCompatible {
     }
 
     public static boolean isDragonArmor(ItemStack stack) {
-        var equippable = stack.get(DataComponents.EQUIPPABLE);
-        return equippable != null && EquipmentSlot.BODY == equippable.slot() && equippable.canBeEquippedBy(DMEntities.TAMEABLE_DRAGON.get());
+        // 1.21.1 has no EQUIPPABLE component (added 1.21.2). Per-entity equippability scoping is
+        // tag-based here (cf. vanilla Mob#isBodyArmorItem / ItemTags.WOLF_ARMOR), mirroring isDragonSaddle.
+        return stack.is(DMItemTags.DRAGON_ARMOR);
     }
 
     public static boolean isDragonSaddle(ItemStack stack) {

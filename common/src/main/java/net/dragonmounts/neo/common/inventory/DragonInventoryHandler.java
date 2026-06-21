@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.inventory;
 
+import com.mojang.datafixers.util.Pair;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMDataComponents;
 import net.dragonmounts.neo.compat.platform.DMScreenHandlers;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
@@ -132,8 +134,10 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
         }
 
         @Override
-        public ResourceLocation getNoItemIcon() {
-            return ICON;
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            // 1.21.1: getNoItemIcon returns (atlas, sprite). NOTE: ICON is a GUI-atlas sprite path in
+            // vanilla 1.21.1, not a block-atlas one -- will render missing unless re-pointed (see notes).
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, ICON);
         }
     }
 
@@ -161,8 +165,8 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
         }
 
         @Override
-        public ResourceLocation getNoItemIcon() {
-            return ICON;
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, ICON);
         }
     }
 
@@ -184,8 +188,8 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
         }
 
         @Override
-        public ResourceLocation getNoItemIcon() {
-            return ICON;
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, ICON);
         }
     }
 

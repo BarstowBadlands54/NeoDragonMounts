@@ -1,17 +1,23 @@
 package net.dragonmounts.neo.common.init;
 
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.equipment.ArmorMaterials;
-import net.minecraft.world.item.equipment.ArmorType;
-import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.EnumMap;
+import java.util.List;
 
 import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 
+/**
+ * 1.21.1 {@link ArmorMaterial} has no {@code durability} or {@code assetId} (those are 1.21.4).
+ * Durability must be applied at item construction via {@code ArmorItem.Type.BODY.getDurability(factor)};
+ * the 1.21.4 asset key becomes a {@link ArmorMaterial.Layer} in the {@code layers} list.
+ */
 public class DragonArmorMaterials {
     public static final ArmorMaterial COPPER;
     public static final ArmorMaterial IRON = makeMaterial(ArmorMaterials.IRON, 3);
@@ -21,53 +27,50 @@ public class DragonArmorMaterials {
     public static final ArmorMaterial NETHERITE = makeMaterial(ArmorMaterials.NETHERITE, 11);
 
     static {
-        var defense = new EnumMap<ArmorType, Integer>(ArmorType.class);
-        defense.put(ArmorType.BOOTS, 1);
-        defense.put(ArmorType.LEGGINGS, 3);
-        defense.put(ArmorType.CHESTPLATE, 4);
-        defense.put(ArmorType.HELMET, 2);
-        defense.put(ArmorType.BODY, 2);
+        var defense = new EnumMap<ArmorItem.Type, Integer>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 1);
+        defense.put(ArmorItem.Type.LEGGINGS, 3);
+        defense.put(ArmorItem.Type.CHESTPLATE, 4);
+        defense.put(ArmorItem.Type.HELMET, 2);
+        defense.put(ArmorItem.Type.BODY, 2);
         COPPER = new ArmorMaterial(
-                11,
                 defense,
                 8,
                 SoundEvents.ARMOR_EQUIP_GENERIC,
+                () -> Ingredient.of(Items.IRON_INGOT),   // was ItemTags.REPAIRS_CHAIN_ARMOR (no such tag in 1.21.1)
+                List.of(new ArmorMaterial.Layer(withDefaultNamespace("copper"))),
                 0.0F,
-                0.0F,
-                ItemTags.REPAIRS_CHAIN_ARMOR,
-                ResourceKey.create(EquipmentAssets.ROOT_ID, withDefaultNamespace("copper"))
+                0.0F
         );
     }
 
     static {
-        var base = ArmorMaterials.DIAMOND;
+        var base = ArmorMaterials.DIAMOND.value();
         var defense = new EnumMap<>(base.defense());
-        defense.put(ArmorType.BODY, 6);
+        defense.put(ArmorItem.Type.BODY, 6);
         EMERALD = new ArmorMaterial(
-                base.durability(),
                 defense,
                 base.enchantmentValue(),
                 base.equipSound(),
-                base.toughness(),
-                base.knockbackResistance(),
                 base.repairIngredient(),
-                ResourceKey.create(EquipmentAssets.ROOT_ID, withDefaultNamespace("emerald"))
+                List.of(new ArmorMaterial.Layer(withDefaultNamespace("emerald"))),
+                base.toughness(),
+                base.knockbackResistance()
         );
     }
 
-    public static ArmorMaterial makeMaterial(ArmorMaterial base, int defense) {
-        var asset = base.assetId();
-        var copy = new EnumMap<>(base.defense());
-        copy.put(ArmorType.BODY, defense);
+    public static ArmorMaterial makeMaterial(Holder<ArmorMaterial> base, int defense) {
+        var value = base.value();
+        var copy = new EnumMap<>(value.defense());
+        copy.put(ArmorItem.Type.BODY, defense);
         return new ArmorMaterial(
-                base.durability(),
                 copy,
-                base.enchantmentValue(),
-                base.equipSound(),
-                base.toughness(),
-                base.knockbackResistance(),
-                base.repairIngredient(),
-                asset
+                value.enchantmentValue(),
+                value.equipSound(),
+                value.repairIngredient(),
+                value.layers(),
+                value.toughness(),
+                value.knockbackResistance()
         );
     }
 

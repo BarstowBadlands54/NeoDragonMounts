@@ -70,7 +70,7 @@ public class DragonNestPiece extends TemplateStructurePiece {
     protected void handleDataMarker(String name, BlockPos pos, ServerLevelAccessor level, RandomSource random, BoundingBox box) {
         switch (name) {
             case "Sentry" -> {
-                var shulker = EntityType.SHULKER.create(level.getLevel(), MobSpawnType.STRUCTURE);
+                var shulker = EntityType.SHULKER.create(level.getLevel());
                 if (shulker != null) {
                     shulker.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                     level.addFreshEntity(shulker);

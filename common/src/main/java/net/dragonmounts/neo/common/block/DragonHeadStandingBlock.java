@@ -38,7 +38,7 @@ public class DragonHeadStandingBlock extends DragonHeadBlock {
     }
 
     @Override
-    protected VoxelShape getOcclusionShape(BlockState state) {
+    protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
 

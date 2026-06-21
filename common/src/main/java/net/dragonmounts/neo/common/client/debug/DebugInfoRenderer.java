@@ -2,6 +2,7 @@ package net.dragonmounts.neo.common.client.debug;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -50,11 +51,12 @@ public enum DebugInfoRenderer implements DebugRenderer.SimpleDebugRenderer {
             }
         }
         var buffer = buffers.getBuffer(RenderType.lines());
+        // 1.21.1: renderVoxelShape lives on LevelRenderer (moved to DebugRenderer in 1.21.4); identical signature
         for (var shape : this.boxShapes) {
-            DebugRenderer.renderVoxelShape(matrices, buffer, shape, -camX, -camY, -camZ, 1.0F, 1.0F, 1.0F, 1.0F, true);
+            LevelRenderer.renderVoxelShape(matrices, buffer, shape, -camX, -camY, -camZ, 1.0F, 1.0F, 1.0F, 1.0F, true);
         }
         for (var shape : this.pointShapes) {
-            DebugRenderer.renderVoxelShape(matrices, buffer, shape, -camX, -camY, -camZ, 1.0F, 1.0F, 1.0F, 1.0F, true);
+            LevelRenderer.renderVoxelShape(matrices, buffer, shape, -camX, -camY, -camZ, 1.0F, 1.0F, 1.0F, 1.0F, true);
         }
     }
 }

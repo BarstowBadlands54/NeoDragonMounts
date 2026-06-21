@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -75,21 +76,21 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResult.PASS;
-        if (!(level instanceof ServerLevel world)) return InteractionResult.SUCCESS;
-        var pos = hit.getBlockPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResult.PASS;
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
+        var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
+        if (!(level instanceof ServerLevel world)) return InteractionResultHolder.success(stack);
+        var pos = hit.getBlockPos();
+        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.pass(stack);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
             world.addFreshEntityWithPassengers(this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
             stack.consume(1, player);
             player.awardStat(Stats.ITEM_USED.get(this));
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(stack);
         }
-        return InteractionResult.FAIL;
+        return InteractionResultHolder.fail(stack);
     }
 
     @Override

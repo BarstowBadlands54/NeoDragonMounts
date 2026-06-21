@@ -2,9 +2,9 @@ package net.dragonmounts.neo.common.client.variant;
 
 import net.dragonmounts.neo.common.client.DMParticleSprites;
 import net.dragonmounts.neo.common.client.breath.impl.*;
-import net.dragonmounts.neo.common.client.model.dragon.BuiltinFactory;
 import net.dragonmounts.neo.common.init.DragonArmorMaterials;
 import net.minecraft.resources.ResourceLocation;
+import org.gradle.internal.impldep.org.apache.sshd.common.BuiltinFactory;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
@@ -20,14 +20,13 @@ public class VariantAppearances {
     }
 
     public static void registerArmorTextures(@Nullable String category, ResourceLocation folder) {
-        registerArmorTexture(category, DragonArmorMaterials.COPPER.assetId(), folder.withSuffix("/copper.png"));
-        registerArmorTexture(category, DragonArmorMaterials.IRON.assetId(), folder.withSuffix("/iron.png"));
-        registerArmorTexture(category, DragonArmorMaterials.GOLD.assetId(), folder.withSuffix("/gold.png"));
-        registerArmorTexture(category, DragonArmorMaterials.EMERALD.assetId(), folder.withSuffix("/emerald.png"));
-        registerArmorTexture(category, DragonArmorMaterials.DIAMOND.assetId(), folder.withSuffix("/diamond.png"));
-        registerArmorTexture(category, DragonArmorMaterials.NETHERITE.assetId(), folder.withSuffix("/netherite.png"));
+        registerArmorTexture(category, makeId("copper_dragon_armor"),    folder.withSuffix("/copper.png"));
+        registerArmorTexture(category, makeId("iron_dragon_armor"),      folder.withSuffix("/iron.png"));
+        registerArmorTexture(category, makeId("golden_dragon_armor"),    folder.withSuffix("/gold.png"));
+        registerArmorTexture(category, makeId("emerald_dragon_armor"),   folder.withSuffix("/emerald.png"));
+        registerArmorTexture(category, makeId("diamond_dragon_armor"),   folder.withSuffix("/diamond.png"));
+        registerArmorTexture(category, makeId("netherite_dragon_armor"), folder.withSuffix("/netherite.png"));
     }
-
     public static final VariantAppearance AETHER_FEMALE;
     public static final VariantAppearance AETHER_MALE;
     public static final VariantAppearance BREEZE;

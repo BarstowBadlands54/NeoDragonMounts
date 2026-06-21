@@ -16,6 +16,7 @@ public interface DMItemTags {
     TagKey<Item> DRAGON_INEDIBLE = create("dragon_inedible");
     TagKey<Item> COOKED_DRAGON_FOODS = create("cooked_dragon_foods");
     TagKey<Item> RAW_DRAGON_FOODS = create("raw_dragon_foods");
+    TagKey<Item> DRAGON_ARMOR = create("dragon_armor");
     TagKey<Item> BATONS = create("batons");
     TagKey<Item> HARD_SHEARS = create("hard_shears");
     TagKey<Item> DRAGON_SADDLES = create("dragon_saddles");

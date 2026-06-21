@@ -6,13 +6,9 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
-import static net.dragonmounts.neo.common.client.renderer.DMCoreShaders.RENDERTYPE_ENTITY_CUTOUT_DECAL;
-import static net.dragonmounts.neo.common.client.renderer.DMCoreShaders.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL;
-
 public abstract class RenderStateAccessor extends RenderStateShard {
-    public static final ShaderStateShard RENDERTYPE_ENTITY_CUTOUT_DECAL_SHADER = new ShaderStateShard(RENDERTYPE_ENTITY_CUTOUT_DECAL);
-    public static final ShaderStateShard RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL_SHADER = new ShaderStateShard(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL);
-
+    public static final ShaderStateShard RENDERTYPE_ENTITY_CUTOUT_DECAL_SHADER = new ShaderStateShard(DMCoreShaders::getEntityCutoutDecal);
+    public static final ShaderStateShard RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL_SHADER = new ShaderStateShard(DMCoreShaders::getEntityTranslucentEmissiveDecal);
     public static RenderType entityCutoutDecal(ResourceLocation texture, ResourceLocation mask) {
         return RenderType.create(
                 "entity_cutout_decal",
