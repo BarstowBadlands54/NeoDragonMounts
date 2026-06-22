@@ -75,6 +75,9 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final TranslatableContents name;
     public final ArmorMaterial material;
     public final Tier tier;
+    public final ResourceLocation geoModel;
+    public final ResourceLocation headGeoModel;
+    public final ResourceLocation texture;
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
@@ -95,12 +98,27 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.eggParticle = builder.eggParticle;
         this.scaleColor = builder.scaleColor;
         this.name = new TranslatableContents(this.makeDescriptionId(), null, TranslatableContents.NO_ARGS);
-        this.material = builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
+        this.material = builder.material == null ? null : builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
         this.tier = builder.tier == null ? null : builder.tier.build(builder.scales);
+        this.geoModel = builder.geoModel;
+        this.headGeoModel = builder.headGeoModel;
+        this.texture = builder.texture;
     }
 
     public final ResourceLocation getId() {
         return this.identifier;
+    }
+
+    public ResourceLocation geoModel() {
+        return this.geoModel;
+    }
+
+    public ResourceLocation headGeoModel() {
+        return this.headGeoModel;
+    }
+
+    public ResourceLocation texture() {
+        return this.texture;
     }
 
     protected String makeDescriptionId() {
@@ -151,8 +169,8 @@ public class DragonType implements TooltipProvider, DragonTypified {
         return dragon.isBaby()
                 ? DMSounds.DRAGON_PURR_HATCHLING
                 : dragon.getRandom().nextFloat() < 0.33F
-                ? DMSounds.DRAGON_PURR
-                : DMSounds.DRAGON_AMBIENT;
+                  ? DMSounds.DRAGON_PURR
+                  : DMSounds.DRAGON_AMBIENT;
     }
 
     public SoundEvent getDeathSound(TameableDragonEntity dragon) {

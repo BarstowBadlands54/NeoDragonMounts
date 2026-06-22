@@ -52,11 +52,15 @@ public class DragonTypes {
         var tier = new ItemTierBuilder(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 2700, 8.0F, 5.0F)
                 .setEnchantmentValue(11);
         MOONLIGHT = new DragonTypeBuilder(0x2C427C, material, tier)
+                .model("normal", "base")
+                .texture(makeId("textures/entity/dragon/moonlight/female/body.png"))
                 .setMaterial(DMItemTags.MOONLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLUE)
                 .addHabitat(Blocks.BLUE_GLAZED_TERRACOTTA)
                 .register(MoonlightType::new, makeId("moonlight"));
         TERRA = new DragonTypeBuilder(0xA56C21, material, tier)
+                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .texture(makeId("textures/entity/dragon/terra/female/body.png"))
                 .setMaterial(DMItemTags.TERRA_DRAGON_SCALES)
                 .setScaleColor(MapColor.DIRT)
                 .addHabitat(Blocks.TERRACOTTA)
@@ -77,6 +81,8 @@ public class DragonTypes {
                 //.addHabitat(BiomeKeys.MUTATED_MESA_ROCK)
                 .register(TerraType::new, makeId("terra"));
         ZOMBIE = new DragonTypeBuilder(0x5A5602, material, tier)
+                .model("winged_horned", "winged_horned")   // TODO confirm body shape (old COMPAT_TAIL_HORNED)
+                .texture(makeId("textures/entity/dragon/zombie/body.png"))
                 .setMaterial(DMItemTags.ZOMBIE_DRAGON_SCALES)
                 .setScaleColor(MapColor.TERRACOTTA_GREEN)
                 .addImmunity(DamageTypes.MAGIC)
@@ -89,6 +95,8 @@ public class DragonTypes {
                 .addHabitat(Blocks.WARPED_WART_BLOCK)
                 .register(ZombieType::new, makeId("zombie"));
         DARK = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
+                .model("normal", "base")
+                .texture(makeId("textures/entity/dragon/dark/female/body.png"))
                 .setMaterial(DMItemTags.DARK_DRAGON_SCALES)
                 .setScaleColor(MapColor.DEEPSLATE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -98,6 +106,8 @@ public class DragonTypes {
                 .register(DarkType::new, makeId("dark"));
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
+                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .texture(makeId("textures/entity/dragon/aether/female/body.png"))
                 .setMaterial(DMItemTags.AETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_LIGHT_BLUE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -110,6 +120,8 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAPIS_ORE)
                 .register(AetherType::new, makeId("aether"));
         FIRE = new DragonTypeBuilder(0x960B0F, material, tier)
+                .model("normal", "base")
+                .texture(makeId("textures/entity/dragon/fire/female/body.png"))
                 .setMaterial(DMItemTags.FIRE_DRAGON_SCALES)
                 .setScaleColor(MapColor.FIRE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -127,6 +139,8 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
+                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .texture(makeId("textures/entity/dragon/forest/forest/female_body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
                 .addImmunity(DamageTypes.MAGIC)
@@ -147,6 +161,8 @@ public class DragonTypes {
                 .addHabitat(Biomes.JUNGLE)
                 .register(ForestType::new, makeId("forest"));
         ICE = new DragonTypeBuilder(0x00F2FF, material, tier)
+                .model("tail_scale_inclined", "base")
+                .texture(makeId("textures/entity/dragon/ice/female/body.png"))
                 .setMaterial(DMItemTags.ICE_DRAGON_SCALES)
                 .setScaleColor(MapColor.SNOW)
                 .addImmunity(DamageTypes.MAGIC)
@@ -161,10 +177,14 @@ public class DragonTypes {
                 .addHabitat(Biomes.FROZEN_RIVER)
                 .register(IceType::new, makeId("ice"));
         STORM = new DragonTypeBuilder(0xF5F1E9, material, tier)
+                .model("tail_horned", "base")
+                .texture(makeId("textures/entity/dragon/storm/female/body.png"))
                 .setMaterial(DMItemTags.STORM_DRAGON_SCALES)
                 .setScaleColor(MapColor.WOOL)
                 .register(StormType::new, makeId("storm"));
         SUNLIGHT = new DragonTypeBuilder(0xFFDE00, material, tier)
+                .model("normal", "base")
+                .texture(makeId("textures/entity/dragon/sunlight/female/body.png"))
                 .setMaterial(DMItemTags.SUNLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_YELLOW)
                 .addHabitat(Blocks.GLOWSTONE)
@@ -173,6 +193,8 @@ public class DragonTypes {
                 .addHabitat(Blocks.YELLOW_GLAZED_TERRACOTTA)
                 .register(SunlightType::new, makeId("sunlight"));
         WATER = new DragonTypeBuilder(0x4F69A8, material, tier)
+                .model("scale_sharpened", "base")
+                .texture(makeId("textures/entity/dragon/water/female/body.png"))
                 .setMaterial(DMItemTags.WATER_DRAGON_SCALES)
                 .setScaleColor(MapColor.WATER)
                 .addImmunity(DamageTypes.DROWN)
@@ -186,6 +208,8 @@ public class DragonTypes {
                 .register(WaterType::new, makeId("water"));
         //modify builder
         ENCHANTED = new DragonTypeBuilder(0x8359AE, material.setEnchantmentValue(30), tier.setEnchantmentValue(30))
+                .model("normal", "base")
+                .texture(makeId("textures/entity/dragon/enchanted/female/body.png"))
                 .setMaterial(DMItemTags.ENCHANTED_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_PURPLE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -201,6 +225,8 @@ public class DragonTypes {
                 .setToughness(9.0F);
         tier = new ItemTierBuilder(netherite, 3000, 8.0F, 6.0F).setEnchantmentValue(11);
         ENDER = new DragonTypeBuilder(0xAB39BE, material, tier)
+                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .texture(makeId("textures/entity/dragon/ender/female/body.png"))
                 .setMaterial(DMItemTags.ENDER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)
                 .notConvertible()
@@ -213,6 +239,8 @@ public class DragonTypes {
                 .setEggParticle(ParticleTypes.PORTAL)
                 .register(EnderType::new, DragonType.DEFAULT_KEY);
         SCULK = new DragonTypeBuilder(0x29DFEB, material, tier)
+                .model("sculk", "base")
+                .texture(makeId("textures/entity/dragon/sculk/wild_type/body.png"))
                 .setMaterial(DMItemTags.SCULK_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)
                 .notConvertible()
@@ -224,6 +252,8 @@ public class DragonTypes {
                 .register(SculkType::new, makeId("sculk"));
         //modify builders
         NETHER = new DragonTypeBuilder(0xE5B81B, material.setDurabilityFactor(55).setToughness(8.0F), new ItemTierBuilder(netherite, 2700, 8.0F, 6.0F).setEnchantmentValue(11))
+                .model("scale_sharpened", "base")
+                .texture(makeId("textures/entity/dragon/nether/female/body.png"))
                 .setMaterial(DMItemTags.NETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.NETHER)
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, 5.0D, AttributeModifier.Operation.ADD_VALUE)
@@ -236,6 +266,8 @@ public class DragonTypes {
                 .register(NetherType::new, makeId("nether"));
         //no scale items
         SKELETON = new DragonTypeBuilder(0xFFFFFF, null, null)
+                .model("skeleton", "skeleton")
+                .texture(makeId("textures/entity/dragon/skeleton/normal/body.png"))
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, -15.0D, AttributeModifier.Operation.ADD_VALUE)
                 .setScaleColor(MapColor.QUARTZ)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
@@ -243,6 +275,8 @@ public class DragonTypes {
                 .addHabitat(Blocks.BONE_BLOCK)
                 .register(SkeletonType::new, makeId("skeleton"));
         WITHER = new DragonTypeBuilder(0x50260A, null, null)
+                .model("spiked_horned", "spiked_horns")   // TODO confirm body shape (old WITHER)
+                .texture(makeId("textures/entity/dragon/wither/body.png"))
                 .notConvertible()
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, -10.0D, AttributeModifier.Operation.ADD_VALUE)
                 .setScaleColor(MapColor.COLOR_GRAY)

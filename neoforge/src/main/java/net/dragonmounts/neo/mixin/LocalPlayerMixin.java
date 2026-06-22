@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import net.dragonmounts.neo.common.api.AutoJumpRideable;
-import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.PlayerRideableJumping;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,8 +22,9 @@ public abstract class LocalPlayerMixin {
     @Shadow
     private float jumpRidingScale;
 
+    // 1.21.1: LocalPlayer.input is net.minecraft.client.player.Input (ClientInput is 1.21.4+).
     @Shadow
-    public ClientInput input;
+    public Input input;
 
     @Shadow
     protected abstract void sendRidingJump();
@@ -41,7 +42,7 @@ public abstract class LocalPlayerMixin {
         if (jumping && original == 0 &&
                 vehicle instanceof AutoJumpRideable rideable &&
                 this.jumpRidingTicks >= 9 &&
-                this.input.keyPresses.jump()
+                this.input.jumping
         ) {
             jumped.set(true);
             rideable.onPlayerJump(100);

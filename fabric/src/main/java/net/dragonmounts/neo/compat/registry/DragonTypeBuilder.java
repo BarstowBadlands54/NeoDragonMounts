@@ -40,6 +40,10 @@ public final class DragonTypeBuilder {
     public @NotNull ParticleOptions eggParticle = ParticleTypes.MYCELIUM;
     public @NotNull MapColor scaleColor = MapColor.NONE;
     public TagKey<Item> scales;
+    public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.normal.geo.json");
+    public ResourceLocation headGeoModel = makeId("geo/head/dragonmounts2.head_block.base.geo.json");
+    public ResourceLocation texture;
+
 
     public DragonTypeBuilder(int color, @Nullable ArmorMaterialBuilder material, @Nullable ItemTierBuilder tier) {
         this.color = color;
@@ -105,5 +109,19 @@ public final class DragonTypeBuilder {
             ResourceLocation identifier
     ) {
         return factory.apply(identifier, this);
+    }
+
+    /// Sets the body + head GeckoLib geo model paths from their shape tokens.
+    /// Body  -> assets/neodragonmounts/geo/model/dragonmounts2.dragon.&lt;bodyShape&gt;.geo.json
+    /// Head  -> assets/neodragonmounts/geo/head/dragonmounts2.head_block.&lt;headShape&gt;.geo.json
+    public DragonTypeBuilder model(String bodyShape, String headShape) {
+        this.geoModel = makeId("geo/model/dragonmounts2.dragon." + bodyShape + ".geo.json");
+        this.headGeoModel = makeId("geo/head/dragonmounts2.head_block." + headShape + ".geo.json");
+        return this;
+    }
+
+    public DragonTypeBuilder texture(ResourceLocation texture) {
+        this.texture = texture;
+        return this;
     }
 }

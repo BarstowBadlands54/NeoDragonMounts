@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin {
     @ModifyExpressionValue(
-            method = "renderItemCooldown",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemCooldowns;getCooldownPercent(Lnet/minecraft/world/item/ItemStack;F)F")
+            method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemCooldowns;getCooldownPercent(Lnet/minecraft/world/item/Item;F)F")
     )
     public float getCooldown(float original, @Local(argsOnly = true) ItemStack stack) {
         if (stack.getItem() instanceof DragonScaleArmorItem armor && armor.effect instanceof DescribedArmorEffect.Advanced advanced) {

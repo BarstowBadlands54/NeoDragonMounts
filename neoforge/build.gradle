@@ -50,8 +50,19 @@ neoForge {
     }
 }
 
+repositories {
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+}
+
 dependencies {
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 }
 
-sourceSets.main.resources { srcDir 'src/main/generated' }
+//sourceSets.main.resources { srcDir 'src/main/generated' }

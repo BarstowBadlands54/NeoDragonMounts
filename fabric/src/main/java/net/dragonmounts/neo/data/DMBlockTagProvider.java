@@ -54,7 +54,7 @@ public class DMBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                         Blocks.SWEET_BERRY_BUSH,
                         Blocks.LILY_PAD,
                         Blocks.MOSS_CARPET,
-                        Blocks.PALE_MOSS_CARPET,
+//                        Blocks.PALE_MOSS_CARPET,
                         Blocks.SUGAR_CANE,
                         Blocks.CACTUS,
                         // Nether:

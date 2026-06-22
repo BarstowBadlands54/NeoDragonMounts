@@ -89,7 +89,7 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
 
     /// @see #createShearsOnlyDrop(ItemLike)
     public void fixShearsOnlyDrop() {
-        Function<Block, LootTable.Builder> fixer = this::createShearsOnlyDrop;
+        Function<Block, LootTable.Builder> fixer = block -> createShearsOnlyDrop(block);
         this.add(Blocks.NETHER_SPROUTS, fixer);
         this.add(Blocks.SEAGRASS, fixer);
         this.add(Blocks.VINE, fixer);
@@ -123,9 +123,8 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
         this.fixNetherVinesDropTable();
     }
 
-    /// @see #createShearsOrSilkTouchOnlyDrop(ItemLike)
+    /// PALE_HANGING_MOSS + createShearsOrSilkTouchOnlyDrop are 1.21.4-only; nothing to fix on 1.21.1.
     public void fixShearsOrSilkTouchOnlyDrop() {
-        this.add(Blocks.PALE_HANGING_MOSS, this::createShearsOrSilkTouchOnlyDrop);
     }
 
     /// @see #createGrassDrops(Block)
@@ -140,7 +139,6 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
         this.add(Blocks.BIRCH_LEAVES, block -> this.createLeavesDrops(block, Blocks.BIRCH_SAPLING, NORMAL_LEAVES_SAPLING_CHANCES));
         this.add(Blocks.JUNGLE_LEAVES, block -> this.createLeavesDrops(block, Blocks.JUNGLE_SAPLING, 0.025F, 0.027777778F, 0.03125F, 0.041666668F, 0.1F));
         this.add(Blocks.ACACIA_LEAVES, block -> this.createLeavesDrops(block, Blocks.ACACIA_SAPLING, NORMAL_LEAVES_SAPLING_CHANCES));
-        this.add(Blocks.PALE_OAK_LEAVES, block -> this.createLeavesDrops(block, Blocks.PALE_OAK_SAPLING, NORMAL_LEAVES_SAPLING_CHANCES));
         this.add(Blocks.CHERRY_LEAVES, block -> this.createLeavesDrops(block, Blocks.CHERRY_SAPLING, NORMAL_LEAVES_SAPLING_CHANCES));
         this.add(Blocks.AZALEA_LEAVES, block -> this.createLeavesDrops(block, Blocks.AZALEA, NORMAL_LEAVES_SAPLING_CHANCES));
         this.add(Blocks.FLOWERING_AZALEA_LEAVES, block -> this.createLeavesDrops(block, Blocks.FLOWERING_AZALEA, NORMAL_LEAVES_SAPLING_CHANCES));
@@ -165,7 +163,7 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
 
     @Override
     public LootItemCondition.@NotNull Builder hasShears() {
-        return MatchTool.toolMatches(ItemPredicate.Builder.item().of(this.registries.lookupOrThrow(Registries.ITEM), ConventionalItemTags.SHEAR_TOOLS));
+        return MatchTool.toolMatches(ItemPredicate.Builder.item().of(ConventionalItemTags.SHEAR_TOOLS));
     }
 
     @Override

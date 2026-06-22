@@ -2,6 +2,7 @@ package net.dragonmounts.neo.common.client;
 
 import net.dragonmounts.neo.common.client.breath.impl.ClientBreathHelper;
 import net.dragonmounts.neo.common.component.DragonFood;
+import net.dragonmounts.neo.common.entity.ai.control.DragonHeadLocator;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMSounds;
@@ -26,7 +27,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 
 public class ClientDragonEntity extends TameableDragonEntity {
-//    public final DragonAnimator animator = new DragonAnimator(this);
+    public final DragonHeadLocator<ClientDragonEntity> headLocator = new DragonHeadLocator<>(this);
     public int controlFlags;
     private float pendingJumpPower;
     private boolean wasOnGround;
@@ -42,8 +43,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
     }
 
     public final @NotNull Vec3 getHeadRelativeOffset(float x, float y, float z) {
-        ClientDragonEntity DragonHeadLocator = this;
-        return DragonHeadLocator.getHeadRelativeOffset(x, y, z);
+        return headLocator.getHeadRelativeOffset(x,y,z);
     }
 
     /**

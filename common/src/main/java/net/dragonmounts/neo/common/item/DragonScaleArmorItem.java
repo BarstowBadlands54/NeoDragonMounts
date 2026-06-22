@@ -17,7 +17,7 @@ public class DragonScaleArmorItem extends ArmorItem implements DragonTypified {
 
     public DragonScaleArmorItem(DragonType type, DescribedArmorEffect effect, ArmorItem.Type slot, Properties props) {
         // 1.21.1 ArmorItem takes Holder<ArmorMaterial>; type.material is a raw ArmorMaterial -> wrap it.
-        super(Holder.direct(type.material).value(), slot, props.component(DMDataComponents.DRAGON_TYPE, type));
+        super(Holder.direct(type.material), slot, props.component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
         this.effect = effect;
     }

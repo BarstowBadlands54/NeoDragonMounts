@@ -43,6 +43,10 @@ public final class DragonTypeBuilder {
     public @NotNull ParticleOptions eggParticle = ParticleTypes.MYCELIUM;
     public @NotNull MapColor scaleColor = MapColor.NONE;
     public TagKey<Item> scales;
+    public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.normal.geo.json");
+    public ResourceLocation headGeoModel = makeId("geo/head/dragonmounts2.head_block.base.geo.json");
+    public ResourceLocation texture;
+
 
     public DragonTypeBuilder(int color, @Nullable ArmorMaterialBuilder material, @Nullable ItemTierBuilder tier) {
         this.color = color;
@@ -110,6 +114,17 @@ public final class DragonTypeBuilder {
         var type = factory.apply(identifier, this);
         INSTANCES.add(type);
         return type;
+    }
+
+    public DragonTypeBuilder model(String bodyShape, String headShape) {
+        this.geoModel = makeId("geo/model/dragonmounts2.dragon." + bodyShape + ".geo.json");
+        this.headGeoModel = makeId("geo/head/dragonmounts2.head_block." + headShape + ".geo.json");
+        return this;
+    }
+
+    public DragonTypeBuilder texture(ResourceLocation texture) {
+        this.texture = texture;
+        return this;
     }
 
     public static void register(RegisterEvent.RegisterHelper<DragonType> registry) {

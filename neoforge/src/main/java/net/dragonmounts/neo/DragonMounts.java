@@ -214,15 +214,15 @@ public class DragonMounts {
         // ---- server data ----
         generator.addProvider(event.includeServer(), new DMRecipeProvider(output, lookup));
         generator.addProvider(event.includeServer(), new DMLootProvider(output, lookup));
-        generator.addProvider(event.includeServer(), new DMBiomeTagProvider(output, lookup, existing));
-        generator.addProvider(event.includeServer(), new DMEntityTagProvider(output, lookup, existing));
-        generator.addProvider(event.includeServer(), new DMStructureTagProvider(output, lookup, existing));
-        var blockTags = new DMBlockTagProvider(output, lookup, existing);
+        generator.addProvider(event.includeServer(), new DMBiomeTagProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new DMEntityTagProvider(output, lookup));
+        generator.addProvider(event.includeServer(), new DMStructureTagProvider(output, lookup));
+        var blockTags = new DMBlockTagProvider(output, lookup);
         generator.addProvider(event.includeServer(), blockTags);
-        generator.addProvider(event.includeServer(), new DMItemTagProvider(output, lookup, blockTags.contentsGetter(), existing));
+        generator.addProvider(event.includeServer(), new DMItemTagProvider(output, lookup, blockTags.contentsGetter()));
 
         // ---- client data ----
         generator.addProvider(event.includeClient(), new DMModelProvider(output, existing));
-        generator.addProvider(event.includeClient(), new DMBlockStateProvider(output, existing));
+//        generator.addProvider(event.includeClient(), new DMBlockStateProvider(output, existing));
     }
 }

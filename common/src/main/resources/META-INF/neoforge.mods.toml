@@ -6,7 +6,7 @@ issueTrackerURL="https://github.com/DragonMounts-Team/NeoDragonMounts/issues"
 modId = "neodragonmounts" #mandatory
 version = "0.1.0" #mandatory
 displayName = "Dragon Mounts 2" #mandatory
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional (see https://docs.neoforged.net/docs/misc/updatechecker/)
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optionaCaused by: org.apache.maven.artifact.versioning.InvalidVersionSpecificationException: Single version must be surrounded by []: [1.21.1)l (see https://docs.neoforged.net/docs/misc/updatechecker/)
 displayURL="https://github.com/DragonMounts-Team/NeoDragonMounts"
 logoFile="neodragonmounts.png" #optional
 credits="" #optional
@@ -23,7 +23,7 @@ side = "BOTH" # Side this dependency is applied on - 'BOTH', 'CLIENT' or 'SERVER
 [[dependencies.neodragonmounts]]
 modId = "minecraft"
 type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
-versionRange = "[1.21.4, 1.21.5)"
+versionRange = "[1.21.1]"
 ordering = "NONE"
 side = "BOTH"
 

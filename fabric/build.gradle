@@ -31,9 +31,15 @@ dependencies {
     modCompileOnly "software.bernie.geckolib:geckolib-common-${minecraft_version}:${geckolib_version}"
 }
 
+//fabricApi {
+//    configureDataGeneration {
+//        client = true
+//    }
+//}
+
 fabricApi {
     configureDataGeneration {
-        client = true
+        outputDirectory = file("src/main/generated")
     }
 }
 

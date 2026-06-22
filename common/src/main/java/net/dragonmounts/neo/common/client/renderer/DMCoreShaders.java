@@ -3,28 +3,37 @@ package net.dragonmounts.neo.common.client.renderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * 1.21.1 has no {@code ShaderProgram}/{@code ShaderDefines} handles. Core shaders are
- * {@link ShaderInstance} objects that must be built during shader registration (they need a
- * {@code ResourceProvider} and can throw {@code IOException}), so they cannot be {@code static final}.
- * <p>
- * These fields are populated by the loader-specific registration hooks (NeoForge
- * {@code RegisterShadersEvent}, Fabric {@code CoreShaderRegistrationCallback}) and consumed by
- * RenderTypes via {@code new RenderStateShard.ShaderStateShard(DMCoreShaders::getEntityCutoutDecal)}.
- */
-public class DMCoreShaders {
+/// 1.21.1 port of the dragon decal core shaders.
+///
+/// 1.21.4 registered these as `ShaderProgram` constants appended to `CoreShaders.PROGRAMS`
+/// via a mixin. That whole system is absent in 1.21.1, so instead the shaders are loaded
+/// through Fabric's `CoreShaderRegistrationCallback` (registered in the fabric client init)
+/// and stashed here as `ShaderInstance`s. The `RenderType` `ShaderStateShard`s read them back
+/// through the getters (`new ShaderStateShard(DMCoreShaders::getEntityCutoutDecal)`), and the
+/// callback writes them through the setters (`context.register(id, fmt, DMCoreShaders::setEntityCutoutDecal)`).
+public final class DMCoreShaders {
     @Nullable
-    public static ShaderInstance rendertypeEntityCutoutDecal;
+    private static ShaderInstance entityCutoutDecal;
     @Nullable
-    public static ShaderInstance rendertypeEntityTranslucentEmissiveDecal;
+    private static ShaderInstance entityTranslucentEmissiveDecal;
+
+    public static void setEntityCutoutDecal(@Nullable ShaderInstance shader) {
+        entityCutoutDecal = shader;
+    }
 
     @Nullable
     public static ShaderInstance getEntityCutoutDecal() {
-        return rendertypeEntityCutoutDecal;
+        return entityCutoutDecal;
+    }
+
+    public static void setEntityTranslucentEmissiveDecal(@Nullable ShaderInstance shader) {
+        entityTranslucentEmissiveDecal = shader;
     }
 
     @Nullable
     public static ShaderInstance getEntityTranslucentEmissiveDecal() {
-        return rendertypeEntityTranslucentEmissiveDecal;
+        return entityTranslucentEmissiveDecal;
     }
+
+    private DMCoreShaders() {}
 }

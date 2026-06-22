@@ -23,7 +23,7 @@ public class DragonScaleShieldItem extends ShieldItem implements DragonTypified 
 
     @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return this.type.material.value().repairIngredient().get().test(repair);
+        return this.type.material.repairIngredient().get().test(repair);
     }
 
     @Override

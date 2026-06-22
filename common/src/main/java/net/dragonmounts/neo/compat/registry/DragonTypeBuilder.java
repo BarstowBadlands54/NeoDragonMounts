@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import net.dragonmounts.neo.common.util.ArmorMaterialBuilder;
 import net.dragonmounts.neo.common.util.ItemTierBuilder;
-import net.dragonmounts.neo.compat.Dummy;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,7 +12,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
@@ -41,58 +40,87 @@ public final class DragonTypeBuilder {
     public @NotNull ParticleOptions eggParticle = ParticleTypes.MYCELIUM;
     public @NotNull MapColor scaleColor = MapColor.NONE;
     public TagKey<Item> scales;
+    public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.normal.geo.json");
+    public ResourceLocation headGeoModel = makeId("geo/head/dragonmounts2.head_block.base.geo.json");
+    public ResourceLocation texture;
 
     public DragonTypeBuilder(int color, @Nullable ArmorMaterialBuilder material, @Nullable ItemTierBuilder tier) {
         this.color = color;
         this.tier = tier;
         this.material = material;
+        // ignore suffocation damage
+        this.addImmunity(DamageTypes.ON_FIRE).addImmunity(DamageTypes.IN_FIRE)
+                .addImmunity(DamageTypes.HOT_FLOOR)
+                .addImmunity(DamageTypes.LAVA)
+                .addImmunity(DamageTypes.DROWN)
+                .addImmunity(DamageTypes.IN_WALL)
+                .addImmunity(DamageTypes.CACTUS) // assume that cactus needles don't do much damage to animals with horned scales
+                .addImmunity(DamageTypes.DRAGON_BREATH); // ignore damage from vanilla ender dragon. I kinda disabled this because it wouldn't make any sense, feel free to re enable
     }
 
     public DragonTypeBuilder notConvertible() {
-        return Dummy.get();
+        this.convertible = false;
+        return this;
     }
 
     public DragonTypeBuilder putAttributeModifier(Holder<Attribute> attribute, ResourceLocation identifier, double value, AttributeModifier.Operation operation) {
-        return Dummy.get();
+        this.attributes.put(attribute, new AttributeModifier(identifier, value, operation));
+        return this;
     }
 
     public DragonTypeBuilder addImmunity(ResourceKey<DamageType> type) {
-        return Dummy.get();
-    }
-    public DragonTypeBuilder addEffectImmunity(Holder<MobEffect> potioneffect) {
-        return Dummy.get();
+        this.immunities.add(type);
+        return this;
     }
 
     public DragonTypeBuilder addHabitat(Block block) {
-        return Dummy.get();
+        this.blocks.add(block);
+        return this;
     }
 
     public DragonTypeBuilder addHabitat(ResourceKey<Biome> biome) {
-        return Dummy.get();
+        this.biomes.add(biome);
+        return this;
     }
 
     public DragonTypeBuilder setSneezeParticle(SimpleParticleType particle) {
-        return Dummy.get();
+        this.sneezeParticle = particle;
+        return this;
     }
 
     public DragonTypeBuilder setEggParticle(SimpleParticleType particle) {
-        return Dummy.get();
+        this.eggParticle = particle;
+        return this;
     }
 
     public DragonTypeBuilder setMaterial(TagKey<Item> material) {
-        return Dummy.get();
+        this.scales = material;
+        return this;
     }
 
     public DragonTypeBuilder setScaleColor(MapColor color) {
-        return Dummy.get();
+        this.scaleColor = color;
+        return this;
+    }
+
+    /// Sets the body + head GeckoLib geo model paths from their shape tokens.
+    /// Body  -> assets/neodragonmounts/geo/model/dragonmounts2.dragon.&lt;bodyShape&gt;.geo.json
+    /// Head  -> assets/neodragonmounts/geo/head/dragonmounts2.head_block.&lt;headShape&gt;.geo.json
+    public DragonTypeBuilder model(String bodyShape, String headShape) {
+        this.geoModel = makeId("geo/model/dragonmounts2.dragon." + bodyShape + ".geo.json");
+        this.headGeoModel = makeId("geo/head/dragonmounts2.head_block." + headShape + ".geo.json");
+        return this;
+    }
+
+    public DragonTypeBuilder texture(ResourceLocation texture) {
+        this.texture = texture;
+        return this;
     }
 
     public <T extends DragonType> T register(
             BiFunction<ResourceLocation, DragonTypeBuilder, T> factory,
             ResourceLocation identifier
     ) {
-        return Dummy.get();
+        return factory.apply(identifier, this);
     }
-
-
 }

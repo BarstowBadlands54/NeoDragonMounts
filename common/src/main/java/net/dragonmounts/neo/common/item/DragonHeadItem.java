@@ -9,9 +9,14 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.Block;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class DragonHeadItem extends StandingAndWallBlockItem implements DragonTypified, Equipable {
+public class DragonHeadItem extends StandingAndWallBlockItem implements DragonTypified, Equipable, GeoItem {
     public final DragonVariant variant;
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public DragonHeadItem(DragonVariant variant, Block standing, Block wall, Properties props) {
         // 1.21.1: ctor order is (Block, Block, Properties, Direction); no equippableUnswappable -- use Equipable
@@ -27,5 +32,16 @@ public class DragonHeadItem extends StandingAndWallBlockItem implements DragonTy
     @Override
     public DragonType getDragonType() {
         return this.variant.type;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // Item GUI/hand render uses the same head geo model; no animation controllers needed
+        // for a static display. Add controllers here if the held item should animate.
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 }

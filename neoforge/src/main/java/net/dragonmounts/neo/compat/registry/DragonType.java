@@ -83,6 +83,9 @@ public class DragonType implements TooltipProvider, DragonTypified {
     private final Set<Block> blocks;
     private final Set<ResourceKey<Biome>> biomes;
     private ResourceKey<LootTable> lootTable;
+    public final ResourceLocation geoModel;
+    public final ResourceLocation headGeoModel;
+    public final ResourceLocation texture;
 
     public DragonType(ResourceLocation identifier, DragonTypeBuilder builder) {
         this.identifier = identifier;
@@ -97,8 +100,23 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.eggParticle = builder.eggParticle;
         this.scaleColor = builder.scaleColor;
         this.name = new TranslatableContents(this.makeDescriptionId(), null, TranslatableContents.NO_ARGS);
-        this.material = builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
+        this.material = builder.material == null ? null : builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
         this.tier = builder.tier == null ? null : builder.tier.build(builder.scales);
+        this.geoModel = builder.geoModel;
+        this.headGeoModel = builder.headGeoModel;
+        this.texture = builder.texture;
+    }
+
+    public ResourceLocation geoModel() {
+        return this.geoModel;
+    }
+
+    public ResourceLocation headGeoModel() {
+        return this.headGeoModel;
+    }
+
+    public ResourceLocation texture() {
+        return this.texture;
     }
 
     public final ResourceLocation getId() {

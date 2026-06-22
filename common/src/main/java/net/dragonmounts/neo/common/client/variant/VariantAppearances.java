@@ -2,9 +2,7 @@ package net.dragonmounts.neo.common.client.variant;
 
 import net.dragonmounts.neo.common.client.DMParticleSprites;
 import net.dragonmounts.neo.common.client.breath.impl.*;
-import net.dragonmounts.neo.common.init.DragonArmorMaterials;
 import net.minecraft.resources.ResourceLocation;
-import org.gradle.internal.impldep.org.apache.sshd.common.BuiltinFactory;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
@@ -15,8 +13,10 @@ import static net.dragonmounts.neo.common.client.variant.DefaultAppearance.regis
 import static net.dragonmounts.neo.common.client.variant.VariantAppearance.TEXTURES_ROOT;
 
 public class VariantAppearances {
-    public static DefaultAppearance.Builder builder(BuiltinFactory model) {
-        return new DefaultAppearance.Builder(model.location);
+    // Body shape used to come from a BuiltinFactory ModelLayerLocation; with GeckoLib the body
+    // geo is resolved per-breed via DragonType.geoModel(), so the builder no longer takes a model.
+    public static DefaultAppearance.Builder builder() {
+        return new DefaultAppearance.Builder();
     }
 
     public static void registerArmorTextures(@Nullable String category, ResourceLocation folder) {
@@ -75,30 +75,30 @@ public class VariantAppearances {
     public static final VariantAppearance HOLLOWED;
 
     static {
-        var builder = builder(BuiltinFactory.COMPAT)
+        var builder = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
         AETHER_FEMALE = builder.build(makeId("aether/female"));
         AETHER_MALE = builder.build(makeId("aether/male"));
-        BREEZE = builder(BuiltinFactory.NORMAL)
+        BREEZE = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
                 .build(makeId("aether/breeze"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.NORMAL)
+        var builder = builder()
                 .withBreath(DMParticleSprites.DARK_BREATH);
         DARK_FEMALE = builder.build(makeId("dark/female"));
         DARK_MALE = builder.build(makeId("dark/male"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.NORMAL);
+        var builder = builder();
         ENCHANTED_FEMALE = builder.build(makeId("enchanted/female"));
         ENCHANTED_MALE = builder.build(makeId("enchanted/male"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.COMPAT)
+        var builder = builder()
                 .withBreath(DMParticleSprites.ENDER_BREATH, EnderBreathParticle.FACTORY);
         ENDER_FEMALE = builder.build(makeId("ender/female"));
         ENDER_MALE = builder.build(makeId("ender/male"));
@@ -106,14 +106,14 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder(BuiltinFactory.NORMAL);
+        var builder = builder();
         FIRE_FEMALE = builder.build(makeId("fire/female"));
         FIRE_MALE = builder.build(makeId("fire/male"));
         BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.COMPAT).withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
+        var builder = builder().withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
         var glow = makeId(TEXTURES_ROOT + "forest/glow.png");
         FOREST_FEMALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/female_body.png"), glow);
         FOREST_MALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/male_body.png"), glow);
@@ -124,21 +124,21 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder(BuiltinFactory.TAIL_SCALE_INCLINED)
+        var builder = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY);
         ICE_FEMALE = builder.build(makeId("ice/female"));
         ICE_MALE = builder.build(makeId("ice/male"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.NORMAL);
+        var builder = builder();
         MOONLIGHT_FEMALE = builder.build(makeId("moonlight/female"));
         MOONLIGHT_MALE = builder.build(makeId("moonlight/male"));
         ECLIPSE = builder.build(makeId("moonlight/eclipse"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.SCALE_SHARPENED)
+        var builder = builder()
                 .withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY);
         NETHER_FEMALE = builder.build(makeId("nether/female"));
         NETHER_MALE = builder.build(makeId("nether/male"));
@@ -146,34 +146,34 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder(BuiltinFactory.SKELETON).setArmorCategory("skeleton");
+        var builder = builder().setArmorCategory("skeleton");
         SKELETON = builder.build(makeId("skeleton/normal"));
         STRAY = builder.build(makeId("skeleton/stray"));
         BOGGED = builder.build(makeId("skeleton/bogged"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.TAIL_HORNED);
+        var builder = builder();
         STORM_FEMALE = builder.build(makeId("storm/female"));
         STORM_MALE = builder.build(makeId("storm/male"));
         BRONZED_STORM = builder.build(makeId("storm/bronzed"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.NORMAL);
+        var builder = builder();
         SUNLIGHT_FEMALE = builder.build(makeId("sunlight/female"));
         SUNLIGHT_MALE = builder.build(makeId("sunlight/male"));
         AURORA = builder.build(makeId("sunlight/aurora"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.COMPAT);
+        var builder = builder();
         TERRA_FEMALE = builder.build(makeId("terra/female"));
         TERRA_MALE = builder.build(makeId("terra/male"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.SCALE_SHARPENED)
+        var builder = builder()
                 .withBreath(DMParticleSprites.WATER_BREATH, WaterBreathParticle.FACTORY);
         WATER_FEMALE = builder.build(makeId("water/female"));
         WATER_MALE = builder.build(makeId("water/male"));
@@ -181,19 +181,19 @@ public class VariantAppearances {
     }
 
     static {
-        WITHER = builder(BuiltinFactory.WITHER)
+        WITHER = builder()
                 .withBreath(DMParticleSprites.WITHER_BREATH)
                 .build(makeId("wither"));
     }
 
     static {
-        ZOMBIE = builder(BuiltinFactory.COMPAT_TAIL_HORNED)
+        ZOMBIE = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
                 .build(makeId("zombie"));
     }
 
     static {
-        var builder = builder(BuiltinFactory.SCULK).setArmorCategory("sculk");
+        var builder = builder().setArmorCategory("sculk");
         WILD_SCULK = builder.build(makeId("sculk/wild_type"));
         MUTANT_SCULK = builder.build(makeId("sculk/mutant"));
         HOLLOWED = builder.build(makeId("sculk/hollowed"));

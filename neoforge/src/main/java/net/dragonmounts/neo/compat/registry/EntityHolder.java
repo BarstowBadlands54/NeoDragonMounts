@@ -66,7 +66,7 @@ public class EntityHolder<T extends Entity> extends DeferredHolder<EntityType<T>
 
     public EntityHolder(ResourceKey<EntityType<?>> key, EntityType.Builder<T> builder) {
         super(key);
-        this.factory = key -> builder.build(key.location().toString());
+        this.factory = k -> builder.build(k.location().toString());
     }
 
     @Override

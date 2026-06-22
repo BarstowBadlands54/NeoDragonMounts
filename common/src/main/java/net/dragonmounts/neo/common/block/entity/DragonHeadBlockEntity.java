@@ -5,11 +5,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
 
 /// @see net.minecraft.world.level.block.entity.SkullBlockEntity
-public class DragonHeadBlockEntity extends BlockEntity {
+public class DragonHeadBlockEntity extends BlockEntity implements GeoBlockEntity {
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     public DragonHeadBlockEntity(BlockPos pos, BlockState state) {
         super(DMBlockEntities.DRAGON_HEAD.get(), pos, state);
     }
@@ -28,5 +34,20 @@ public class DragonHeadBlockEntity extends BlockEntity {
         } else {
             entity.active = false;
         }
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // No controllers registered -> the head geo model renders in its default (bind) pose.
+        // GeckoLib drives animation via keyframed controllers, not the manual ticks/active
+        // fields above. Once you have a head .animation.json, wire the powered "active" state
+        // through a controller instead, e.g.:
+        //   controllers.add(new AnimationController<>(this, "base", state ->
+        //       state.setAndContinue(RawAnimation.begin().thenLoop("<head_idle_anim>"))));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
     }
 }

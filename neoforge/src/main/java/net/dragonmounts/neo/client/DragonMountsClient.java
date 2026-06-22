@@ -110,7 +110,7 @@ public class DragonMountsClient {
 
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_CORE.get(), DragonCoreRenderer::new);
-        event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer.INSTANCE);
+//        event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer.INSTANCE);
         event.registerEntityRenderer(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
     }
 
