@@ -1,6 +1,7 @@
 package net.dragonmounts.neo.common.entity.dragon;
 
 import com.mojang.logging.LogUtils;
+import net.dragonmounts.neo.common.DragonMountsShared;
 import net.dragonmounts.neo.common.api.AutoJumpRideable;
 import net.dragonmounts.neo.common.api.ConditionalShearable;
 import net.dragonmounts.neo.common.api.DragonTypified;
@@ -32,6 +33,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -69,7 +71,9 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Optional;
 
@@ -87,6 +91,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         DynamicAttributeEntity,
         DragonTypified.Mutable,
         GeoEntity {
+
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
     public static TameableDragonEntity construct(EntityType<? extends TameableDragonEntity> type, Level level) {
         return level instanceof ServerLevel server ? new ServerDragonEntity(type, server) : new ClientDragonEntity(type, level);
     }
@@ -701,9 +708,15 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return ServerConfig.INSTANCE.getDragonAttributes();
     }
 
-//    @Override
-//    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-//        controllers.add(new AnimationController<GeoAnimatable>(this, ""))
-//    }
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
+    }
 
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 5, state ->
+                state.setAndContinue(RawAnimation.begin().thenLoop("idle"))
+        ));
+    }
 }

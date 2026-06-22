@@ -38,12 +38,6 @@ public class DragonHeadBlockEntity extends BlockEntity implements GeoBlockEntity
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // No controllers registered -> the head geo model renders in its default (bind) pose.
-        // GeckoLib drives animation via keyframed controllers, not the manual ticks/active
-        // fields above. Once you have a head .animation.json, wire the powered "active" state
-        // through a controller instead, e.g.:
-        //   controllers.add(new AnimationController<>(this, "base", state ->
-        //       state.setAndContinue(RawAnimation.begin().thenLoop("<head_idle_anim>"))));
     }
 
     @Override

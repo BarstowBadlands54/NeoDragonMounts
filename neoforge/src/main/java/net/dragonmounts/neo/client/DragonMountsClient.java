@@ -8,6 +8,7 @@ import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
 import net.dragonmounts.neo.common.client.renderer.DMCoreShaders;
 import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
+import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.client.renderer.egg.DragonEggRenderer;
 import net.dragonmounts.neo.common.init.*;
 import net.dragonmounts.neo.common.item.DragonScaleBowItem;
@@ -110,8 +111,9 @@ public class DragonMountsClient {
 
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_CORE.get(), DragonCoreRenderer::new);
-//        event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer.INSTANCE);
+        event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
         event.registerEntityRenderer(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
+        event.registerEntityRenderer(DMEntities.TAMEABLE_DRAGON.get(), DragonRenderer::new);
     }
 
     static void registerShaders(RegisterShadersEvent event) {

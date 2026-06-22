@@ -6,6 +6,8 @@ import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
 import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
 import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
+import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
+import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.client.renderer.egg.DragonEggRenderer;
 import net.dragonmounts.neo.common.init.*;
 import net.dragonmounts.neo.common.network.c2s.ControlDragonPayload;
@@ -89,9 +91,9 @@ public class DragonMountsClient implements
         */
         ClientTickEvents.START_CLIENT_TICK.register(this);
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_CORE.get(), DragonCoreRenderer::new);
-//        BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer.INSTANCE);
+        BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
         EntityRendererRegistry.register(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
-//        EntityRendererRegistry.register(DMEntities.TAMEABLE_DRAGON.cast(), TameableDragonRenderer::new);
+        EntityRendererRegistry.register(DMEntities.TAMEABLE_DRAGON.cast(), DragonRenderer::new);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this);
         ParticleFactoryRegistry.getInstance().register(DMParticles.DRAGON_BREATH, BreathParticleProvider::new);
         ClientCommandRegistrationCallback.EVENT.register(DMClientCommand::register);
