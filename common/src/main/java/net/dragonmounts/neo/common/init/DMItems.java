@@ -607,7 +607,7 @@ public class DMItems {
     }
 
     static DragonScaleSwordItem makeDragonScaleSword(DragonType type, Properties props) {
-        var item = new DragonScaleSwordItem(type, 3, -2.0F, props);
+        var item = new DragonScaleSwordItem(type, 5, -2.0F, props);
         type.bindInstance(DragonScaleSwordItem.class, item);
         return item;
     }

@@ -4,10 +4,13 @@ import net.dragonmounts.neo.common.client.breath.impl.ClientBreathHelper;
 import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.ai.control.DragonHeadLocator;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
+import net.dragonmounts.neo.common.entity.dragon.DragonModelContracts;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.dragonmounts.neo.common.inventory.DragonInventory;
 import net.dragonmounts.neo.common.tag.DMItemTags;
+import net.dragonmounts.neo.common.util.ArrayUtil;
+import net.dragonmounts.neo.common.util.Segment;
 import net.dragonmounts.neo.common.util.math.MathUtil;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -31,6 +34,8 @@ public class ClientDragonEntity extends TameableDragonEntity {
     public int controlFlags;
     private float pendingJumpPower;
     private boolean wasOnGround;
+    private final Segment[] neckSegments =
+            ArrayUtil.fillArray(new Segment[DragonModelContracts.NECK_SEGMENTS], Segment::new);
 
     public ClientDragonEntity(EntityType<? extends TameableDragonEntity> type, Level world) {
         super(type, world);
@@ -70,7 +75,9 @@ public class ClientDragonEntity extends TameableDragonEntity {
             this.checkCrystals();
         }
         super.aiStep();
-//        this.animator.tick();
+        this.headLocator.tick();
+        this.headLocator.calculateHeadAndNeck(this.neckSegments, this.getXRot(), this.yHeadRot - this.yBodyRot);
+
         this.breathHelper.tick();
         if (!this.isAgeLocked()) {
             if (this.age < 0) {

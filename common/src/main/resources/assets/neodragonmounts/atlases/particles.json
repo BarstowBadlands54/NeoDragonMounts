@@ -1,0 +1,64 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_acid",
+      "sprite": "neodragonmounts:breath_acid"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_air",
+      "sprite": "neodragonmounts:breath_air"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_blue_fire",
+      "sprite": "neodragonmounts:breath_blue_fire"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_dark",
+      "sprite": "neodragonmounts:breath_dark"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_fire",
+      "sprite": "neodragonmounts:breath_fire"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_forest",
+      "sprite": "neodragonmounts:breath_forest"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_hydro",
+      "sprite": "neodragonmounts:breath_hydro"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_ice",
+      "sprite": "neodragonmounts:breath_ice"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_nether",
+      "sprite": "neodragonmounts:breath_nether"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_poison",
+      "sprite": "neodragonmounts:breath_poison"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_soul",
+      "sprite": "neodragonmounts:breath_soul"
+    },
+    {
+      "type": "single",
+      "resource": "neodragonmounts:particle/breath_wither",
+      "sprite": "neodragonmounts:breath_wither"
+    }
+  ]
+}
