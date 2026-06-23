@@ -8,7 +8,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
     private static final ResourceLocation ANIMATIONS =
-            makeId("animations/entity/dragon/dragon.animation.json");
+            makeId("animations/entity/dragon/dragonmounts2.dragon.animation.json");
 
     @Override
     public ResourceLocation getModelResource(TameableDragonEntity dragon) {

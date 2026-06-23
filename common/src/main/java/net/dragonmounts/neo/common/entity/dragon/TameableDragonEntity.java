@@ -71,6 +71,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -713,10 +714,42 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return this.cache;
     }
 
+    // ---- names MUST match the keys in dragonmounts2.dragon.animation.json ----
+// ---- exact keys from dragonmounts2.dragon.animation.json ----
+    private static final RawAnimation IDLE   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.idle");
+    private static final RawAnimation WALK   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.walking");
+    private static final RawAnimation SWIM   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.swimming");
+    private static final RawAnimation SIT    = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.sit");
+    private static final RawAnimation HOVER  = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.hover");
+    private static final RawAnimation FLAP   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.flying");
+    private static final RawAnimation DIVE   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.dive");
+    private static final RawAnimation BREATH = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.breath");
+    private static final RawAnimation BITE   = RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.bite");
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, state ->
-                state.setAndContinue(RawAnimation.begin().thenLoop("idle"))
+        // 1) LOCOMOTION state machine
+        controllers.add(new AnimationController<>(this, "movement", 5, state -> {
+            if (this.isFlying()) {
+                Vec3 v = this.getDeltaMovement();
+                double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
+                if (v.y < -0.35)        return state.setAndContinue(DIVE);   // descending fast
+                if (horizontal > 0.08)  return state.setAndContinue(FLAP);   // moving forward
+                return state.setAndContinue(HOVER);                          // stationary in air
+            }
+            if (this.isInWater() && state.isMoving()) return state.setAndContinue(SWIM);  // NEW swim check
+            if (this.isInSittingPose())               return state.setAndContinue(SIT);
+            if (state.isMoving())                      return state.setAndContinue(WALK);
+            return state.setAndContinue(IDLE);
+        }));
+
+        // 2) FIRE BREATH — independent layer, plays on TOP of flap/walk/etc.
+        controllers.add(new AnimationController<>(this, "breath", 3, state ->
+                this.isBreathing() ? state.setAndContinue(BREATH) : PlayState.STOP
         ));
+
+        // 3) BITE — triggered one-shot, layered over movement
+        controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
+                .triggerableAnim("bite", BITE));
     }
 }
