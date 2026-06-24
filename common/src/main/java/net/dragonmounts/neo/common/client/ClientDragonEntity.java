@@ -87,7 +87,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
             }
         }
         var sneeze = this.getVariant().type.sneezeParticle;
-        if (sneeze != null && !this.isBaby() && !this.isBreathing() && this.random.nextInt(700) == 0) {
+        if (sneeze != null && !this.isBaby() && !this.isBreathing() && this.random.nextInt(700) == 0 && !isInWater()) {
             var level = this.level();
             var pos = this.getHeadRelativeOffset(0.0F, 4.0F, 22.0F);
             double x = pos.x, y = pos.y, z = pos.z;

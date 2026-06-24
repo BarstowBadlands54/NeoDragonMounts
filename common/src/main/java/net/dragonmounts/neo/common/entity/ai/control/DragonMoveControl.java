@@ -27,19 +27,45 @@ public class DragonMoveControl extends MoveControl {
             double distX = this.wantedX - pos.x, distY = this.wantedY - pos.y, distZ = this.wantedZ - pos.z;
             double squared = distX * distX + distZ * distZ;
             if (squared + distY * distY < 2.5E-7) {
-                if (dragon.isFlying()) {
-                    dragon.setYya(0.0F);
-                }
+                if (dragon.isFlying()) dragon.setYya(0.0F);
                 dragon.setZza(0.0F);
                 return;
             }
+
+            // ---- WATER: always swim (movement speed, smooth pitch), regardless of onGround ----
+            if (dragon.isInWater()) {
+                // gentle upward bias so it doesn't sink while pathing (vanilla smooth-swim does this)
+                dragon.setDeltaMovement(dragon.getDeltaMovement().add(0.0, 0.005, 0.0));
+
+                float yaw = (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F;
+                dragon.setYRot(this.rotlerp(dragon.getYRot(), yaw, 10.0F));   // slow turn = smooth
+                dragon.yBodyRot = dragon.getYRot();
+                dragon.yHeadRot = dragon.getYRot();
+
+                float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
+                dragon.setSpeed(speed);
+
+                double horiz = Math.sqrt(squared);
+                if (Math.abs(distY) > 1.0E-5 || Math.abs(horiz) > 1.0E-5) {
+                    float pitch = -(float) (Mth.atan2(distY, horiz) * 180.0F / MathUtil.PI);
+                    pitch = Mth.clamp(Mth.wrapDegrees(pitch), -85.0F, 85.0F);
+                    dragon.setXRot(this.rotlerp(dragon.getXRot(), pitch, 5.0F));   // smooth pitch
+                }
+                // swim forward along facing, with vertical component
+                float cos = Mth.cos(dragon.getXRot() * Mth.DEG_TO_RAD);
+                float sin = Mth.sin(dragon.getXRot() * Mth.DEG_TO_RAD);
+                dragon.zza = cos * speed;
+                dragon.setYya(-sin * speed);
+                return;
+            }
+
+            // ---- GROUND ----
             if (dragon.onGround()) {
                 dragon.setYRot(this.rotlerp(
                         dragon.getYRot(),
                         (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F,
                         90.0F
                 ));
-                // invoke super.tick()
                 dragon.setSpeed((float) (this.speedModifier * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED)));
                 var location = dragon.blockPosition();
                 var state = dragon.level().getBlockState(location);
@@ -53,20 +79,20 @@ public class DragonMoveControl extends MoveControl {
                     dragon.getJumpControl().jump();
                     this.operation = Operation.JUMPING;
                 } else if (distY > 0.5F) {
-                    // a small jump
                     dragon.setYya(dragon.yya + 0.5F);
                 }
-            } else {
-                // TODO: see SmoothSwimmingMoveControl
+            }
+            // ---- AIR (flight) ----
+            else {
                 dragon.setYRot(this.rotlerp(
                         dragon.getYRot(),
                         (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F,
                         30.0F
                 ));
                 double dist = Math.sqrt(squared);
-                float speed = dragon.isInWater() ? (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED)) / 3 : (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
+                float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
                 dragon.setSpeed(speed);
-                if (dist > Mth.EPSILON || Math.abs(distY) > Mth.EPSILON) { // adjusted order to simplify population
+                if (dist > Mth.EPSILON || Math.abs(distY) > Mth.EPSILON) {
                     dragon.setXRot(this.rotlerp(
                             dragon.getXRot(),
                             (float) (Mth.atan2(distY, dist) * -180.0F / MathUtil.PI),
@@ -75,6 +101,11 @@ public class DragonMoveControl extends MoveControl {
                     dragon.setYya(distY > 0.0 ? speed : -speed);
                 }
             }
+        } else if (dragon.isInWater()) {
+            // idle in water — stop cleanly, slight float
+            dragon.setSpeed(0.0F);
+            dragon.setYya(0.0F);
+            dragon.setZza(0.0F);
         } else if (dragon.onGround()) {
             super.tick();
         } else if (this.operation == Operation.JUMPING) {
