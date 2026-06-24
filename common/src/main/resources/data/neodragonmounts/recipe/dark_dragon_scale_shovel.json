@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_shovel",
   "key": {
-    "#": "#c:rods/wooden",
-    "X": "neodragonmounts:dark_dragon_scales"
+    "#": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "neodragonmounts:dark_dragon_scales"
+    }
   },
   "pattern": [
     "X",

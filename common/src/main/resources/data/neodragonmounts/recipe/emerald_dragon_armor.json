@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_armor",
   "key": {
-    "#": "#c:gems/emerald",
-    "X": "#c:storage_blocks/emerald"
+    "#": {
+      "tag": "c:gems/emerald"
+    },
+    "X": {
+      "tag": "c:storage_blocks/emerald"
+    }
   },
   "pattern": [
     "#  ",

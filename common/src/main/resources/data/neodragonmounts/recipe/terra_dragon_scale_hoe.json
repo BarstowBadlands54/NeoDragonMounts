@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_hoe",
   "key": {
-    "#": "#c:rods/wooden",
-    "X": "neodragonmounts:terra_dragon_scales"
+    "#": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "neodragonmounts:terra_dragon_scales"
+    }
   },
   "pattern": [
     "XX",

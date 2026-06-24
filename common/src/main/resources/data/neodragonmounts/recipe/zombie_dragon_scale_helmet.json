@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_helmet",
   "key": {
-    "X": "neodragonmounts:zombie_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:zombie_dragon_scales"
+    }
   },
   "pattern": [
     "XXX",

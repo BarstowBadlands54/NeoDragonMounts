@@ -2,9 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "#": "#c:glass_blocks/colorless",
-    "O": "minecraft:ender_eye",
-    "Y": "#c:strings"
+    "#": {
+      "tag": "c:glass_blocks/colorless"
+    },
+    "O": {
+      "item": "minecraft:ender_eye"
+    },
+    "Y": {
+      "tag": "c:strings"
+    }
   },
   "pattern": [
     " Y ",

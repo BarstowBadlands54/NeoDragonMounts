@@ -3,7 +3,9 @@
   "category": "misc",
   "group": "neodragonmounts.dragon_scales",
   "ingredients": [
-    "neodragonmounts:ender_dragon_scale_block"
+    {
+      "item": "neodragonmounts:ender_dragon_scale_block"
+    }
   ],
   "result": {
     "count": 9,

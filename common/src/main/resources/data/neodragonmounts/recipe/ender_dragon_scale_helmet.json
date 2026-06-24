@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_helmet",
   "key": {
-    "X": "neodragonmounts:ender_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:ender_dragon_scales"
+    }
   },
   "pattern": [
     "XXX",

@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_helmet",
   "key": {
-    "X": "neodragonmounts:sculk_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:sculk_dragon_scales"
+    }
   },
   "pattern": [
     "XXX",

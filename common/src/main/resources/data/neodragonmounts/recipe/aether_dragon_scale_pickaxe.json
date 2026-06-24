@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_pickaxe",
   "key": {
-    "#": "#c:rods/wooden",
-    "X": "neodragonmounts:aether_dragon_scales"
+    "#": {
+      "tag": "c:rods/wooden"
+    },
+    "X": {
+      "item": "neodragonmounts:aether_dragon_scales"
+    }
   },
   "pattern": [
     "XXX",

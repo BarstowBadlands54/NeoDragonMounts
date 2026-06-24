@@ -3,7 +3,9 @@
   "category": "misc",
   "group": "neodragonmounts.dragon_scales",
   "ingredients": [
-    "neodragonmounts:forest_dragon_scale_block"
+    {
+      "item": "neodragonmounts:forest_dragon_scale_block"
+    }
   ],
   "result": {
     "count": 9,

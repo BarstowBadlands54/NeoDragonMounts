@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_leggings",
   "key": {
-    "X": "neodragonmounts:dark_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:dark_dragon_scales"
+    }
   },
   "pattern": [
     "XXX",

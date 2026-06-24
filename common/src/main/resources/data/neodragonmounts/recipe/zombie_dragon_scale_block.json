@@ -3,7 +3,9 @@
   "category": "building",
   "group": "neodragonmounts.dragon_scale_block",
   "key": {
-    "#": "neodragonmounts:zombie_dragon_scales"
+    "#": {
+      "item": "neodragonmounts:zombie_dragon_scales"
+    }
   },
   "pattern": [
     "###",

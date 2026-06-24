@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_bow",
   "key": {
-    "#": "neodragonmounts:sunlight_dragon_scales",
-    "X": "#c:strings"
+    "#": {
+      "item": "neodragonmounts:sunlight_dragon_scales"
+    },
+    "X": {
+      "tag": "c:strings"
+    }
   },
   "pattern": [
     " #X",
