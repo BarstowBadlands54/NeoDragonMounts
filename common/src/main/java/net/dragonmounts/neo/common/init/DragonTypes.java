@@ -275,7 +275,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.BONE_BLOCK)
                 .register(SkeletonType::new, makeId("skeleton"));
         WITHER = new DragonTypeBuilder(0x50260A, null, null)
-                .model("spiked_horned", "spiked_horns")   // TODO confirm body shape (old WITHER)
+                .model("spiked_horned", "spiked_horned")   // TODO confirm body shape (old WITHER)
                 .texture(makeId("textures/entity/dragon/wither/body.png"))
                 .notConvertible()
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, -10.0D, AttributeModifier.Operation.ADD_VALUE)

@@ -3,11 +3,16 @@ package net.dragonmounts.neo.common.entity.breath.impl;
 import net.dragonmounts.neo.common.entity.breath.BreathAffectedBlock;
 import net.dragonmounts.neo.common.entity.breath.BreathAffectedEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.init.DMBlocks;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Blocks;
 
 public class NetherBreath extends FireBreath {
     public NetherBreath(TameableDragonEntity dragon, float damage) {
@@ -66,5 +71,19 @@ public class NetherBreath extends FireBreath {
             damage *= 2.0F;
         }
         target.hurt(level.damageSources().mobAttack(this.dragon), damage);
+    }
+
+    protected void burnBlock(ServerLevel level, BlockPos sideToIgnite, RandomSource random) {
+        level.setBlockAndUpdate(sideToIgnite, DMBlocks.BLUE_FIRE.defaultBlockState());
+        level.playSound(
+                null,
+                sideToIgnite.getX() + 0.5,
+                sideToIgnite.getY() + 0.5,
+                sideToIgnite.getZ() + 0.5,
+                SoundEvents.FLINTANDSTEEL_USE,
+                SoundSource.BLOCKS,
+                1.0F,
+                0.8F + random.nextFloat() * 0.4F
+        );
     }
 }

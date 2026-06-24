@@ -1,6 +1,7 @@
 package net.dragonmounts.neo.common.init;
 
 import com.google.common.collect.ImmutableList;
+import net.dragonmounts.neo.common.block.BlueFireBlock;
 import net.dragonmounts.neo.common.block.DragonCoreBlock;
 import net.dragonmounts.neo.common.block.DragonScaleBlock;
 import net.dragonmounts.neo.common.block.HatchableDragonEggBlock;
@@ -52,6 +53,16 @@ public class DMBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava())
     );
+
+    public static final BlockHolder<BlueFireBlock> BLUE_FIRE = registerBlock("blue_fire", props ->
+            new BlueFireBlock(props
+                    .noCollission()
+                    .instabreak()
+                    .lightLevel(state -> 10)
+                    .sound(SoundType.WOOL)
+                    .pushReaction(PushReaction.DESTROY)
+                    .replaceable()));
+
     public static final BlockHolder<HatchableDragonEggBlock> AETHER_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> DARK_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> ENCHANTED_DRAGON_EGG;
