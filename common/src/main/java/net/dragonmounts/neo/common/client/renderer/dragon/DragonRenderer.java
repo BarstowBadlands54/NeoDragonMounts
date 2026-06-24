@@ -26,6 +26,7 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
     public DragonRenderer(EntityRendererProvider.Context context) {
         super(context, new DragonGeoModel());
         addRenderLayer(new DragonGlowLayer(this));
+        addRenderLayer(new DragonTackLayer(this));
     }
 
     /** Scale the model by life stage so hatchlings render small and grow to adult size. */
@@ -42,7 +43,6 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
     public RenderType getRenderType(TameableDragonEntity animatable, ResourceLocation texture,
                                     @Nullable MultiBufferSource bufferSource, float partialTick) {
         if (animatable.deathTime > 0) {
-            // body dissolves through the custom decal shader during death
             return RenderStateAccessor.entityCutoutDecal(texture, DEFAULT_DISSOLVE);
         }
         return super.getRenderType(animatable, texture, bufferSource, partialTick);
