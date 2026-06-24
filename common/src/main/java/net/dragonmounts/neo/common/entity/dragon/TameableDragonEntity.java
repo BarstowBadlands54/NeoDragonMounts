@@ -502,10 +502,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         var previous = this.getVariant();
         if (previous.type != type || reset) {
             DragonVariant drawn = type.variants.draw(this.random, previous, true);
-            System.out.println("[DM] setDragonType: type=" + type.getName()
-                    + " poolSize=" + type.variants.size()
-                    + " previous=" + previous.identifier
-                    + " drawn=" + (drawn == null ? "NULL" : drawn.identifier));
             this.setVariant(drawn);
         }
         if (reset) this.setHealth(this.getMaxHealth());
@@ -596,7 +592,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         if (this.isInWater()) {
             this.moveRelative(this.getSpeed(), motion);
             this.move(MoverType.SELF, this.getDeltaMovement());
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.85F));   // water drag
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.35F));   // water drag
             return;
         }
         if (this.isFlying()) {
