@@ -501,13 +501,15 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public final void setDragonType(DragonType type, boolean reset) {
         var previous = this.getVariant();
         if (previous.type != type || reset) {
-            this.setVariant(type.variants.draw(this.random, previous, true));
+            DragonVariant drawn = type.variants.draw(this.random, previous, true);
+            System.out.println("[DM] setDragonType: type=" + type.getName()
+                    + " poolSize=" + type.variants.size()
+                    + " previous=" + previous.identifier
+                    + " drawn=" + (drawn == null ? "NULL" : drawn.identifier));
+            this.setVariant(drawn);
         }
-        if (reset) {
-            this.setHealth(this.getMaxHealth());
-        }
+        if (reset) this.setHealth(this.getMaxHealth());
     }
-
     @Override
     public final DragonType getDragonType() {
         return this.getVariant().type;

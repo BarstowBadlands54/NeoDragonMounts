@@ -52,6 +52,7 @@ public class DragonVariant implements DragonTypified {
         this.identifier = identifier;
         this.appearance = appearance;
         this.head = factory.apply(this);
+        type.variants.add(this);
     }
 
     @Override

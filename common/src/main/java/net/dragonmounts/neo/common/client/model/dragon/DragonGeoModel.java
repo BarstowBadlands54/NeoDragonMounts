@@ -17,7 +17,7 @@ public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
 
     @Override
     public ResourceLocation getTextureResource(TameableDragonEntity dragon) {
-        return dragon.getVariant().getDragonType().texture();     // per-breed body png
+        return dragon.getVariant().appearance.getBodyTexture(null);
     }
 
     @Override

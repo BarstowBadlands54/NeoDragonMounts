@@ -67,6 +67,10 @@ public class DragonSpawnEggItem extends SpawnEggItem implements EntityContainer<
     protected void putDragonData(SpawnData data, EntityType<?> type, RandomSource random) {
         var tag = data.entityToSpawn();
         var id = BuiltInRegistries.ENTITY_TYPE.getKey(type).toString();
+        var drawn = DragonVariant.draw(this.type, random);
+        System.out.println("[DM-DEBUG] egg drew: " + (drawn == null ? "NULL" : drawn.identifier)
+                + " | type.variants.size()=" + this.type.variants.size());
+        tag.putString(DragonVariant.DATA_PARAMETER_KEY, drawn.identifier.toString());
         if (id.equals(tag.getString("id"))) {
             tag.putString(DragonVariant.DATA_PARAMETER_KEY, DragonVariant.draw(this.type, random, tag.getString(DragonVariant.DATA_PARAMETER_KEY)).identifier.toString());
         } else {

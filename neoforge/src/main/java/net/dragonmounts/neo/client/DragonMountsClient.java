@@ -24,7 +24,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -69,6 +71,7 @@ public class DragonMountsClient {
         modbus.addListener(DragonMountsClient::registerRenderers);
         modbus.addListener(DragonMountsClient::registerShaders);
         modbus.addListener(DragonMountsClient::registerScreens);
+        modbus.addListener(DragonMountsClient::onClientSetupBows);
         container.registerExtensionPoint(IConfigScreenFactory.class, DMConfigScreen::new);
     }
 
@@ -164,20 +167,22 @@ public class DragonMountsClient {
         event.register(DMScreenHandlers.DRAGON_INVENTORY, DragonInventoryScreen::new);
     }
 
-//    public static void registerSpecialRendererCodecs(EntityRenderersEvent.RegisterRenderers event) {
-//        event.register(makeId("dragon_core"), DragonCoreRenderer.Unbaked.CODEC);
-//        event.register(makeId("dragon_head"), DragonHeadRenderer.Unbaked.CODEC);
-//    }
-//
-//    public static void registerSpecialRenderers(RegisterSpecialBlockModelRendererEvent event) {
-//        event.register(DMBlocks.DRAGON_CORE.get(), new DragonCoreRenderer.Unbaked(0.0F, Direction.SOUTH));
-//        for (var variant : DragonVariants.BUILTIN_VALUES) {
-//            var head = variant.head;
-//            var renderer = new DragonHeadRenderer.Unbaked(variant, 0.0F);
-//            event.register(head.standing.get(), renderer);
-//            event.register(head.wall.get(), renderer);
-//        }
-//    }
+    private static void onClientSetupBows(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (Item item : BuiltInRegistries.ITEM) {
+                if (!(item instanceof DragonScaleBowItem)) continue;
+                ItemProperties.register(item, ResourceLocation.withDefaultNamespace("pull"),
+                        (stack, level, entity, seed) -> {
+                            if (entity == null) return 0.0F;
+                            return entity.getUseItem() != stack ? 0.0F
+                                    : (stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
+                        });
+                ItemProperties.register(item, ResourceLocation.withDefaultNamespace("pulling"),
+                        (stack, level, entity, seed) ->
+                                entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+            }
+        });
+    }
 
     public static void onClientTick(ClientTickEvent.Pre event) {
         var client = Minecraft.getInstance();
