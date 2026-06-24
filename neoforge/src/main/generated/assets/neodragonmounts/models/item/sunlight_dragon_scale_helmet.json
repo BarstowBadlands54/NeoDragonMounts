@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "neodragonmounts:item/sunlight_dragon_scale_helmet"
-  }
-}

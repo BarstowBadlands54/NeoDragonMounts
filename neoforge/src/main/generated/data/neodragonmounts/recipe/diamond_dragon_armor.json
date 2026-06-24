@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_armor",
   "key": {
-    "#": "#c:gems/diamond",
-    "X": "#c:storage_blocks/diamond"
+    "#": {
+      "tag": "c:gems/diamond"
+    },
+    "X": {
+      "tag": "c:storage_blocks/diamond"
+    }
   },
   "pattern": [
     "#  ",

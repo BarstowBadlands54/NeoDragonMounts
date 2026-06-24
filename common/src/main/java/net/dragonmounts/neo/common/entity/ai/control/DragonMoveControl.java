@@ -64,7 +64,7 @@ public class DragonMoveControl extends MoveControl {
                         30.0F
                 ));
                 double dist = Math.sqrt(squared);
-                float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
+                float speed = dragon.isInWater() ? (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED)) / 3 : (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
                 dragon.setSpeed(speed);
                 if (dist > Mth.EPSILON || Math.abs(distY) > Mth.EPSILON) { // adjusted order to simplify population
                     dragon.setXRot(this.rotlerp(

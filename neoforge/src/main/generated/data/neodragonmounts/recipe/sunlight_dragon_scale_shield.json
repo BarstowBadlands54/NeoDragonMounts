@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_shield",
   "key": {
-    "W": "neodragonmounts:sunlight_dragon_scales",
-    "X": "#c:ingots/iron"
+    "W": {
+      "item": "neodragonmounts:sunlight_dragon_scales"
+    },
+    "X": {
+      "tag": "c:ingots/iron"
+    }
   },
   "pattern": [
     "WXW",

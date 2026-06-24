@@ -1,6 +1,7 @@
 package net.dragonmounts.neo.client;
 
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.dragonmounts.neo.common.DragonMountsShared;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
@@ -20,6 +21,7 @@ import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ClientConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +40,8 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+
+import java.io.IOException;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
@@ -117,8 +121,22 @@ public class DragonMountsClient {
     }
 
     static void registerShaders(RegisterShadersEvent event) {
-//        event.registerShader(DMCoreShaders.RENDERTYPE_ENTITY_CUTOUT_DECAL);
-//        event.registerShader(DMCoreShaders.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_DECAL);
+        try {
+            event.registerShader(
+                    new ShaderInstance(event.getResourceProvider(),
+                            ResourceLocation.fromNamespaceAndPath("neodragonmounts", "rendertype_entity_cutout_decal"),
+                            DefaultVertexFormat.NEW_ENTITY),
+                    DMCoreShaders::setEntityCutoutDecal
+            );
+            event.registerShader(
+                    new ShaderInstance(event.getResourceProvider(),
+                            ResourceLocation.fromNamespaceAndPath("neodragonmounts", "rendertype_entity_translucent_emissive_decal"),
+                            DefaultVertexFormat.NEW_ENTITY),
+                    DMCoreShaders::setEntityTranslucentEmissiveDecal
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load Dragon Mounts dissolve shaders", e);
+        }
     }
 
     public static void registerScreens(RegisterMenuScreensEvent event) {

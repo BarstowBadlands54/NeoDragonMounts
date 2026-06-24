@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "neodragonmounts:block/nether_dragon_scale_block"
-  }
-}

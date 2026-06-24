@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_boots",
   "key": {
-    "X": "neodragonmounts:forest_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:forest_dragon_scales"
+    }
   },
   "pattern": [
     "X X",

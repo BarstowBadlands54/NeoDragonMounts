@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_armor",
   "key": {
-    "#": "#c:ingots/gold",
-    "X": "#c:storage_blocks/gold"
+    "#": {
+      "tag": "c:ingots/gold"
+    },
+    "X": {
+      "tag": "c:storage_blocks/gold"
+    }
   },
   "pattern": [
     "#  ",

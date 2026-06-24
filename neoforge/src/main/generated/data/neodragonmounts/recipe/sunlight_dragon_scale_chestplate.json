@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_chestplate",
   "key": {
-    "X": "neodragonmounts:sunlight_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:sunlight_dragon_scales"
+    }
   },
   "pattern": [
     "X X",

@@ -559,7 +559,7 @@ public class DMItems {
     }
 
     static DragonScaleAxeItem makeDragonScaleAxe(DragonType type, Properties props) {
-        return makeDragonScaleAxe(type, 5.0F, -2.8F, props);
+        return makeDragonScaleAxe(type, 8.0F, -2.8F, props);
     }
 
     static DragonScaleBowItem makeDragonScaleBow(DragonType type, Properties props) {

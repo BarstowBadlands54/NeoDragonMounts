@@ -147,13 +147,13 @@ public class ClientDragonEntity extends TameableDragonEntity {
         switch (id) {
             case ON_ATTACK -> {
                 this.playSound(SoundEvents.GENERIC_EAT, 1.0F, 0.7F);
-//                this.animator.transitMouthState(MouthState.ATTACKING, false);
+                this.triggerAnim("attack", "bite");
             }
             case ON_ROAR -> {
                 SoundEvent sound = this.getVariant().type.getRoarSound(this);
                 if (sound == null) break;
                 this.playSound(sound, Mth.clamp(this.getAgeScale(), 0.3F, 0.6F), 1.0F);
-//                this.animator.transitMouthState(MouthState.ROARING, false);
+                this.triggerAnim("attack", "bite");
             }
             default -> super.handleEntityEvent(id);
         }
@@ -192,6 +192,16 @@ public class ClientDragonEntity extends TameableDragonEntity {
     @Override
     protected void tickDeath() {
         ++this.deathTime;
+        if (this.level().isClientSide && this.deathTime % 4 == 0) {
+            var pos = this.position();
+            for (int i = 0; i < 3; i++) {
+                this.level().addParticle(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE,
+                        pos.x + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
+                        pos.y + this.random.nextDouble() * this.getBbHeight(),
+                        pos.z + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
+                        0, 0.05, 0);
+            }
+        }
     }
 
     @Override

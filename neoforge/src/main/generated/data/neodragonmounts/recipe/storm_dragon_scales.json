@@ -3,7 +3,9 @@
   "category": "misc",
   "group": "neodragonmounts.dragon_scales",
   "ingredients": [
-    "neodragonmounts:storm_dragon_scale_block"
+    {
+      "item": "neodragonmounts:storm_dragon_scale_block"
+    }
   ],
   "result": {
     "count": 9,

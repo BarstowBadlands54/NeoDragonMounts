@@ -3,8 +3,12 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_armor",
   "key": {
-    "#": "#c:ingots/copper",
-    "X": "#c:storage_blocks/copper"
+    "#": {
+      "tag": "c:ingots/copper"
+    },
+    "X": {
+      "tag": "c:storage_blocks/copper"
+    }
   },
   "pattern": [
     "#  ",

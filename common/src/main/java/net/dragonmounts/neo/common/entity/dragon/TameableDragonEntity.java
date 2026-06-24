@@ -714,17 +714,16 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return this.cache;
     }
 
-    // ---- names MUST match the keys in dragonmounts2.dragon.animation.json ----
-// ---- exact keys from dragonmounts2.dragon.animation.json ----
-    private static final RawAnimation IDLE   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.idle");
-    private static final RawAnimation WALK   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.walking");
-    private static final RawAnimation SWIM   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.swimming");
-    private static final RawAnimation SIT    = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.sit");
-    private static final RawAnimation HOVER  = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.hover");
-    private static final RawAnimation FLAP   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.flying");
-    private static final RawAnimation DIVE   = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.dive");
+    private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.idle");
+    private static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.walking");
+    private static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.swimming");
+    private static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.sit");
+    private static final RawAnimation HOVER = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.hover");
+    private static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.flying");
+    private static final RawAnimation DIVE = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.dive");
     private static final RawAnimation BREATH = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.breath");
-    private static final RawAnimation BITE   = RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.bite");
+    private static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.bite");
+    private static final RawAnimation DEATH = RawAnimation.begin().thenPlayAndHold("animation.dragonmounts2.dragon.death");
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -733,14 +732,20 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
             if (this.isFlying() && !isInWater()) {
                 Vec3 v = this.getDeltaMovement();
                 double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
-                if (v.y < -0.35)        return state.setAndContinue(DIVE);   // descending fast
-                if (horizontal > 0.08)  return state.setAndContinue(FLAP);   // moving forward
+                if (v.y < -0.35) return state.setAndContinue(DIVE);   // descending fast
+                if (horizontal > 0.08) return state.setAndContinue(FLAP);   // moving forward
                 return state.setAndContinue(HOVER);                          // stationary in air
             }
-            if (this.isInWater() && state.isMoving()) return state.setAndContinue(SWIM);  // NEW swim check
-            if (this.isInSittingPose())               return state.setAndContinue(SIT);
-            if (state.isMoving())                      return state.setAndContinue(WALK);
-            return state.setAndContinue(IDLE);
+            if (this.isInWater()) {
+                return state.setAndContinue(SWIM);
+            } else {  // NEW swim check
+                if (this.isInSittingPose()) return state.setAndContinue(SIT);
+                if (state.isMoving()) {
+                    return state.setAndContinue(WALK);
+                } else {
+                    return state.setAndContinue(IDLE);
+                }
+            }
         }));
 
         // 2) FIRE BREATH — independent layer, plays on TOP of flap/walk/etc.
@@ -751,5 +756,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // 3) BITE — triggered one-shot, layered over movement
         controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
                 .triggerableAnim("bite", BITE));
+
+        controllers.add(new AnimationController<>(this, "death", 0, state ->
+                this.isDeadOrDying() ? state.setAndContinue(DEATH) : PlayState.STOP
+        ));
     }
 }

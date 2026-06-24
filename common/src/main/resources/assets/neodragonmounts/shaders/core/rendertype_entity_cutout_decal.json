@@ -1,6 +1,6 @@
 {
-    "vertex": "neodragonmounts:core/entity_decal",
-    "fragment": "neodragonmounts:core/entity_decal",
+    "vertex": "neodragonmounts:entity_decal",
+    "fragment": "neodragonmounts:entity_decal",
     "samplers": [
         { "name": "Sampler0" },
         { "name": "Sampler1" },

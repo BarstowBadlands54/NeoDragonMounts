@@ -3,7 +3,9 @@
   "category": "equipment",
   "group": "neodragonmounts.dragon_scale_chestplate",
   "key": {
-    "X": "neodragonmounts:dark_dragon_scales"
+    "X": {
+      "item": "neodragonmounts:dark_dragon_scales"
+    }
   },
   "pattern": [
     "X X",

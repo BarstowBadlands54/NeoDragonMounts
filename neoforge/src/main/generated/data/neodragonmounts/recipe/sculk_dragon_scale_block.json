@@ -3,7 +3,9 @@
   "category": "building",
   "group": "neodragonmounts.dragon_scale_block",
   "key": {
-    "#": "neodragonmounts:sculk_dragon_scales"
+    "#": {
+      "item": "neodragonmounts:sculk_dragon_scales"
+    }
   },
   "pattern": [
     "###",

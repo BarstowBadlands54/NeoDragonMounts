@@ -3,7 +3,9 @@
   "category": "misc",
   "cookingtime": 100,
   "experience": 1.0,
-  "ingredient": "neodragonmounts:golden_dragon_armor",
+  "ingredient": {
+    "item": "neodragonmounts:golden_dragon_armor"
+  },
   "result": {
     "count": 1,
     "id": "minecraft:gold_ingot"

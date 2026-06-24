@@ -3,7 +3,9 @@
   "category": "food",
   "cookingtime": 100,
   "experience": 0.35,
-  "ingredient": "neodragonmounts:dragon_meat",
+  "ingredient": {
+    "item": "neodragonmounts:dragon_meat"
+  },
   "result": {
     "count": 1,
     "id": "neodragonmounts:cooked_dragon_meat"

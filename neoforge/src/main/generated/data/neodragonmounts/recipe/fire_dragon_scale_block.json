@@ -3,7 +3,9 @@
   "category": "building",
   "group": "neodragonmounts.dragon_scale_block",
   "key": {
-    "#": "neodragonmounts:fire_dragon_scales"
+    "#": {
+      "item": "neodragonmounts:fire_dragon_scales"
+    }
   },
   "pattern": [
     "###",
