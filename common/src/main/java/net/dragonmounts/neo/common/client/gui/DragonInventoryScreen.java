@@ -34,6 +34,10 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
     private static final ResourceLocation INVENTORY = makeId("textures/gui/dragon_inventory.png");
     private static final ResourceLocation PANEL = makeId("textures/gui/dragon_panel.png");
     private static final ResourceLocation ARMOR_SPRITE = makeId("dragon_panel/armor");
+    private static final ResourceLocation EMPTY_SADDLE = makeId("slot/empty_saddle");
+    private static final ResourceLocation EMPTY_ARMOR  = makeId("slot/empty_dragon_armor");
+    private static final ResourceLocation EMPTY_CHEST  = makeId("slot/empty_chest");
+    private static final ResourceLocation EMPTY_FLUTE  = makeId("slot/empty_flute");
     private static final ResourceLocation HEALTH_SPRITE = makeId("dragon_panel/health");
     private static final ResourceLocation FOOD_SPRITE = makeId("dragon_panel/food");
     private static final Component TRUST_STATE = Component.translatable("button.neodragonmounts.trust_state");
