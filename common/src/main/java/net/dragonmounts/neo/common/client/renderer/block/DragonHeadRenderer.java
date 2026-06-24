@@ -25,13 +25,13 @@ public class DragonHeadRenderer extends GeoBlockRenderer<DragonHeadBlockEntity> 
         BlockState state = be.getBlockState();
         // Standing head: 16-step rotation from ROTATION_16 (+180 to flip geo model's facing)
         if (state.hasProperty(BlockStateProperties.ROTATION_16)) {
-            float yRot = state.getValue(BlockStateProperties.ROTATION_16) * 22.5F;
+            float yRot = -state.getValue(BlockStateProperties.ROTATION_16) * 22.5F;
             poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
             return;
         }
         // Wall head: face the mounted direction (+180 to flip geo model's facing)
         if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-            float yRot = state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180.0F;
+            float yRot = -state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180.0F;
             poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
             return;
         }

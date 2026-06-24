@@ -68,7 +68,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
                     !Objects.equals(pos, spawnPos) && direction == Direction.UP
             ));
             level.gameEvent(player, GameEvent.ENTITY_PLACE, spawnPos);
-            stack.shrink(1);
+            consumeOne(player, context.getHand(), stack);
             // stat will be awarded at `ItemStack#useOn`
             return InteractionResult.SUCCESS;
         }
@@ -86,7 +86,7 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
             world.addFreshEntityWithPassengers(this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
-            stack.consume(1, player);
+            consumeOne(player, hand, stack);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResultHolder.success(stack);
         }
@@ -96,6 +96,15 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltips, TooltipFlag flag) {
         tooltips.add(this.type.getName());
+    }
+
+    /** Shrinks the stack by 1, forcing the decrement even in creative mode. */
+    private static void consumeOne(Player player, InteractionHand hand, ItemStack stack) {
+        stack.shrink(1);
+        // In creative, the held stack is normally restored — force the change into the real slot.
+        if (player != null && player.getAbilities().instabuild) {
+            player.setItemInHand(hand, stack.isEmpty() ? ItemStack.EMPTY : stack);
+        }
     }
 
     @Override

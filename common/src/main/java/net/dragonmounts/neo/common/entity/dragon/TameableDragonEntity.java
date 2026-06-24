@@ -227,7 +227,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     public final void setBreathing(boolean breathing) {
-        this.entityData.set(DATA_BREATHING, breathing && this.getLifeStage().isOldEnough(DragonLifeStage.INFANT) && this.breathHelper.canBreathe());
+        this.entityData.set(DATA_BREATHING, breathing && this.getLifeStage().isOldEnough(DragonLifeStage.FLEDGLING) && this.breathHelper.canBreathe());
     }
 
     protected abstract void checkCrystals();

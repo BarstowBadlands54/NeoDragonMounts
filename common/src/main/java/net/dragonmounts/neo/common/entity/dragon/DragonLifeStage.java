@@ -18,8 +18,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.dragonmounts.neo.common.util.TimeUtil.TICKS_PER_GAME_HOUR;
 
 public enum DragonLifeStage implements StringRepresentable {
-    HATCHLING(48 * TICKS_PER_GAME_HOUR, 0.04F, 0.09F, BreathPower.SMALL),
-    INFANT(24 * TICKS_PER_GAME_HOUR, 0.10F, 0.18F, BreathPower.SMALL),
+    HATCHLING(72 * TICKS_PER_GAME_HOUR, 0.12F, 0.18F, BreathPower.SMALL),
     FLEDGLING(32 * TICKS_PER_GAME_HOUR, 0.19F, 0.60F, BreathPower.SMALL),
     JUVENILE(60 * TICKS_PER_GAME_HOUR, 0.61F, 0.99F, BreathPower.MEDIUM),
     ADULT(0, 1.00F, 1.00F, BreathPower.LARGE);
