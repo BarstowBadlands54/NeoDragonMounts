@@ -16,12 +16,15 @@ public class DragonScaleArmorItem extends ArmorItem implements DragonTypified {
     public final DescribedArmorEffect effect;
 
     public DragonScaleArmorItem(DragonType type, DescribedArmorEffect effect, ArmorItem.Type slot, Properties props) {
-        // 1.21.1 ArmorItem takes Holder<ArmorMaterial>; type.material is a raw ArmorMaterial -> wrap it.
-        super(Holder.direct(type.material), slot, props.component(DMDataComponents.DRAGON_TYPE, type));
+        super(Holder.direct(type.material),
+                slot,
+                props.durability(slot.getDurability(DURABILITY_FACTOR))   // ← durability + implicit stacksTo(1)
+                        .component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
         this.effect = effect;
     }
 
+    private static final int DURABILITY_FACTOR = 33;   // diamond-tier; tune per balance
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.ofNullable(this.effect);

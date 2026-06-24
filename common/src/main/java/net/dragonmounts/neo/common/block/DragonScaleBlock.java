@@ -2,6 +2,8 @@ package net.dragonmounts.neo.common.block;
 
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.BLOCK_TRANSLATION_KEY_PREFIX;
 
@@ -12,5 +14,10 @@ public class DragonScaleBlock extends Block {
     public DragonScaleBlock(DragonType type, Properties props) {
         super(props);
         this.type = type;
+    }
+
+    @Override
+    protected SoundType getSoundType(BlockState state) {
+        return SoundType.CHAIN;
     }
 }
