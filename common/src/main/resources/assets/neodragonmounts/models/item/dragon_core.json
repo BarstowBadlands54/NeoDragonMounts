@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/template_shulker_box",
-  "textures": {
-    "particle": "neodragonmounts:block/dragon_core_break"
-  }
+  "parent": "neodragonmounts:block/dragon_core"
 }

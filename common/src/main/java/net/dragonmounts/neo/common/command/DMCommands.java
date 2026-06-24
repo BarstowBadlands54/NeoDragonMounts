@@ -32,6 +32,7 @@ public class DMCommands {
                 .then(StageCommand.register(hasPermissionLevel2))
                 .then(TameCommand.register(hasPermissionLevel2))
                 .then(TypeCommand.register(context, hasPermissionLevel2))
+                .then(VariantCommand.register(hasPermissionLevel2))
                 .then(ServerConfig.INSTANCE.appendCommands(
                         Commands.literal("config").requires(source -> source.hasPermission(3))
                 ))

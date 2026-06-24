@@ -234,7 +234,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         } else {
             ++this.flightTicks;
         }
-        this.setFlying(++this.flightTicks > LIFTOFF_THRESHOLD && !this.isBaby() && (
+        this.setFlying(++this.flightTicks > LIFTOFF_THRESHOLD && !this.isBaby() && !this.isInWater() && (
                 this.fluidHeight.isEmpty() || DoubleIterators.all(
                         this.fluidHeight.values().doubleIterator(),
                         value -> value == 0.0

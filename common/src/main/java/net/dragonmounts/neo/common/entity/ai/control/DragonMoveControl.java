@@ -32,31 +32,27 @@ public class DragonMoveControl extends MoveControl {
                 return;
             }
 
-            // ---- WATER: always swim (movement speed, smooth pitch), regardless of onGround ----
+            // ============ WATER FIRST — before onGround/air, so  depth never matters ============
+            // inside MOVE_TO, immediately after the "close enough" early-return:
+            // inside MOVE_TO, immediately after the "close enough" early-return:
             if (dragon.isInWater()) {
-                // gentle upward bias so it doesn't sink while pathing (vanilla smooth-swim does this)
-                dragon.setDeltaMovement(dragon.getDeltaMovement().add(0.0, 0.005, 0.0));
-
-                float yaw = (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F;
-                dragon.setYRot(this.rotlerp(dragon.getYRot(), yaw, 10.0F));   // slow turn = smooth
+                // smooth swim toward target — same slow speed regardless of floor below
+                float yaw = (float) (Mth.atan2(distZ, distX) * Mth.RAD_TO_DEG) - 90.0F;
+                dragon.setYRot(this.rotlerp(dragon.getYRot(), yaw, 10.0F));
                 dragon.yBodyRot = dragon.getYRot();
-                dragon.yHeadRot = dragon.getYRot();
 
                 float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 dragon.setSpeed(speed);
 
                 double horiz = Math.sqrt(squared);
-                if (Math.abs(distY) > 1.0E-5 || Math.abs(horiz) > 1.0E-5) {
-                    float pitch = -(float) (Mth.atan2(distY, horiz) * 180.0F / MathUtil.PI);
-                    pitch = Mth.clamp(Mth.wrapDegrees(pitch), -85.0F, 85.0F);
-                    dragon.setXRot(this.rotlerp(dragon.getXRot(), pitch, 5.0F));   // smooth pitch
+                if (Math.abs(distY) > 1.0E-5 || horiz > 1.0E-5) {
+                    float pitch = -(float) (Mth.atan2(distY, horiz) * Mth.RAD_TO_DEG);
+                    pitch = Mth.clamp(Mth.wrapDegrees(pitch), -75.0F, 75.0F);
+                    dragon.setXRot(this.rotlerp(dragon.getXRot(), pitch, 5.0F));
                 }
-                // swim forward along facing, with vertical component
-                float cos = Mth.cos(dragon.getXRot() * Mth.DEG_TO_RAD);
-                float sin = Mth.sin(dragon.getXRot() * Mth.DEG_TO_RAD);
-                dragon.zza = cos * speed;
-                dragon.setYya(-sin * speed);
-                return;
+                // gentle vertical follow so it rises/dives toward the target smoothly
+                dragon.setYya(distY > 0.0 ? speed : -speed);
+                return;   // never fall into onGround/air branches
             }
 
             // ---- GROUND ----

@@ -1,7 +1,6 @@
 package net.dragonmounts.neo.common.entity.dragon;
 
 import com.mojang.logging.LogUtils;
-import net.dragonmounts.neo.common.DragonMountsShared;
 import net.dragonmounts.neo.common.api.AutoJumpRideable;
 import net.dragonmounts.neo.common.api.ConditionalShearable;
 import net.dragonmounts.neo.common.api.DragonTypified;
@@ -25,7 +24,6 @@ import net.dragonmounts.neo.compat.platform.MenuProvider;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ServerConfig;
-import net.dragonmounts.neo.mixin.MobAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -33,7 +31,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -64,19 +61,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.Optional;
 
 /**
  * @see Mule
@@ -596,7 +590,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    public void travel(Vec3 motion) {
+    public void travel(@NotNull Vec3 motion) {
+        if (this.isInWater()) {
+            this.moveRelative(this.getSpeed(), motion);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.85F));   // water drag
+            return;
+        }
         if (this.isFlying()) {
             if (this.isDeadOrDying()) return;
             this.moveRelative(this.getFlyingSpeed(), motion);

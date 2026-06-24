@@ -6,9 +6,8 @@ import software.bernie.geckolib.model.GeoModel;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
-/** GeoModel for the dragon-head item (GUI/hand). Resolves geo/texture from the item's own variant. */
 public class DragonHeadItemGeoModel extends GeoModel<DragonHeadItem> {
-    private static final ResourceLocation ANIMATIONS = makeId("animations/entity/dragon/dragon.animation.json");
+    private static final ResourceLocation ANIMATIONS = makeId("animations/entity/dragon/dragonmounts2.dragon.animation.json");
 
     @Override
     public ResourceLocation getModelResource(DragonHeadItem item) {

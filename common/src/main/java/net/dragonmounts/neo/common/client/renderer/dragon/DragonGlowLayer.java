@@ -27,7 +27,7 @@ public class DragonGlowLayer extends GeoRenderLayer<TameableDragonEntity> {
                        @Nullable RenderType renderType, MultiBufferSource bufferSource,
                        @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         if (animatable.isInvisible()) return;
-        RenderType emissive = RenderType.eyes(glowTexture(animatable));   // full-bright, ignores world light
+        RenderType emissive = RenderType.entityTranslucentEmissive(glowTexture(animatable));
         getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, emissive,
                 bufferSource.getBuffer(emissive), partialTick, LightTexture.FULL_SKY, packedOverlay,
                 -1);   // white, no tint

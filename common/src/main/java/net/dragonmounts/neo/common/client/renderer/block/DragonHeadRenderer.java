@@ -1,20 +1,40 @@
 package net.dragonmounts.neo.common.client.renderer.block;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.dragonmounts.neo.common.block.entity.DragonHeadBlockEntity;
 import net.dragonmounts.neo.common.client.model.block.DragonHeadBlockGeoModel;
+import net.minecraft.core.Direction;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-/**
- * GeckoLib 4 block-entity renderer for the dragon head. GeoBlockRenderer already implements
- * BlockEntityRenderer<T> and orients the model from the block's HORIZONTAL_FACING via
- * getFacing()/rotateBlock(), so the wall-mount facing the old renderer did by hand is handled.
- * Register with: BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
- */
 public class DragonHeadRenderer extends GeoBlockRenderer<DragonHeadBlockEntity> {
     public DragonHeadRenderer(BlockEntityRendererProvider.Context context) {
         super(new DragonHeadBlockGeoModel());
-        // If the head renders too large/small or the standing form needs the 16-step rotation,
-        // tune here: withScale(0.75F) for the old 0.75 scale, and/or override getFacing(...).
+    }
+
+    @Override
+    protected void rotateBlock(Direction facing, PoseStack poseStack) {
+        DragonHeadBlockEntity be = this.animatable;
+        if (be == null) {
+            super.rotateBlock(facing, poseStack);
+            return;
+        }
+        BlockState state = be.getBlockState();
+        // Standing head: 16-step rotation from ROTATION_16 (+180 to flip geo model's facing)
+        if (state.hasProperty(BlockStateProperties.ROTATION_16)) {
+            float yRot = state.getValue(BlockStateProperties.ROTATION_16) * 22.5F;
+            poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+            return;
+        }
+        // Wall head: face the mounted direction (+180 to flip geo model's facing)
+        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            float yRot = state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180.0F;
+            poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+            return;
+        }
+        super.rotateBlock(facing, poseStack);
     }
 }

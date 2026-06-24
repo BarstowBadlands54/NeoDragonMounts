@@ -12,6 +12,7 @@ import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.client.renderer.egg.DragonEggRenderer;
 import net.dragonmounts.neo.common.init.*;
+import net.dragonmounts.neo.common.item.DragonHeadItem;
 import net.dragonmounts.neo.common.item.DragonScaleBowItem;
 import net.dragonmounts.neo.common.network.c2s.ControlDragonPayload;
 import net.dragonmounts.neo.common.util.ArrayUtil;
@@ -21,6 +22,7 @@ import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ClientConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -30,16 +32,23 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 
 import java.io.IOException;
 
@@ -54,14 +63,12 @@ public class DragonMountsClient {
         modbus.addListener(DragonMountsClient::onClientSetup);
         modbus.addListener(DragonMountsClient::registerBuiltinPacks);
         modbus.addListener(DragonMountsClient::registerKeyMappings);
-//        modbus.addListener(DragonMountsClient::registerReloadListeners);
+        modbus.addListener(DragonMountsClient::registerClientExtensions);
         modbus.addListener(DragonMountsClient::registerParticles);
         modbus.addListener(DragonMountsClient::registerModels);
         modbus.addListener(DragonMountsClient::registerRenderers);
         modbus.addListener(DragonMountsClient::registerShaders);
         modbus.addListener(DragonMountsClient::registerScreens);
-//        modbus.addListener(DragonMountsClient::registerSpecialRendererCodecs);
-//        modbus.addListener(DragonMountsClient::registerSpecialRenderers);
         container.registerExtensionPoint(IConfigScreenFactory.class, DMConfigScreen::new);
     }
 
@@ -93,7 +100,7 @@ public class DragonMountsClient {
         DMKeyMappings.BREATHE.setKeyConflictContext(KeyConflictContext.IN_GAME);
     }
 
-//    public static void registerReloadListeners(AddClientReloadListenersEvent event) {
+    //    public static void registerReloadListeners(AddClientReloadListenersEvent event) {
 //        event.addListener(MODEL_RELOADER, (ResourceManagerReloadListener) (manager) -> {
 //            var models = Minecraft.getInstance().getEntityModels();
 //            for (var variant : DragonVariant.REGISTRY) {
@@ -102,6 +109,19 @@ public class DragonMountsClient {
 //        });
 //        event.addDependency(VanillaClientListeners.MODELS, MODEL_RELOADER);
 //    }
+    @SubscribeEvent
+    static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        for (ItemLike like : DMItemGroups.DRAGON_HEADS.items) {   // .items is the ObjectArrayList<ItemLike>
+            Item item = like.asItem();
+            if (!(item instanceof DragonHeadItem)) continue;
+            event.registerItem(new IClientItemExtensions() {
+                @Override
+                public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                    return GeoRenderProvider.of(item).getGeoItemRenderer();
+                }
+            }, item);
+        }
+    }
 
     public static void registerParticles(RegisterParticleProvidersEvent event) {
         event.registerSpecial(DMParticles.DRAGON_BREATH, BreathParticleProvider.INSTANCE);
