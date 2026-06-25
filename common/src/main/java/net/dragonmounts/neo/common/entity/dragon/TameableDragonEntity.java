@@ -656,11 +656,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         super.tickRidden(player, input);
         float rotY = this.getYRot();
         var rot = EntityUtil.getRiddenRotation(player);
-        rotY += Mth.wrapDegrees(rot.y - rotY) * 0.08F;
+        rotY += Mth.wrapDegrees(rot.y - rotY) * 0.20F;   // was 0.08F — snappier, less lag
         this.setRot(rotY, rot.x * 1.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
     }
-
     public @Nullable DragonProjectileAbility getProjectile() {
         DragonProjectileAbility p = this.getVariant().projectile;   // variant override wins
         return p != null ? p : this.getVariant().getDragonType().getProjectile();
@@ -816,12 +815,17 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
             Vec3 v = this.getDeltaMovement();
             targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
 
-            float turn = Mth.wrapDegrees(this.getYRot() - this.lastYRotForRoll);
+            // roll from the RIDER's look turn-rate so the bank tracks your view instantly
+            Player driver = this.getControllingPassenger();
+            float yaw = (driver != null) ? driver.getYRot() : this.getYRot();
+            float turn = Mth.wrapDegrees(yaw - this.lastYRotForRoll);
             targetRoll = Mth.clamp(turn * 8.0F, -25.0F, 25.0F);
+            this.lastYRotForRoll = yaw;
+        } else {
+            this.lastYRotForRoll = this.getYRot();
         }
-        this.lastYRotForRoll = this.getYRot();   // remember for next tick
 
         this.renderPitch += (targetPitch - this.renderPitch) * 0.2F;
-        this.renderRoll  += (targetRoll  - this.renderRoll)  * 0.15F;
+        this.renderRoll  += (targetRoll  - this.renderRoll)  * 0.25F;
     }
 }

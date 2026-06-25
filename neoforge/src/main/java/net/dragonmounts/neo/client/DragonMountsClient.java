@@ -220,16 +220,21 @@ public class DragonMountsClient {
         var player = event.getEntity();
         if (player.getVehicle() instanceof ClientDragonEntity dragon
                 && dragon.getPassengers().size() == 1 && dragon.isFlying()) {
-            float partialTick = event.getPartialTick();
-            float roll  = Mth.lerp(partialTick, dragon.renderRollO,  dragon.renderRoll);
-            float pitch = Mth.lerp(partialTick, dragon.renderPitchO, dragon.renderPitch);
+            float pt = event.getPartialTick();
+            float roll  = Mth.lerp(pt, dragon.renderRollO,  dragon.renderRoll);
+            float pitch = Mth.lerp(pt, dragon.renderPitchO, dragon.renderPitch);
+
+            // interpolated body yaw the same way vanilla will apply it
+            float bodyYaw = Mth.rotLerp(pt, player.yBodyRotO, player.yBodyRot);
+            float yaw = 180.0F - bodyYaw;
 
             var pose = event.getPoseStack();
             pose.pushPose();
-            // rotate around the player's center so they pivot in place, not swing out
-            pose.translate(0.0, 1.0, 0.0);                       // up to roughly torso center
-            pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(roll));   // bank
-            pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-pitch)); // pitch with dragon
+            pose.translate(0.0, 1.0, 0.0);
+            pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yaw));    // enter body-local frame
+            pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-roll));  // roll in correct frame
+            pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-pitch)); // pitch in correct frame
+            pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-yaw));   // undo, so vanilla's yaw still applies
             pose.translate(0.0, -1.0, 0.0);
         }
     }
@@ -238,7 +243,7 @@ public class DragonMountsClient {
         var player = event.getEntity();
         if (player.getVehicle() instanceof ClientDragonEntity dragon
                 && dragon.getPassengers().size() == 1 && dragon.isFlying()) {
-            event.getPoseStack().popPose();   // balance the pushPose from Pre
+            event.getPoseStack().popPose();
         }
     }
 }

@@ -236,15 +236,17 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
-        super.positionRider(passenger, callback);   // place them at the seat
-        // non-player passengers (animals) face the same way as the dragon
-        if (!(passenger instanceof Player)) {
-            passenger.setYRot(this.getYRot());
-            passenger.setYBodyRot(this.getYRot());
-            passenger.setYHeadRot(this.getYRot());
+        super.positionRider(passenger, callback);
+        if (passenger instanceof Player player && player == this.getControllingPassenger()
+                && this.isFlying() && this.getPassengers().size() == 1) {
+            float dragonYaw = this.getYRot();
+            // lock the MODEL orientation to the dragon (NOT setYRot — that moves the camera)
+            player.setYBodyRot(dragonYaw);
+            player.setYHeadRot(dragonYaw);
+            player.yBodyRotO = this.yRotO;
+            player.yHeadRotO = this.yRotO;
         }
     }
-
     @Override
     protected void removePassenger(Entity passenger) {
         boolean wasDriver = (passenger instanceof Player);
