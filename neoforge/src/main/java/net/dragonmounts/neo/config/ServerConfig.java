@@ -73,7 +73,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
                 config(builder, "quenchingBreath", true, "Whether mist-like dragon breath can put out fire and solidify lava")
         );
         EntryUtil.register(registry, this.frostyBreath =
-                config(builder, "frostyBreath", false, "Whether blizzard-like dragon breath can leave snow on ground")
+                config(builder, "frostyBreath", true, "Whether blizzard-like dragon breath can leave snow on ground")
         );
         EntryUtil.register(registry, this.baseArmor =
                 config(builder, "baseArmor", 8.0, 0.0, 30.0, "The base armor of a newly spawned dragon at adulthood", this::invalidateAttributes)

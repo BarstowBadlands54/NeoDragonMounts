@@ -49,19 +49,36 @@ public class IceBreath extends DragonBreath {
         } else if (state.is(BlockTags.FIRE)) {
             level.destroyBlock(pos, true, this.dragon);
         } else {
-            BlockPos upper = pos.above();
-            if (ServerConfig.INSTANCE.frostyBreath.get()) {
-                BlockState above = level.getBlockState(upper);
-                if (above.is(Blocks.SNOW)) {
-                    // already snow -> add a layer (up to 8)
-                    int layers = above.getValue(SnowLayerBlock.LAYERS);
-                    if (layers < SnowLayerBlock.MAX_HEIGHT) {
-                        level.setBlockAndUpdate(upper, above.setValue(SnowLayerBlock.LAYERS, layers + 1));
-                    }
-                } else if (above.isAir() && (state.is(BlockTags.LEAVES) || state.isFaceSturdy(level, pos, Direction.UP))) {
-                    // bare ground -> first snow layer
-                    level.setBlockAndUpdate(upper, Blocks.SNOW.defaultBlockState());
+            if (!ServerConfig.INSTANCE.frostyBreath.get()) return new BreathAffectedBlock();
+
+            BlockPos snowPos;
+            if (state.canBeReplaced()) {
+                // grass plant / fern / replaceable foliage -> snow REPLACES it at this position
+                snowPos = pos;
+            } else if (state.isAir()) {
+                // air over ground -> snow goes here
+                snowPos = pos;
+            } else if (state.isFaceSturdy(level, pos, Direction.UP) || state.is(BlockTags.LEAVES)) {
+                // solid block -> snow goes on top
+                snowPos = pos.above();
+            } else {
+                return new BreathAffectedBlock();
+            }
+
+            // require solid support below the snow
+            BlockState below = level.getBlockState(snowPos.below());
+            if (!below.isFaceSturdy(level, snowPos.below(), Direction.UP) && !below.is(BlockTags.LEAVES)) {
+                return new BreathAffectedBlock();
+            }
+
+            BlockState existing = level.getBlockState(snowPos);
+            if (existing.is(Blocks.SNOW)) {
+                int layers = existing.getValue(SnowLayerBlock.LAYERS);
+                if (layers < SnowLayerBlock.MAX_HEIGHT) {
+                    level.setBlockAndUpdate(snowPos, existing.setValue(SnowLayerBlock.LAYERS, layers + 1));
                 }
+            } else if (existing.isAir() || existing.canBeReplaced()) {   // ← also overwrite replaceable plants
+                level.setBlockAndUpdate(snowPos, Blocks.SNOW.defaultBlockState());
             }
         }
         return new BreathAffectedBlock(); // reset to zero

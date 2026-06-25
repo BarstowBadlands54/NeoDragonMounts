@@ -72,7 +72,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
                 config("quenchingBreath", true)
         );
         register(registry, this.frostyBreath =
-                config("frostyBreath", false)
+                config("frostyBreath", true)
         );
         register(registry, this.baseArmor =
                 config("baseArmor", 8.0, 0.0, 30.0, this::invalidateAttributes)
