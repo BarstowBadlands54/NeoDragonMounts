@@ -4,10 +4,13 @@ import net.dragonmounts.neo.common.entity.breath.BreathAffectedBlock;
 import net.dragonmounts.neo.common.entity.breath.BreathAffectedEntity;
 import net.dragonmounts.neo.common.entity.breath.DragonBreath;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.init.DMBlocks;
+import net.dragonmounts.neo.common.init.DragonVariants;
 import net.dragonmounts.neo.compat.platform.FlammableBlock;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -110,17 +113,22 @@ public class FireBreath extends DragonBreath {
     }
 
     protected void burnBlock(ServerLevel level, BlockPos sideToIgnite, RandomSource random) {
-        level.setBlockAndUpdate(sideToIgnite, Blocks.FIRE.defaultBlockState());
-        level.playSound(
-                null,
-                sideToIgnite.getX() + 0.5,
-                sideToIgnite.getY() + 0.5,
-                sideToIgnite.getZ() + 0.5,
-                SoundEvents.FLINTANDSTEEL_USE,
-                SoundSource.BLOCKS,
-                1.0F,
-                0.8F + random.nextFloat() * 0.4F
-        );
+        BlockState fire = pickFireBlock(this.dragon.getVariant().identifier, random);
+        level.setBlockAndUpdate(sideToIgnite, fire);
+        level.playSound(null, sideToIgnite.getX() + 0.5, sideToIgnite.getY() + 0.5, sideToIgnite.getZ() + 0.5,
+                SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, 0.8F + random.nextFloat() * 0.4F);
+    }
+
+    protected BlockState pickFireBlock(ResourceLocation variantId, RandomSource random) {
+        String path = variantId.getPath();
+        if (this.dragon.getVariant() == DragonVariants.BLUE_FIRE) {
+            // dual-flame variant: randomly red OR blue fire block
+            return random.nextBoolean()
+                    ? DMBlocks.BLUE_FIRE.get().defaultBlockState()
+                    : Blocks.FIRE.defaultBlockState();   // your red fire block
+        }
+        // normal fire variants -> vanilla orange fire (or your yellow fire block)
+        return Blocks.FIRE.defaultBlockState();
     }
 
     protected float calcIgnitionThreshold(Level level, BlockPos pos, BlockState state, Direction side) {

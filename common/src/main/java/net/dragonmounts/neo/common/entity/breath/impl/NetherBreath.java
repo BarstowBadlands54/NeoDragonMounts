@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class NetherBreath extends FireBreath {
     public NetherBreath(TameableDragonEntity dragon, float damage) {
@@ -74,7 +75,10 @@ public class NetherBreath extends FireBreath {
     }
 
     protected void burnBlock(ServerLevel level, BlockPos sideToIgnite, RandomSource random) {
-        level.setBlockAndUpdate(sideToIgnite, DMBlocks.BLUE_FIRE.defaultBlockState());
+        BlockState fire = "soul".equals(this.dragon.getVariant().identifier.getPath())
+                ? DMBlocks.BLUE_FIRE.get().defaultBlockState()   // soul variant -> blue fire
+                : Blocks.FIRE.defaultBlockState();                       // nether male/female -> red/orange fire
+        level.setBlockAndUpdate(sideToIgnite, fire);
         level.playSound(
                 null,
                 sideToIgnite.getX() + 0.5,
