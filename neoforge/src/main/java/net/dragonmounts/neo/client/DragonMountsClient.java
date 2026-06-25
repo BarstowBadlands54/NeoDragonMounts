@@ -7,6 +7,7 @@ import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
 import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
 import net.dragonmounts.neo.common.client.renderer.DMCoreShaders;
+import net.dragonmounts.neo.common.client.renderer.DragonShoulderLayer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.entity.DragonFireballRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -72,6 +74,7 @@ public class DragonMountsClient {
         modbus.addListener(DragonMountsClient::registerRenderers);
         modbus.addListener(DragonMountsClient::registerShaders);
         modbus.addListener(DragonMountsClient::registerScreens);
+        modbus.addListener(DragonMountsClient::onAddLayers);
         modbus.addListener(DragonMountsClient::onClientSetupBows);
         container.registerExtensionPoint(IConfigScreenFactory.class, DMConfigScreen::new);
     }
@@ -115,6 +118,15 @@ public class DragonMountsClient {
 //        });
 //        event.addDependency(VanillaClientListeners.MODELS, MODEL_RELOADER);
 //    }
+
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            if (event.getSkin(skin) instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
+                pr.addLayer(new DragonShoulderLayer<>(pr));
+            }
+        }
+    }
+
     @SubscribeEvent
     static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         for (ItemLike like : DMItemGroups.DRAGON_HEADS.items) {   // .items is the ObjectArrayList<ItemLike>

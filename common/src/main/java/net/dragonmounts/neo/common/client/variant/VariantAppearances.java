@@ -131,7 +131,7 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder();
+        var builder = builder().withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
         MOONLIGHT_FEMALE = builder.build(makeId("moonlight/female"));
         MOONLIGHT_MALE = builder.build(makeId("moonlight/male"));
         ECLIPSE = builder.build(makeId("moonlight/eclipse"));
