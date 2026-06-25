@@ -16,6 +16,7 @@ import net.dragonmounts.neo.common.network.s2c.SyncDragonAgePayload;
 import net.dragonmounts.neo.common.tag.DMItemTags;
 import net.dragonmounts.neo.common.util.ArrayUtil;
 import net.dragonmounts.neo.common.util.Segment;
+import net.dragonmounts.neo.common.util.math.MathUtil;
 import net.dragonmounts.neo.compat.platform.ServerNetworkHandler;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.DragonVariant;
@@ -43,7 +44,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -52,6 +55,7 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import static net.dragonmounts.neo.common.entity.dragon.DragonModelContracts.NECK_SEGMENTS;
@@ -204,6 +208,88 @@ public class ServerDragonEntity extends TameableDragonEntity {
         DragonAi.tickBrain((ServerLevel) level(), this);
     }
 
+    private void tickAnimalPassengers() {
+        if (this.level().isClientSide) return;
+        if (!this.isTrustingAnyPlayer()) return;
+
+        System.out.println("trusting others " + this.isTrustingAnyPlayer());
+
+        this.checkInsideBlocks();
+        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
+        if (!list.isEmpty()) {
+
+            for (Entity entity : list) {
+                if (!entity.hasPassenger(this)) {
+                    if (this.getPassengers().size() < this.getMaxPassengers()
+                            && !entity.isPassenger()
+                            && this.hasEnoughSpaceFor(entity)
+                            && entity instanceof LivingEntity
+                            && !(entity instanceof WaterAnimal)
+                            && !(entity instanceof Player)
+                            && !(entity instanceof Enemy)) {
+                        entity.startRiding(this);
+                    } else {
+                        this.push(entity);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+        super.positionRider(passenger, callback);   // place them at the seat
+        // non-player passengers (animals) face the same way as the dragon
+        if (!(passenger instanceof Player)) {
+            passenger.setYRot(this.getYRot());
+            passenger.setYBodyRot(this.getYRot());
+            passenger.setYHeadRot(this.getYRot());
+        }
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        boolean wasDriver = (passenger instanceof Player);
+        super.removePassenger(passenger);
+        if (wasDriver) {
+            this.ejectPassengers();   // driver left -> drop all animal passengers too
+        }
+    }
+
+    public boolean hasEnoughSpaceFor(Entity entity) {
+        return entity.getBbWidth() < this.getBbWidth();
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float scale) {
+        int seat;
+        Player driver = this.getControllingPassenger();   // the player driver, if any
+        if (entity == driver) {
+            seat = 0;   // driver -> front-center
+        } else {
+            // non-driver passengers fill seats 1, 2 by their order, skipping the driver
+            int idx = 0;
+            seat = 1;
+            for (Entity p : this.getPassengers()) {
+                if (p == driver) continue;     // don't count the driver
+                if (p == entity) break;
+                idx++;
+                seat++;
+            }
+        }
+        return this.getDragonType().locatePassenger(seat, this.isInSittingPose())
+                .scale(scale * MathUtil.MOJANG_MODEL_SCALE)
+                .yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
+    }
+
+
+    /**
+     * Friendly = not a hostile mob.
+     */
+    private static boolean isFriendly(Entity entity) {
+        return !(entity instanceof Enemy);   // Enemy is the hostile-mob marker (zombies, skeletons, etc.)
+    }
+
     @Override
     public void aiStep() {
         if (this.isDeadOrDying()) {
@@ -221,6 +307,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 this.getXRot(),
                 this.yHeadRot - this.yBodyRot
         );
+        tickAnimalPassengers();
         this.breathHelper.tick();
         if (this.isAgeLocked()) {
             int age = this.age;

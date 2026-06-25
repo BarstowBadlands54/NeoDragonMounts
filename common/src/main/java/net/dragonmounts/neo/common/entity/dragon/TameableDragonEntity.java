@@ -54,6 +54,7 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -298,6 +299,15 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         Vec3 pos = this.position();
         super.refreshDimensions();
         this.setPos(pos.x, pos.y, pos.z);
+    }
+
+    protected int getMaxPassengers() {
+        return 3;
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return this.getPassengers().size() < 3;
     }
 
     @Override
@@ -742,7 +752,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                 Vec3 v = this.getDeltaMovement();
                 double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
                 if (v.y < -0.35) return state.setAndContinue(DIVE);   // descending fast
-                if (horizontal > 0.08) return state.setAndContinue(FLAP);   // moving forward
+                if (horizontal > 0.08 || getPassengers().size() > 1) return state.setAndContinue(FLAP);   // moving forward
                 return state.setAndContinue(HOVER);                          // stationary in air
             }
             if (this.isInWater()) {

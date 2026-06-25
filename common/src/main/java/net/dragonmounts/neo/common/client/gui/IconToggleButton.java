@@ -24,13 +24,12 @@ public class IconToggleButton extends ToggleButton {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Icon icon;
         if (!this.active) {
-            icon = this.getState() ? Icon.LOCKED_DISABLED : Icon.UNLOCKED_DISABLED;
+            icon = this.getState() ? Icon.UNLOCKED_DISABLED : Icon.LOCKED_DISABLED;
         } else if (this.isHoveredOrFocused()) {
-            icon = this.getState() ? Icon.LOCKED_HOVER : Icon.UNLOCKED_HOVER;
+            icon = this.getState() ? Icon.UNLOCKED_HOVER : Icon.LOCKED_HOVER;
         } else {
-            icon = this.getState() ? Icon.LOCKED : Icon.UNLOCKED;
+            icon = this.getState() ? Icon.UNLOCKED : Icon.LOCKED;
         }
-        // 1.21.1 blitSprite has no RenderType provider arg
         guiGraphics.blitSprite(icon.sprite, this.getX(), this.getY(), this.width, this.height);
     }
 
