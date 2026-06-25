@@ -288,12 +288,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
-
-                if (!stack.isEmpty()) {
-                    player.drop(stack, false);
-                } else {
-                    player.setItemInHand(hand, stack);
-                }
+                player.setItemInHand(hand, stack.isEmpty() ? ItemStack.EMPTY : stack);   // ← fixed
 
                 ServerNetworkHandler.sendTracking(
                         this,
