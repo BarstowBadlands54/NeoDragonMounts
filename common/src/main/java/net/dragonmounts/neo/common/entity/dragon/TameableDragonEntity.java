@@ -54,7 +54,6 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -90,6 +89,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         GeoEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+    public float renderPitch;
+    public float renderPitchO;
+    public float renderRoll;
+    public float renderRollO;
+    private float lastYRotForRoll;
 
     public static TameableDragonEntity construct(EntityType<? extends TameableDragonEntity> type, Level level) {
         return level instanceof ServerLevel server ? new ServerDragonEntity(type, server) : new ClientDragonEntity(type, level);
@@ -370,11 +375,31 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     @Override
-    protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float scale) {
-        return this.getDragonType().locatePassenger(
-                this.getPassengers().indexOf(entity),
-                this.isInSittingPose()
-        ).scale(scale * MathUtil.MOJANG_MODEL_SCALE).yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
+    protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float partialTick) {
+        int seat;
+        Player driver = this.getControllingPassenger();
+        if (entity == driver) {
+            seat = 0;
+        } else {
+            int s = (driver == null) ? 0 : 1;
+            for (Entity p : this.getPassengers()) {
+                if (p == driver) continue;
+                if (p == entity) break;
+                s++;
+            }
+            seat = s;
+        }
+
+        Vec3 base = this.getDragonType().locatePassenger(seat, this.isInSittingPose())
+                .scale(MathUtil.MOJANG_MODEL_SCALE);
+
+        if (this.getPassengers().size() == 1 && this.isFlying()) {
+            float pitch = Mth.lerp(partialTick, this.renderPitchO, this.renderPitch);
+            float roll  = Mth.lerp(partialTick, this.renderRollO, this.renderRoll);
+            base = base.xRot(-pitch * MathUtil.TO_RAD_FACTOR);   // pitch shifts seat fwd/back+up/down
+            base = base.zRot(-roll * MathUtil.TO_RAD_FACTOR);     // roll shifts seat left/right (the part you want)
+        }
+        return base.yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
     }
 
     @Override
@@ -779,5 +804,24 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         controllers.add(new AnimationController<>(this, "death", 0, state ->
                 this.isDeadOrDying() ? state.setAndContinue(DEATH) : PlayState.STOP
         ));
+    }
+
+    public void updateRenderPitchAndRoll() {
+        this.renderPitchO = this.renderPitch;
+        this.renderRollO = this.renderRoll;
+
+        float targetPitch = 0.0F;
+        float targetRoll = 0.0F;
+        if (this.getPassengers().size() == 1 && this.isFlying()) {
+            Vec3 v = this.getDeltaMovement();
+            targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
+
+            float turn = Mth.wrapDegrees(this.getYRot() - this.lastYRotForRoll);
+            targetRoll = Mth.clamp(turn * 8.0F, -25.0F, 25.0F);
+        }
+        this.lastYRotForRoll = this.getYRot();   // remember for next tick
+
+        this.renderPitch += (targetPitch - this.renderPitch) * 0.2F;
+        this.renderRoll  += (targetRoll  - this.renderRoll)  * 0.15F;
     }
 }

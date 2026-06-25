@@ -212,8 +212,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (this.level().isClientSide) return;
         if (!this.isTrustingAnyPlayer()) return;
 
-        System.out.println("trusting others " + this.isTrustingAnyPlayer());
-
         this.checkInsideBlocks();
         List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.2F, -0.01F, 0.2F), EntitySelector.pushableBy(this));
         if (!list.isEmpty()) {

@@ -29,8 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
 
 public class ClientDragonEntity extends TameableDragonEntity {
     public final DragonHeadLocator<ClientDragonEntity> headLocator = new DragonHeadLocator<>(this);
@@ -80,6 +78,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
         super.aiStep();
         this.headLocator.tick();
         this.headLocator.calculateHeadAndNeck(this.neckSegments, this.getXRot(), this.yHeadRot - this.yBodyRot);
+        this.updateRenderPitchAndRoll();
 
         this.breathHelper.tick();
         if (!this.isAgeLocked()) {

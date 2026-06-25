@@ -96,6 +96,8 @@ public class DragonMountsClient {
         var play = NeoForge.EVENT_BUS;
         play.addListener(DragonMountsClient::onClientTick);
         play.addListener(DragonMountsClient::modifyPlayerFov);
+        play.addListener(DragonMountsClient::onRenderPlayerPre);
+        play.addListener(DragonMountsClient::onRenderPlayerPost);
     }
 
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
@@ -211,6 +213,32 @@ public class DragonMountsClient {
             event.setNewFovModifier(event.getFovModifier() * (
                     1.0F - Mth.square(Math.min((float) player.getTicksUsingItem() / 20.0F, 1.0F)) * 0.15F
             ));
+        }
+    }
+
+    public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
+        var player = event.getEntity();
+        if (player.getVehicle() instanceof ClientDragonEntity dragon
+                && dragon.getPassengers().size() == 1 && dragon.isFlying()) {
+            float partialTick = event.getPartialTick();
+            float roll  = Mth.lerp(partialTick, dragon.renderRollO,  dragon.renderRoll);
+            float pitch = Mth.lerp(partialTick, dragon.renderPitchO, dragon.renderPitch);
+
+            var pose = event.getPoseStack();
+            pose.pushPose();
+            // rotate around the player's center so they pivot in place, not swing out
+            pose.translate(0.0, 1.0, 0.0);                       // up to roughly torso center
+            pose.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(roll));   // bank
+            pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-pitch)); // pitch with dragon
+            pose.translate(0.0, -1.0, 0.0);
+        }
+    }
+
+    public static void onRenderPlayerPost(RenderPlayerEvent.Post event) {
+        var player = event.getEntity();
+        if (player.getVehicle() instanceof ClientDragonEntity dragon
+                && dragon.getPassengers().size() == 1 && dragon.isFlying()) {
+            event.getPoseStack().popPose();   // balance the pushPose from Pre
         }
     }
 }

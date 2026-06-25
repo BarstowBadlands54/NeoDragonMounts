@@ -184,11 +184,11 @@ public class DragonType implements TooltipProvider, DragonTypified {
 
     public Vec3 locatePassenger(int index, boolean sitting) {
         return switch (index) {
-            case 1 -> new Vec3(6.5, sitting ? 26.5 : 44.0, -10);
-            case 2 -> new Vec3(-6.5, sitting ? 26.5 : 44.0, -10);
-            case 3 -> new Vec3(12.0, sitting ? 10.5 : 28.0, -6.0);
-            case 4 -> new Vec3(-12.0, sitting ? 10.5 : 28.0, -6.0);
-            default -> new Vec3(0.0, sitting ? 29.0 : 46.5, 20.0);
+            case 1 -> new Vec3(6.5, sitting ? 21.5 : 44.0, -10);
+            case 2 -> new Vec3(-6.5, sitting ? 21.5 : 44.0, -10);
+            case 3 -> new Vec3(12.0, sitting ? 5.5 : 28.0, -6.0);
+            case 4 -> new Vec3(-12.0, sitting ? 5.5 : 28.0, -6.0);
+            default -> new Vec3(0.0, sitting ? 24.0 : 46.5, 20.0);
         };
     }
 

@@ -1,6 +1,7 @@
 package net.dragonmounts.neo.common.client.renderer.dragon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.dragonmounts.neo.common.client.model.dragon.DragonGeoModel;
 import net.dragonmounts.neo.common.client.renderer.RenderStateAccessor;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
@@ -66,5 +68,19 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
     @Override
     protected float getShadowRadius(TameableDragonEntity animatable) {
         return this.shadowRadius * animatable.getAgeScale();
+    }
+
+    @Override
+    protected void applyRotations(TameableDragonEntity animatable, PoseStack poseStack,
+                                  float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
+        super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
+
+        if (animatable.getPassengers().size() == 1 && animatable.isFlying()) {
+            float pitch = Mth.lerp(partialTick, animatable.renderPitchO, animatable.renderPitch);
+            poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
+
+            float roll = Mth.lerp(partialTick, animatable.renderRollO, animatable.renderRoll);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-roll));   // bank into turns
+        }
     }
 }
