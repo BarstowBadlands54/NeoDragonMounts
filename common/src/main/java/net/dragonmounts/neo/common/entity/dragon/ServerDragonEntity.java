@@ -414,17 +414,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
 
-        } else if (this.isBaby()) {
-            // owner always; others only if trust-others is enabled
-            if (isOwner || this.isTrustingAnyPlayer()) {
-                this.setTarget(null);
-                this.getNavigation().stop();
-                this.setInSittingPose(false);
-                CompoundTag tag = new CompoundTag();
-                if (this.save(tag) && player.setEntityOnShoulder(tag)) {
-                    this.discard();
-                }
-            }
         } else if (this.isSaddled) {
             this.setOrderedToSit(false);
             player.setYRot(this.getYRot());

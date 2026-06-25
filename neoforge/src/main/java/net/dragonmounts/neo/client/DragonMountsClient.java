@@ -7,7 +7,6 @@ import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
 import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
 import net.dragonmounts.neo.common.client.renderer.DMCoreShaders;
-import net.dragonmounts.neo.common.client.renderer.DragonShoulderLayer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
@@ -74,7 +73,6 @@ public class DragonMountsClient {
         modbus.addListener(DragonMountsClient::registerRenderers);
         modbus.addListener(DragonMountsClient::registerShaders);
         modbus.addListener(DragonMountsClient::registerScreens);
-        modbus.addListener(DragonMountsClient::onAddLayers);
         modbus.addListener(DragonMountsClient::onClientSetupBows);
         container.registerExtensionPoint(IConfigScreenFactory.class, DMConfigScreen::new);
     }
@@ -118,14 +116,6 @@ public class DragonMountsClient {
 //        });
 //        event.addDependency(VanillaClientListeners.MODELS, MODEL_RELOADER);
 //    }
-
-    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            if (event.getSkin(skin) instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
-                pr.addLayer(new DragonShoulderLayer<>(pr));
-            }
-        }
-    }
 
     @SubscribeEvent
     static void registerClientExtensions(RegisterClientExtensionsEvent event) {
