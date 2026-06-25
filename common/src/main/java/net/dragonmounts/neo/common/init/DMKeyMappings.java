@@ -1,6 +1,7 @@
 package net.dragonmounts.neo.common.init;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.config.ClientConfig;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.ToggleKeyMapping;
@@ -22,8 +23,16 @@ public class DMKeyMappings {
             ClientConfig.INSTANCE.toggleBreathing::get
     );
 
+    public static final KeyMapping PROJECTILE = new KeyMapping(
+            "key.neodragonmounts.projectile",
+            InputConstants.KEY_G,
+            KEY_CATEGORY
+    );
+
     public static void register(Consumer<KeyMapping> registry) {
         registry.accept(DESCEND);
         registry.accept(BREATHE);
+        registry.accept(PROJECTILE);
     }
+
 }

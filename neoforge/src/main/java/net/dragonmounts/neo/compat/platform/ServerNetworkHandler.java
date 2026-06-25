@@ -2,6 +2,8 @@ package net.dragonmounts.neo.compat.platform;
 
 import net.dragonmounts.neo.common.entity.dragon.Relation;
 import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
+import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.init.DMMemories;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.dragonmounts.neo.common.inventory.DragonInventoryHandler;
@@ -18,6 +20,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.Nullable;
@@ -99,5 +102,24 @@ public class ServerNetworkHandler {
         if (context.player().containerMenu instanceof DragonInventoryHandler handler) {
             handler.flute.applyName(payload.name());
         }
+    }
+
+    public static void handleFireProjectile(FireProjectilePayload payload, IPayloadContext context) {
+        var player = (ServerPlayer) context.player();
+        if (!(player.serverLevel().getEntity(payload.dragon()) instanceof TameableDragonEntity dragon)) return;
+        // must be the rider and owner
+        if (dragon.getControllingPassenger() != player || !dragon.isOwnedBy(player)) return;
+
+        DragonProjectileAbility ability = dragon.getProjectile();
+        if (ability == null) return;
+        // server cooldown (anti-spam, authoritative)
+        if (dragon.getProjectileCooldown() > 0) return;
+
+        var level = player.serverLevel();
+        Vec3 aim = dragon.getViewVector(1.0F).normalize();          // or player.getViewVector for rider-aim
+        // was: Vec3 origin = dragon.getEyePosition().add(aim.scale(2.0));
+        Vec3 origin = dragon.getHeadRelativeOffset(0.0F, -10.0F, 24.0F);   // throat — same point the breath emits from   // 2 blocks ahead of the eyes
+        ability.fire(dragon, level, origin, aim, payload.power());
+        dragon.setProjectileCooldown(ability.cooldownTicks);
     }
 }

@@ -3,6 +3,7 @@ package net.dragonmounts.neo.compat.registry;
 import com.mojang.serialization.Codec;
 import net.dragonmounts.neo.common.api.DragonTypified;
 import net.dragonmounts.neo.common.client.variant.VariantAppearance;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.util.DragonHead;
 import net.dragonmounts.neo.compat.Dummy;
 import net.minecraft.core.DefaultedMappedRegistry;
@@ -41,18 +42,26 @@ public class DragonVariant implements DragonTypified {
     public final ResourceLocation identifier;
     public final VariantAppearance appearance;
     public final DragonHead head;
+    public final @Nullable DragonProjectileAbility projectile;
 
     public DragonVariant(
             DragonType type,
             ResourceLocation identifier,
             VariantAppearance appearance,
+            @Nullable DragonProjectileAbility projectile,
             Function<DragonVariant, DragonHead> factory
     ) {
         this.type = type;
         this.identifier = identifier;
         this.appearance = appearance;
         this.head = factory.apply(this);
+        this.projectile = projectile;
         type.variants.add(this);
+    }
+
+    public DragonVariant(DragonType type, ResourceLocation identifier, VariantAppearance appearance,
+                         Function<DragonVariant, DragonHead> factory) {
+        this(type, identifier, appearance, null, factory);
     }
 
     @Override

@@ -6,12 +6,15 @@ import net.dragonmounts.neo.common.entity.ai.control.DragonHeadLocator;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.DragonModelContracts;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.init.DMKeyMappings;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.dragonmounts.neo.common.inventory.DragonInventory;
+import net.dragonmounts.neo.common.network.c2s.FireProjectilePayload;
 import net.dragonmounts.neo.common.tag.DMItemTags;
 import net.dragonmounts.neo.common.util.ArrayUtil;
 import net.dragonmounts.neo.common.util.Segment;
 import net.dragonmounts.neo.common.util.math.MathUtil;
+import net.dragonmounts.neo.compat.platform.ClientNetworkHandler;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.sounds.SoundEvent;
@@ -95,6 +98,34 @@ public class ClientDragonEntity extends TameableDragonEntity {
                 level.addParticle(sneeze, x, y + 0.5 * i, z, 0, 0.3, 0);
             }
             level.playSound(null, x, y, z, DMSounds.DRAGON_SNEEZE, SoundSource.NEUTRAL, 0.8F, 1);
+        }
+    }
+
+    // client-side field somewhere persistent (e.g. a ClientProjectileHelper or the client mod class)
+    private int projectileChargeTicks = 0;
+
+    public void clientTickProjectile(net.minecraft.client.Minecraft mc) {
+        var player = mc.player;
+        if (player == null) return;
+        // only while riding a dragon you control
+        if (!(player.getVehicle() instanceof TameableDragonEntity dragon) || dragon.getControllingPassenger() != player) {
+            projectileChargeTicks = 0;
+            return;
+        }
+        var ability = dragon.getProjectile();
+        if (ability == null) { projectileChargeTicks = 0; return; }
+
+        if (DMKeyMappings.PROJECTILE.isDown()) {
+            projectileChargeTicks++;
+        } else if (projectileChargeTicks > 0) {
+            int held = projectileChargeTicks;
+            projectileChargeTicks = 0;
+            System.out.println("[DM] G released, held=" + held + " min=" + ability.minChargeTicks);
+            if (held >= ability.minChargeTicks) {
+                float power = Math.min(1.0F, (held - ability.minChargeTicks) / 20.0F);
+                System.out.println("[DM] sending FireProjectilePayload power=" + power);
+                ClientNetworkHandler.send(new FireProjectilePayload(dragon.getId(), power));
+            }
         }
     }
 

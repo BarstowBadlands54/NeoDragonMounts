@@ -10,6 +10,7 @@ import net.dragonmounts.neo.common.entity.breath.impl.FireBreath;
 import net.dragonmounts.neo.common.entity.dragon.HatchableDragonEggEntity;
 import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.minecraft.Util;
 import net.minecraft.core.DefaultedMappedRegistry;
@@ -250,5 +251,9 @@ public class DragonType implements TooltipProvider, DragonTypified {
         entity.setDragonType(type, false);
         entity.playSound(SoundEvents.END_PORTAL_SPAWN, 2, 1);
         entity.playSound(SoundEvents.PORTAL_TRIGGER, 2, 1);
+    }
+
+    public @Nullable DragonProjectileAbility getProjectile() {
+        return null;   // override per type, or leave null if a type has no default projectile
     }
 }

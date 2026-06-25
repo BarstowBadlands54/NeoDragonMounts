@@ -10,6 +10,7 @@ import net.dragonmounts.neo.common.entity.breath.impl.FireBreath;
 import net.dragonmounts.neo.common.entity.dragon.HatchableDragonEggEntity;
 import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.minecraft.Util;
 import net.minecraft.core.DefaultedMappedRegistry;
@@ -37,7 +38,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.component.TooltipProvider;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -252,5 +252,9 @@ public class DragonType implements TooltipProvider, DragonTypified {
         entity.setDragonType(type, false);
         entity.playSound(SoundEvents.END_PORTAL_SPAWN, 2, 1);
         entity.playSound(SoundEvents.PORTAL_TRIGGER, 2, 1);
+    }
+
+    public @Nullable DragonProjectileAbility getProjectile() {
+        return null;
     }
 }

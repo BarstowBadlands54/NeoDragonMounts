@@ -1,11 +1,11 @@
 package net.dragonmounts.neo.common.init;
 
 import com.google.common.collect.ImmutableList;
-import net.dragonmounts.neo.common.block.DragonHeadBlock;
 import net.dragonmounts.neo.common.block.DragonHeadStandingBlock;
 import net.dragonmounts.neo.common.block.DragonHeadWallBlock;
 import net.dragonmounts.neo.common.client.variant.VariantAppearance;
 import net.dragonmounts.neo.common.client.variant.VariantAppearances;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.item.DragonHeadItem;
 import net.dragonmounts.neo.common.util.DragonHead;
 import net.dragonmounts.neo.compat.platform.PlatformCompat;
@@ -108,57 +108,72 @@ public class DragonVariants {
         });
     }
 
+    static DragonVariant make(Function<String, VariantAppearance> supplier, DragonType type, String name,
+                              DragonProjectileAbility projectile) {
+        return new DragonVariant(type, makeId(name), supplier.apply(name), projectile, variant -> {
+            var wall = variant.identifier.getPath() + "_dragon_head_wall";
+            return new DragonHead(
+                    variant,
+                    wall.substring(0, wall.length() - 5),
+                    wall,
+                    DragonVariants::registerStandingHead,
+                    DragonVariants::registerWallHead,
+                    DragonVariants::registerHeadItem
+            );
+        });
+    }
+
     static {
         Function<String, VariantAppearance> supplier = PlatformCompat.isClientSide()
                 ? VariantAppearances.getBuiltinSupplier()
                 : ignored -> null;
         var variants = ImmutableList.<DragonVariant>builderWithExpectedSize(46);
-        variants.add(AETHER_FEMALE = make(supplier, DragonTypes.AETHER, "aether_female"));
-        variants.add(AETHER_MALE = make(supplier, DragonTypes.AETHER, "aether_male"));
-        variants.add(BREEZE = make(supplier, DragonTypes.AETHER, "breeze"));
-        variants.add(DARK_FEMALE = make(supplier, DragonTypes.DARK, "dark_female"));
-        variants.add(DARK_MALE = make(supplier, DragonTypes.DARK, "dark_male"));
-        variants.add(ENCHANTED_FEMALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_female"));
-        variants.add(ENCHANTED_MALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_male"));
-        variants.add(ENDER_FEMALE = make(supplier, DragonTypes.ENDER, "ender_female"));
-        variants.add(ENDER_MALE = make(supplier, DragonTypes.ENDER, "ender_male"));
-        variants.add(ENDER_RARE = make(supplier, DragonTypes.ENDER, "ender_rare"));
-        variants.add(FIRE_FEMALE = make(supplier, DragonTypes.FIRE, "fire_female"));
-        variants.add(FIRE_MALE = make(supplier, DragonTypes.FIRE, "fire_male"));
-        variants.add(BLUE_FIRE = make(supplier, DragonTypes.FIRE, "blue_fire"));
-        variants.add(FOREST_FEMALE = make(supplier, DragonTypes.FOREST, "forest_female"));
-        variants.add(FOREST_MALE = make(supplier, DragonTypes.FOREST, "forest_male"));
-        variants.add(FOREST_DRY_FEMALE = make(supplier, DragonTypes.FOREST, "forest_dry_female"));
-        variants.add(FOREST_DRY_MALE = make(supplier, DragonTypes.FOREST, "forest_dry_male"));
-        variants.add(FOREST_TAIGA_FEMALE = make(supplier, DragonTypes.FOREST, "forest_taiga_female"));
-        variants.add(FOREST_TAIGA_MALE = make(supplier, DragonTypes.FOREST, "forest_taiga_male"));
-        variants.add(ICE_FEMALE = make(supplier, DragonTypes.ICE, "ice_female"));
-        variants.add(ICE_MALE = make(supplier, DragonTypes.ICE, "ice_male"));
-        variants.add(MOONLIGHT_FEMALE = make(supplier, DragonTypes.MOONLIGHT, "moonlight_female"));
-        variants.add(MOONLIGHT_MALE = make(supplier, DragonTypes.MOONLIGHT, "moonlight_male"));
-        variants.add(ECLIPSE = make(supplier, DragonTypes.MOONLIGHT, "eclipse"));
-        variants.add(NETHER_FEMALE = make(supplier, DragonTypes.NETHER, "nether_female"));
-        variants.add(NETHER_MALE = make(supplier, DragonTypes.NETHER, "nether_male"));
-        variants.add(SOUL = make(supplier, DragonTypes.NETHER, "soul"));
-        variants.add(WILD_SCULK = make(supplier, DragonTypes.SCULK, "wild_sculk"));
-        variants.add(MUTANT_SCULK = make(supplier, DragonTypes.SCULK, "mutant_sculk"));
-        variants.add(HOLLOWED = make(supplier, DragonTypes.SCULK, "hollowed"));
-        variants.add(SKELETON = make(supplier, DragonTypes.SKELETON, "skeleton"));
-        variants.add(STRAY = make(supplier, DragonTypes.SKELETON, "stray"));
-        variants.add(BOGGED = make(supplier, DragonTypes.SKELETON, "bogged"));
-        variants.add(STORM_FEMALE = make(supplier, DragonTypes.STORM, "storm_female"));
-        variants.add(STORM_MALE = make(supplier, DragonTypes.STORM, "storm_male"));
-        variants.add(BRONZED_STORM = make(supplier, DragonTypes.STORM, "bronzed_storm"));
-        variants.add(SUNLIGHT_FEMALE = make(supplier, DragonTypes.SUNLIGHT, "sunlight_female"));
-        variants.add(SUNLIGHT_MALE = make(supplier, DragonTypes.SUNLIGHT, "sunlight_male"));
-        variants.add(AURORA = make(supplier, DragonTypes.SUNLIGHT, "aurora"));
-        variants.add(TERRA_FEMALE = make(supplier, DragonTypes.TERRA, "terra_female"));
-        variants.add(TERRA_MALE = make(supplier, DragonTypes.TERRA, "terra_male"));
-        variants.add(WATER_FEMALE = make(supplier, DragonTypes.WATER, "water_female"));
-        variants.add(WATER_MALE = make(supplier, DragonTypes.WATER, "water_male"));
-        variants.add(BRINE = make(supplier, DragonTypes.WATER, "brine"));
-        variants.add(WITHER = make(supplier, DragonTypes.WITHER, "wither"));
-        variants.add(ZOMBIE = make(supplier, DragonTypes.ZOMBIE, "zombie"));
+        variants.add(AETHER_FEMALE = make(supplier, DragonTypes.AETHER, "aether_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(AETHER_MALE = make(supplier, DragonTypes.AETHER, "aether_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BREEZE = make(supplier, DragonTypes.AETHER, "breeze", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(DARK_FEMALE = make(supplier, DragonTypes.DARK, "dark_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(DARK_MALE = make(supplier, DragonTypes.DARK, "dark_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ENCHANTED_FEMALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ENCHANTED_MALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ENDER_FEMALE = make(supplier, DragonTypes.ENDER, "ender_female", DragonProjectiles.ENDER_CHARGE));
+        variants.add(ENDER_MALE = make(supplier, DragonTypes.ENDER, "ender_male", DragonProjectiles.ENDER_CHARGE));
+        variants.add(ENDER_RARE = make(supplier, DragonTypes.ENDER, "ender_rare", DragonProjectiles.ENDER_CHARGE));
+        variants.add(FIRE_FEMALE = make(supplier, DragonTypes.FIRE, "fire_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FIRE_MALE = make(supplier, DragonTypes.FIRE, "fire_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BLUE_FIRE = make(supplier, DragonTypes.FIRE, "blue_fire", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_FEMALE = make(supplier, DragonTypes.FOREST, "forest_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_MALE = make(supplier, DragonTypes.FOREST, "forest_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_DRY_FEMALE = make(supplier, DragonTypes.FOREST, "forest_dry_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_DRY_MALE = make(supplier, DragonTypes.FOREST, "forest_dry_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_TAIGA_FEMALE = make(supplier, DragonTypes.FOREST, "forest_taiga_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FOREST_TAIGA_MALE = make(supplier, DragonTypes.FOREST, "forest_taiga_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ICE_FEMALE = make(supplier, DragonTypes.ICE, "ice_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ICE_MALE = make(supplier, DragonTypes.ICE, "ice_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(MOONLIGHT_FEMALE = make(supplier, DragonTypes.MOONLIGHT, "moonlight_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(MOONLIGHT_MALE = make(supplier, DragonTypes.MOONLIGHT, "moonlight_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ECLIPSE = make(supplier, DragonTypes.MOONLIGHT, "eclipse", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(NETHER_FEMALE = make(supplier, DragonTypes.NETHER, "nether_female", DragonProjectiles.NETHER_FIREBALL));
+        variants.add(NETHER_MALE = make(supplier, DragonTypes.NETHER, "nether_male", DragonProjectiles.NETHER_FIREBALL));
+        variants.add(SOUL = make(supplier, DragonTypes.NETHER, "soul", DragonProjectiles.NETHER_FIREBALL));
+        variants.add(WILD_SCULK = make(supplier, DragonTypes.SCULK, "wild_sculk", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(MUTANT_SCULK = make(supplier, DragonTypes.SCULK, "mutant_sculk", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(HOLLOWED = make(supplier, DragonTypes.SCULK, "hollowed", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(SKELETON = make(supplier, DragonTypes.SKELETON, "skeleton", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(STRAY = make(supplier, DragonTypes.SKELETON, "stray", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BOGGED = make(supplier, DragonTypes.SKELETON, "bogged", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(STORM_FEMALE = make(supplier, DragonTypes.STORM, "storm_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(STORM_MALE = make(supplier, DragonTypes.STORM, "storm_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BRONZED_STORM = make(supplier, DragonTypes.STORM, "bronzed_storm", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(SUNLIGHT_FEMALE = make(supplier, DragonTypes.SUNLIGHT, "sunlight_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(SUNLIGHT_MALE = make(supplier, DragonTypes.SUNLIGHT, "sunlight_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(AURORA = make(supplier, DragonTypes.SUNLIGHT, "aurora", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(TERRA_FEMALE = make(supplier, DragonTypes.TERRA, "terra_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(TERRA_MALE = make(supplier, DragonTypes.TERRA, "terra_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(WATER_FEMALE = make(supplier, DragonTypes.WATER, "water_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(WATER_MALE = make(supplier, DragonTypes.WATER, "water_male", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BRINE = make(supplier, DragonTypes.WATER, "brine", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(WITHER = make(supplier, DragonTypes.WITHER, "wither", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ZOMBIE = make(supplier, DragonTypes.ZOMBIE, "zombie", DragonProjectiles.DRAGON_FIREBALL));
         BUILTIN_VALUES = variants.build();
     }
 }

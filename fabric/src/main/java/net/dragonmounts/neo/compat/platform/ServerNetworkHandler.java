@@ -2,6 +2,8 @@ package net.dragonmounts.neo.compat.platform;
 
 import net.dragonmounts.neo.common.entity.dragon.Relation;
 import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
+import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.init.DMMemories;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.dragonmounts.neo.common.inventory.DragonInventoryHandler;
@@ -20,6 +22,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.phys.Vec3;
 
 public class ServerNetworkHandler {
     public static void sendTo(ServerPlayer player, CustomPacketPayload payload) {
@@ -102,5 +105,21 @@ public class ServerNetworkHandler {
         if (context.player().containerMenu instanceof DragonInventoryHandler handler) {
             handler.flute.applyName(payload.name());
         }
+    }
+
+    public static void handleFireProjectile(FireProjectilePayload payload, ServerPlayNetworking.Context context) {
+        var player = context.player();
+        if (!(player.serverLevel().getEntity(payload.dragon()) instanceof TameableDragonEntity dragon)) return;
+        if (dragon.getControllingPassenger() != player || !dragon.isOwnedBy(player)) return;
+
+        DragonProjectileAbility ability = dragon.getProjectile();
+        if (ability == null) return;
+        if (dragon.getProjectileCooldown() > 0) return;
+
+        var level = player.serverLevel();
+        Vec3 aim = dragon.getViewVector(1.0F).normalize();// was: Vec3 origin = dragon.getEyePosition().add(aim.scale(2.0));
+        Vec3 origin = dragon.getHeadRelativeOffset(0.0F, -10.0F, 24.0F);   // throat — same point the breath emits from
+        ability.fire(dragon, level, origin, aim, payload.power());
+        dragon.setProjectileCooldown(ability.cooldownTicks);
     }
 }

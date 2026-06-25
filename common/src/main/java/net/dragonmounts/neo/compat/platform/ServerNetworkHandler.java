@@ -12,4 +12,5 @@ public class ServerNetworkHandler {
     public static void sendTracking(Entity entity, CustomPacketPayload payload) {}
 
     public static void sendToAll(MinecraftServer server, CustomPacketPayload payload) {}
+
 }

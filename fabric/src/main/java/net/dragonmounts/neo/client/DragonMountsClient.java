@@ -39,6 +39,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 // 1.21.1: special-model system removed — core/head item render needs a BEWLR
 // import net.minecraft.client.renderer.special.SpecialModelRenderers;
+import net.minecraft.client.renderer.entity.DragonFireballRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -94,6 +95,7 @@ public class DragonMountsClient implements
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
         EntityRendererRegistry.register(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
         EntityRendererRegistry.register(DMEntities.TAMEABLE_DRAGON.cast(), DragonRenderer::new);
+        EntityRendererRegistry.register(DMEntities.DRAGON_CHARGE.get(), DragonFireballRenderer::new);
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this);
         ParticleFactoryRegistry.getInstance().register(DMParticles.DRAGON_BREATH, BreathParticleProvider::new);
         ClientCommandRegistrationCallback.EVENT.register(DMClientCommand::register);
@@ -118,6 +120,9 @@ public class DragonMountsClient implements
         if (player == null) return;
         if (player.getVehicle() instanceof ClientDragonEntity dragon) {
             if (player != dragon.getControllingPassenger()) return;
+
+            dragon.clientTickProjectile(client);
+
             int flags = ArrayUtil.compressFlags(
                     DMKeyMappings.DESCEND.isDown(),
                     client.options.keySprint.isDown(),

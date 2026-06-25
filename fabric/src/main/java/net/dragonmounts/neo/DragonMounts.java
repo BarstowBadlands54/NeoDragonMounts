@@ -79,6 +79,7 @@ public class DragonMounts implements ModInitializer, ServerPlayConnectionEvents.
         registerGlobalReceiver(ToggleTrustPayload.TYPE, ServerNetworkHandler::handleToggleTrust);
         registerGlobalReceiver(ToggleFollowingPayload.TYPE, ServerNetworkHandler::handleToggleFollowing);
         registerGlobalReceiver(RenameFlutePayload.TYPE, ServerNetworkHandler::handleRenameFlute);
+        registerGlobalReceiver(FireProjectilePayload.TYPE, ServerNetworkHandler::handleFireProjectile);
     }
 
     static void registerPayloads(PayloadTypeRegistry<RegistryFriendlyByteBuf> registry) {
@@ -99,6 +100,7 @@ public class DragonMounts implements ModInitializer, ServerPlayConnectionEvents.
         registry.register(S2CSyncConfigPayload.TYPE, S2CSyncConfigPayload.CODEC);
         registry.register(BooleanConfigPayload.TYPE, BooleanConfigPayload.CODEC);
         registry.register(DoubleConfigPayload.TYPE, DoubleConfigPayload.CODEC);
+        registry.register(FireProjectilePayload.TYPE, FireProjectilePayload.CODEC);
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.ai.control.DragonBodyControl;
 import net.dragonmounts.neo.common.entity.ai.control.DragonMoveControl;
 import net.dragonmounts.neo.common.entity.breath.DragonBreathHelper;
+import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.dragonmounts.neo.common.init.DragonVariants;
@@ -139,6 +140,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     protected int flightTicks;
     protected int crystalTicks;
     protected int shearCooldown;
+    protected int projectileCooldown;
     public final DragonInventory inventory = new DragonInventory(
             this,
             DATA_CHEST_ITEM,
@@ -522,6 +524,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_SHEARED, cooldown > 0);
     }
 
+    public int getProjectileCooldown() { return this.projectileCooldown; }
+
+    public void setProjectileCooldown(int ticks) { this.projectileCooldown = ticks; }
+
     @Override
     public boolean readyForShearing(ServerLevel level, ItemStack stack) {
         return this.isAlive() && this.stage.ordinal() >= 2 && !this.isSheared() && stack.is(DMItemTags.HARD_SHEARS);
@@ -618,6 +624,11 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         rotY += Mth.wrapDegrees(rot.y - rotY) * 0.08F;
         this.setRot(rotY, rot.x * 1.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
+    }
+
+    public @Nullable DragonProjectileAbility getProjectile() {
+        DragonProjectileAbility p = this.getVariant().projectile;   // variant override wins
+        return p != null ? p : this.getVariant().getDragonType().getProjectile();
     }
 
     @Override

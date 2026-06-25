@@ -3,7 +3,9 @@ package net.dragonmounts.neo.common.init;
 import net.dragonmounts.neo.common.entity.breath.BreathNodeEntity;
 import net.dragonmounts.neo.common.entity.dragon.HatchableDragonEggEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.entity.projectile.DragonChargeEntity;
 import net.dragonmounts.neo.compat.registry.EntityHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 
 import static net.dragonmounts.neo.compat.registry.EntityHolder.registerEntity;
@@ -29,6 +31,12 @@ public class DMEntities {
             TameableDragonEntity::construct,
             null,
             builder -> builder.sized(3.0F, 2.5F).fireImmune()
+    );
+    public static final EntityHolder<DragonChargeEntity> DRAGON_CHARGE = registerEntity(
+            "dragon_charge",
+            MobCategory.MISC,
+            DragonChargeEntity::new,
+            builder -> builder.sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
     );
 
     public static void init() {}

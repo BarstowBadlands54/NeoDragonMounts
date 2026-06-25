@@ -95,6 +95,7 @@ public class DragonMounts {
         registrar.playToClient(SyncEggAgePayload.TYPE, SyncEggAgePayload.CODEC, ClientNetworkHandler::handleEggSync);
         registrar.playToClient(BooleanConfigPayload.TYPE, BooleanConfigPayload.CODEC, ClientNetworkHandler::handleBooleanConfig);
         registrar.playToClient(DoubleConfigPayload.TYPE, DoubleConfigPayload.CODEC, ClientNetworkHandler::handleDoubleConfig);
+        registrar.playToServer(FireProjectilePayload.TYPE, FireProjectilePayload.CODEC, ServerNetworkHandler::handleFireProjectile);
     }
 
     static void commonSetup(FMLCommonSetupEvent event) {

@@ -214,6 +214,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (this.shearCooldown > 0) {
             this.setSheared(this.shearCooldown - 1);
         }
+        if (this.projectileCooldown > 0) this.projectileCooldown--;
         this.headLocator.tick();
         this.headLocator.calculateHeadAndNeck(
                 this.neckSegments,

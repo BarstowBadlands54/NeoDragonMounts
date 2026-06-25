@@ -24,6 +24,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.entity.DragonFireballRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -141,6 +142,7 @@ public class DragonMountsClient {
         event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
         event.registerEntityRenderer(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
         event.registerEntityRenderer(DMEntities.TAMEABLE_DRAGON.get(), DragonRenderer::new);
+        event.registerEntityRenderer(DMEntities.DRAGON_CHARGE.get(), DragonFireballRenderer::new);
     }
 
     static void registerShaders(RegisterShadersEvent event) {
@@ -190,6 +192,9 @@ public class DragonMountsClient {
         if (player == null) return;
         if (player.getVehicle() instanceof ClientDragonEntity dragon) {
             if (player != dragon.getControllingPassenger()) return;
+
+            dragon.clientTickProjectile(client);
+
             int flags = ArrayUtil.compressFlags(
                     DMKeyMappings.DESCEND.isDown(),
                     client.options.keySprint.isDown(),
@@ -200,7 +205,6 @@ public class DragonMountsClient {
             ClientNetworkHandler.send(new ControlDragonPayload(dragon.getId(), flags));
         }
     }
-
     public static void modifyPlayerFov(ComputeFovModifierEvent event) {
         var player = event.getPlayer();
         if (player.isUsingItem() && player.getUseItem().getItem() instanceof DragonScaleBowItem) {
