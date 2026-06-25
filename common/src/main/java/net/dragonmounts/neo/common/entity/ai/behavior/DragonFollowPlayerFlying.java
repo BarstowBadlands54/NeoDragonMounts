@@ -31,8 +31,8 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
                 return false;
             }
 
-            if(!dragon.isBaby()) {
-                return  false;
+            if(dragon.isBaby()) {
+                return false;
             }
 
             // if owner is on ground land next to owner
