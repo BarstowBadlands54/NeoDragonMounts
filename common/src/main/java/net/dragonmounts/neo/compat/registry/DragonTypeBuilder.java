@@ -40,7 +40,7 @@ public final class DragonTypeBuilder {
     public @NotNull ParticleOptions eggParticle = ParticleTypes.MYCELIUM;
     public @NotNull MapColor scaleColor = MapColor.NONE;
     public TagKey<Item> scales;
-    public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.normal.geo.json");
+    public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.bland.geo.json");
     public ResourceLocation headGeoModel = makeId("geo/head/dragonmounts2.head_block.base.geo.json");
     public ResourceLocation texture;
 

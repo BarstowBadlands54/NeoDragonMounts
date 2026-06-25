@@ -106,7 +106,7 @@ public class DragonTypes {
                 .register(DarkType::new, makeId("dark"));
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
-                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .model("normal", "base")   // TODO confirm body shape (old COMPAT)
                 .texture(makeId("textures/entity/dragon/aether/female/body.png"))
                 .setMaterial(DMItemTags.AETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_LIGHT_BLUE)
@@ -139,7 +139,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
-                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .model("normal", "base")   // TODO confirm body shape (old COMPAT)
                 .texture(makeId("textures/entity/dragon/forest/forest/female_body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
@@ -225,7 +225,7 @@ public class DragonTypes {
                 .setToughness(9.0F);
         tier = new ItemTierBuilder(netherite, 3000, 8.0F, 6.0F).setEnchantmentValue(11);
         ENDER = new DragonTypeBuilder(0xAB39BE, material, tier)
-                .model("bland", "base")   // TODO confirm body shape (old COMPAT)
+                .model("normal", "base")   // TODO confirm body shape (old COMPAT)
                 .texture(makeId("textures/entity/dragon/ender/female/body.png"))
                 .setMaterial(DMItemTags.ENDER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)

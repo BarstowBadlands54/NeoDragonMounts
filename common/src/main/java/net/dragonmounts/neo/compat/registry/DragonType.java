@@ -46,6 +46,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -226,7 +227,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     }
 
     @Override
-    public void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag) {
+    public void addToTooltip(Item.@NotNull TooltipContext context, Consumer<Component> consumer, @NotNull TooltipFlag flag) {
         consumer.accept(this.getName());
     }
 
