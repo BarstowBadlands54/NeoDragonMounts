@@ -246,6 +246,18 @@ public class ServerDragonEntity extends TameableDragonEntity {
             player.yBodyRotO = this.yRotO;
             player.yHeadRotO = this.yRotO;
         }
+
+        if (!(passenger instanceof Player)) {
+            float dragonYaw = this.getYRot();
+            passenger.setYRot(dragonYaw);
+            passenger.yRotO = dragonYaw;            // prev-tick yaw, prevents render interpolation swing
+            if (passenger instanceof LivingEntity living) {
+                living.setYBodyRot(dragonYaw);
+                living.setYHeadRot(dragonYaw);
+                living.yBodyRotO = this.yRotO;
+                living.yHeadRotO = this.yRotO;
+            }
+        }
     }
     @Override
     protected void removePassenger(Entity passenger) {
