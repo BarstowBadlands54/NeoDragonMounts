@@ -14,14 +14,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity> {
 
-    private int xDist;
-    private int yDist;
-    private int zDist;
+    public DragonFollowPlayerFlying() {
 
-    public DragonFollowPlayerFlying(TameableDragonEntity dragonBaseFlyingRideable, int xDist, int yDist, int zDist) {
-        this.xDist = xDist;
-        this.yDist = yDist;
-        this.zDist = zDist;
     }
 
     @Override
@@ -37,36 +31,56 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
                 return false;
             }
 
+            if(!dragon.isBaby()) {
+                return  false;
+            }
+
             // if owner is on ground land next to owner
-            return dragon.getOwner().isFallFlying();
+            return dragon.getOwner().isFallFlying() || owner.fallDistance > 4;
         }
         return false;
     }
 
     @Override
     public void tickOrStop(ServerLevel level, TameableDragonEntity dragon, long gameTime) {
-        LivingEntity target = dragon.getTarget();
-        dragon.setFlying(true);
         LivingEntity owner = dragon.getOwner();
-        if (target != null && dragon.distanceTo(target) < 8) {
-            dragon.getNavigation().moveTo(target.getX(), target.getY(), target.getZ(), 4);
-        } else {
-            if (owner != null) {
-                // don't catch if owner is too far away
-                double followRange = 35;
-                Vec3 movePos = new Vec3(owner.getX(), owner.getY() + yDist, owner.getZ());
+        if (owner == null) return;
 
-                if (owner.fallDistance > 4 && !owner.isFallFlying()) {
-                    if (dragon.distanceTo(owner) < followRange) {
-                        // mount owner if close enough, otherwise move to owner
-                        if (dragon.distanceTo(owner) <= dragon.getBbWidth() * 1.4 || dragon.distanceTo(owner) <= dragon.getBbHeight() * 1.0 && !owner.isShiftKeyDown() && dragon.isFlying()) {
-                            owner.startRiding(dragon);
-                        } else {
-                            // y movement is too slow
-                            dragon.getNavigation().moveTo(owner.getX(), owner.getY() - 5, owner.getZ(), 4F);
-                        }
+        dragon.setFlying(true);
+
+        double dist = dragon.distanceTo(owner);
+        double followRange = 35.0;
+
+        // CASE 1: owner is elytra-flying -> follow alongside in the air
+        if (owner.isFallFlying()) {
+            // fly to a point near the owner; offset so the dragon doesn't sit exactly on them
+            double offset = dragon.getScale() * 5.0;
+            dragon.getMoveControl().setWantedPosition(
+                    owner.getX() + offset,
+                    owner.getY(),
+                    owner.getZ() + offset,
+                    1.5   // speed multiplier
+            );
+            return;
+        }
+
+        // CASE 2: owner is falling (not elytra) -> swoop in to catch
+        if (owner.fallDistance > 4 && !owner.onGround()) {
+            if (dist < followRange) {
+                // close enough to mount -> catch the owner
+                if (dist <= dragon.getBbWidth() * 1.4 || dist <= dragon.getBbHeight()) {
+                    if (!owner.isShiftKeyDown()) {
+                        owner.startRiding(dragon);
+                        return;
                     }
                 }
+                // otherwise fly UNDER the owner to intercept the fall
+                dragon.getMoveControl().setWantedPosition(
+                        owner.getX(),
+                        owner.getY() - 2.0,   // aim slightly below to catch
+                        owner.getZ(),
+                        2.0                    // fast swoop
+                );
             }
         }
     }

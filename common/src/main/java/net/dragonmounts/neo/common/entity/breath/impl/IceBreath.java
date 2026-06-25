@@ -17,6 +17,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 
 public class IceBreath extends DragonBreath {
@@ -47,11 +49,19 @@ public class IceBreath extends DragonBreath {
         } else if (state.is(BlockTags.FIRE)) {
             level.destroyBlock(pos, true, this.dragon);
         } else {
-            BlockPos upper;
-            if (ServerConfig.INSTANCE.frostyBreath.get() && level.getBlockState(upper = pos.above()).isAir() && (
-                    state.is(BlockTags.LEAVES) || state.isFaceSturdy(level, pos, Direction.UP)
-            )) {
-                level.setBlockAndUpdate(upper, Blocks.SNOW.defaultBlockState());
+            BlockPos upper = pos.above();
+            if (ServerConfig.INSTANCE.frostyBreath.get()) {
+                BlockState above = level.getBlockState(upper);
+                if (above.is(Blocks.SNOW)) {
+                    // already snow -> add a layer (up to 8)
+                    int layers = above.getValue(SnowLayerBlock.LAYERS);
+                    if (layers < SnowLayerBlock.MAX_HEIGHT) {
+                        level.setBlockAndUpdate(upper, above.setValue(SnowLayerBlock.LAYERS, layers + 1));
+                    }
+                } else if (above.isAir() && (state.is(BlockTags.LEAVES) || state.isFaceSturdy(level, pos, Direction.UP))) {
+                    // bare ground -> first snow layer
+                    level.setBlockAndUpdate(upper, Blocks.SNOW.defaultBlockState());
+                }
             }
         }
         return new BreathAffectedBlock(); // reset to zero

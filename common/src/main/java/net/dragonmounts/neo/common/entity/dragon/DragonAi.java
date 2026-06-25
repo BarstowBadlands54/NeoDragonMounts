@@ -81,6 +81,7 @@ public class DragonAi {
                 new AnimalMakeLoveEx(DMEntities.TAMEABLE_DRAGON.get(), 1.0F, 4, 6),
                 new FollowTemptation(entity -> 1.25F, entity -> 3.0),
                 new FollowOwner(1.0F, 14.0F, 10),
+                new DragonFollowPlayerFlying(),
                 StartAttacking.create(DragonAi::findNearestValidAttackTarget),
                 SetEntityLookTargetSometimes.create(8.0F, UniformInt.of(30, 60)),
                 BrainUtil.dispatch(

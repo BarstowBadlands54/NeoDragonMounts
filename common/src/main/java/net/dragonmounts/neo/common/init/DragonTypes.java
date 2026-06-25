@@ -169,6 +169,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
+                .setSneezeParticle(ParticleTypes.SNOWFLAKE)
                 .addHabitat(Blocks.SNOW)
                 .addHabitat(Blocks.ICE)
                 .addHabitat(Blocks.PACKED_ICE)

@@ -813,9 +813,16 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         float targetRoll = 0.0F;
         if (this.getPassengers().size() == 1 && this.isFlying()) {
             Vec3 v = this.getDeltaMovement();
-            targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
+            double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
 
-            // roll from the RIDER's look turn-rate so the bank tracks your view instantly
+            // only pitch when actually flying forward — not when hovering or going straight up (spacebar)
+            if (horizontal > 0.08) {
+                targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
+            } else {
+                targetPitch = 0.0F;   // hovering / vertical ascent -> level out
+            }
+
+            // roll unchanged
             Player driver = this.getControllingPassenger();
             float yaw = (driver != null) ? driver.getYRot() : this.getYRot();
             float turn = Mth.wrapDegrees(yaw - this.lastYRotForRoll);
