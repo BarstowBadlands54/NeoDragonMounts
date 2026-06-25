@@ -5,33 +5,22 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class DragonTackLayer extends GeoRenderLayer<TameableDragonEntity> {
-    private static final ResourceLocation SADDLE = makeId("textures/entity/dragon/saddle.png");
-    private static final ResourceLocation CHEST  = makeId("textures/entity/dragon/chest.png");
+    private static final ResourceLocation SADDLE_TEX = makeId("textures/entity/dragon/saddle.png");
+    private static final ResourceLocation CHEST_TEX  = makeId("textures/entity/dragon/chest.png");
 
     public DragonTackLayer(GeoRenderer<TameableDragonEntity> renderer) {
         super(renderer);
-    }
-
-    private void overlay(ResourceLocation texture, RenderType rt, BakedGeoModel model, PoseStack poseStack,
-                         MultiBufferSource bufferSource, TameableDragonEntity dragon,
-                         float partialTick, int packedLight) {
-        getRenderer().reRender(model, poseStack, bufferSource, dragon, rt,
-                bufferSource.getBuffer(rt), partialTick, packedLight, OverlayTexture.NO_OVERLAY, -1);
     }
 
     @Override
@@ -41,22 +30,56 @@ public class DragonTackLayer extends GeoRenderLayer<TameableDragonEntity> {
         if (dragon.isInvisible() || dragon.deathTime > 0) return;
 
         if (dragon.isSaddled()) {
-            overlay(SADDLE, RenderType.entityCutoutNoCull(SADDLE), bakedModel, poseStack, bufferSource, dragon, partialTick, packedLight);
+            renderBoneWithTexture(bakedModel, "body.saddle", SADDLE_TEX,
+                    poseStack, dragon, bufferSource, partialTick, packedLight);
         }
         if (dragon.hasChest()) {
-            overlay(CHEST, RenderType.entityCutoutNoCull(CHEST), bakedModel, poseStack, bufferSource, dragon, partialTick, packedLight);
+            renderBoneWithTexture(bakedModel, "body.chest", CHEST_TEX,
+                    poseStack, dragon, bufferSource, partialTick, packedLight);
         }
+    }
 
-        ItemStack armor = dragon.inventory.armor.get();
-        if (armor != null && !armor.isEmpty()) {
-            ResourceLocation assetId = BuiltInRegistries.ITEM.getKey(armor.getItem());   // e.g. neodragonmounts:copper_dragon_armor
-            ResourceLocation tex = dragon.getVariant().appearance.getArmorTexture(assetId);
-            if (tex != null) {
-                RenderType rt = RenderType.armorCutoutNoCull(tex);
-                VertexConsumer vc = ItemRenderer.getArmorFoilBuffer(bufferSource, rt, armor.hasFoil());
-                getRenderer().reRender(bakedModel, poseStack, bufferSource, dragon, rt, vc,
-                        partialTick, packedLight, OverlayTexture.NO_OVERLAY, -1);
-            }
+    private void renderBoneWithTexture(BakedGeoModel model, String boneName, ResourceLocation texture,
+                                       PoseStack poseStack, TameableDragonEntity dragon,
+                                       MultiBufferSource bufferSource, float partialTick, int packedLight) {
+        // hide ALL top-level bones, then unhide only the chain leading to our target bone
+        for (GeoBone top : model.topLevelBones()) {
+            top.setHidden(true);
         }
+        GeoBone target = model.getBone(boneName).orElse(null);
+        if (target == null) {
+            for (GeoBone top : model.topLevelBones()) top.setHidden(false);
+            return;
+        }
+        // unhide the bone and all its ancestors (so the chain renders), but keep siblings' cubes hidden
+        unhideChain(target);
+
+        RenderType rt = RenderType.entityCutoutNoCull(texture);
+        getRenderer().reRender(model, poseStack, bufferSource, dragon, rt,
+                bufferSource.getBuffer(rt), partialTick, packedLight, OverlayTexture.NO_OVERLAY, -1);
+
+        // restore: unhide everything
+        for (GeoBone top : model.topLevelBones()) top.setHidden(false);
+        resetChildrenHidden(model);
+    }
+
+    private void unhideChain(GeoBone bone) {
+        while (bone != null) {
+            bone.setHidden(false);
+            bone.setChildrenHidden(false);
+            bone = bone.getParent();
+        }
+    }
+
+    private void resetChildrenHidden(BakedGeoModel model) {
+        for (GeoBone top : model.topLevelBones()) {
+            top.setChildrenHidden(false);
+            resetRecursive(top);
+        }
+    }
+    private void resetRecursive(GeoBone bone) {
+        bone.setHidden(false);
+        bone.setChildrenHidden(false);
+        for (GeoBone c : bone.getChildBones()) resetRecursive(c);
     }
 }

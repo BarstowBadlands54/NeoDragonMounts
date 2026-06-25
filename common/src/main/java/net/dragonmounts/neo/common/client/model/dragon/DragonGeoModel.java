@@ -33,6 +33,12 @@ public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
     public void setCustomAnimations(TameableDragonEntity dragon, long instanceId, AnimationState<TameableDragonEntity> state) {
         super.setCustomAnimations(dragon, instanceId, state);
 
+        var processor = this.getAnimationProcessor();
+        var saddle = processor.getBone("body.saddle");
+        if (saddle != null) saddle.setHidden(!dragon.isSaddled());
+        var chest = processor.getBone("body.chest");
+        if (chest != null) chest.setHidden(!dragon.hasChest());
+
         var head = getAnimationProcessor().getBone("head");
         if (head == null) return;
 
