@@ -149,20 +149,14 @@ public class DragonMountsClient {
 
     static void registerShaders(RegisterShadersEvent event) {
         try {
-            event.registerShader(
-                    new ShaderInstance(event.getResourceProvider(),
-                            ResourceLocation.fromNamespaceAndPath("neodragonmounts", "rendertype_entity_cutout_decal"),
-                            DefaultVertexFormat.NEW_ENTITY),
-                    DMCoreShaders::setEntityCutoutDecal
-            );
-            event.registerShader(
-                    new ShaderInstance(event.getResourceProvider(),
-                            ResourceLocation.fromNamespaceAndPath("neodragonmounts", "rendertype_entity_translucent_emissive_decal"),
-                            DefaultVertexFormat.NEW_ENTITY),
-                    DMCoreShaders::setEntityTranslucentEmissiveDecal
-            );
+            event.registerShader(new ShaderInstance(event.getResourceProvider(),
+                            makeId("rendertype_entity_cutout_decal"), DefaultVertexFormat.NEW_ENTITY),
+                    DMCoreShaders::setEntityCutoutDecal);
+            event.registerShader(new ShaderInstance(event.getResourceProvider(),
+                            makeId("rendertype_entity_translucent_emissive_decal"), DefaultVertexFormat.NEW_ENTITY),
+                    DMCoreShaders::setEntityTranslucentEmissiveDecal);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load Dragon Mounts dissolve shaders", e);
+            throw new RuntimeException("Failed to load DragonMounts decal shaders", e);
         }
     }
 

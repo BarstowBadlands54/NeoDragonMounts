@@ -1,10 +1,12 @@
 package net.dragonmounts.neo.client;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.dragonmounts.neo.common.DragonMountsShared;
 import net.dragonmounts.neo.common.api.DescribedArmorEffect;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
 import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
+import net.dragonmounts.neo.common.client.renderer.DMCoreShaders;
 import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
@@ -23,6 +25,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 // 1.21.1: SpecialBlockRendererRegistry (Fabric 1.21.4 API) absent
@@ -107,6 +110,19 @@ public class DragonMountsClient implements
                         ResourcePackActivationType.NORMAL
                 )
         );
+
+        CoreShaderRegistrationCallback.EVENT.register(context -> {
+            context.register(
+                    makeId("rendertype_entity_cutout_decal"),
+                    DefaultVertexFormat.NEW_ENTITY,
+                    DMCoreShaders::setEntityCutoutDecal
+            );
+            context.register(
+                    makeId("rendertype_entity_translucent_emissive_decal"),
+                    DefaultVertexFormat.NEW_ENTITY,
+                    DMCoreShaders::setEntityTranslucentEmissiveDecal
+            );
+        });
     }
 
     @Override
