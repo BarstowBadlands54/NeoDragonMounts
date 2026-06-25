@@ -39,6 +39,10 @@ public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
         var chest = processor.getBone("body.chest");
         if (chest != null) chest.setHidden(!dragon.hasChest());
 
+        // hide the back spikes/scales when a saddle is on
+        var back = processor.getBone("body.back");
+        if (back != null) back.setHidden(dragon.isSaddled());
+
         var head = getAnimationProcessor().getBone("head");
         if (head == null) return;
 
