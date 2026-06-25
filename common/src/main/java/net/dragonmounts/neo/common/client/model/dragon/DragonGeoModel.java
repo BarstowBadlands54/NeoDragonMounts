@@ -46,12 +46,24 @@ public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
         var head = getAnimationProcessor().getBone("head");
         if (head == null) return;
 
+        // use the smoothed roll (already turn-based + clamped) so the tail follows turns smoothly
+        float turnSway = Mth.lerp(state.getPartialTick(), dragon.renderRollO, dragon.renderRoll);
+        // convert to a small per-segment yaw; sign so the tail trails the turn
+        float perSeg = (turnSway / 25.0F) * 0.06F;   // normalize by the roll clamp (±25), tiny amplitude
+        for (int i = 0; i <= 11; i++) {
+            var seg = processor.getBone("tail." + i);
+            if (seg == null) continue;
+            // deeper segments sway slightly more (tip trails most) for a smooth curve
+            float factor = 1.0F + i * 0.15F;
+            seg.setRotY(seg.getRotY() + perSeg * factor);
+        }
+
         EntityModelData data = state.getData(DataTickets.ENTITY_MODEL_DATA);
         if (data == null) return;
 
         // distribute pitch across the head + neck for a natural arc
         float pitchRad = data.headPitch() * Mth.DEG_TO_RAD;
-        float yawRad   = data.netHeadYaw() * Mth.DEG_TO_RAD;
+        float yawRad = data.netHeadYaw() * Mth.DEG_TO_RAD;
 
         head.setRotX(head.getRotX() + pitchRad);
         head.setRotY(head.getRotY() + yawRad);
