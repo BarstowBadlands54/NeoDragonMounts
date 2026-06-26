@@ -47,6 +47,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -221,7 +222,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                     if (this.getPassengers().size() < this.getMaxPassengers()
                             && !entity.isPassenger()
                             && this.hasEnoughSpaceFor(entity)
-                            && entity instanceof LivingEntity
+                            && (entity instanceof LivingEntity || entity instanceof Villager)
                             && !(entity instanceof WaterAnimal)
                             && !(entity instanceof Player)
                             && !(entity instanceof Enemy)) {

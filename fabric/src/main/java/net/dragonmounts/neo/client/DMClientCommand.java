@@ -15,7 +15,7 @@ public class DMClientCommand {
 
     public static int openConfigScreen(CommandContext<FabricClientCommandSource> context) {
         var client = context.getSource().getClient();
-        client.schedule(() -> client.setScreen(new DMConfigScreen(null)));
+        client.execute(() -> client.setScreen(new DMConfigScreen(null)));
         return 1;
     }
 }

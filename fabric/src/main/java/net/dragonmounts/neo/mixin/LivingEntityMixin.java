@@ -31,12 +31,13 @@ public class LivingEntityMixin {
         return this instanceof DynamicAttributeEntity ? ((DynamicAttributeEntity) this).getDynamicAttributes() : original;
     }
 
-    @Inject(method = "resolvePlayerResponsibleForDamage", at = @At("HEAD"), cancellable = true)
-    public void appendDragonTypifiedText(DamageSource source, CallbackInfoReturnable<Player> info) {
+    @Inject(method = "hurt", at = @At("RETURN"))
+    public void creditDragonOwner(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
+        // only if the hit actually landed
+        if (!info.getReturnValueZ()) return;
         if (source.getEntity() instanceof ServerDragonEntity dragon && dragon.isTame()) {
             this.lastHurtByPlayerTime = 100;
             this.lastHurtByPlayer = dragon.getOwner() instanceof Player player ? player : null;
-            info.setReturnValue(this.lastHurtByPlayer);
         }
     }
 }

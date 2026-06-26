@@ -62,9 +62,9 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
         this.fixShear();
     }
 
-    /// @see #hasShears()
+    // @see #hasShears()
     public void fixShear() {
-        this.add(Blocks.GLOW_LICHEN, block -> this.createMultifaceBlockDrops(block, this.hasShears()));
+//        this.add(Blocks.GLOW_LICHEN, block -> this.createMultifaceBlockDrops(block, this.hasShears()));
         this.fixShearOrSilkTouch();
         this.fixShearsDispatchTable();
         this.fixShearsOnlyDrop();
@@ -160,11 +160,11 @@ public class DMBlockLootProvider extends FabricBlockLootTableProvider {
         this.addNetherVinesDropTable(Blocks.WEEPING_VINES, Blocks.WEEPING_VINES_PLANT);
         this.addNetherVinesDropTable(Blocks.TWISTING_VINES, Blocks.TWISTING_VINES_PLANT);
     }
-
-    @Override
-    public LootItemCondition.@NotNull Builder hasShears() {
-        return MatchTool.toolMatches(ItemPredicate.Builder.item().of(ConventionalItemTags.SHEAR_TOOLS));
-    }
+//
+//    @Override
+//    public LootItemCondition.@NotNull Builder hasShears() {
+//        return MatchTool.toolMatches(ItemPredicate.Builder.item().of(ConventionalItemTags.SHEAR_TOOLS));
+//    }
 
     @Override
     public <T extends FunctionUserBuilder<T>> @NotNull T applyExplosionDecay(ItemLike item, FunctionUserBuilder<T> builder) {
