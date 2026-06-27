@@ -96,6 +96,7 @@ public class DragonMounts {
         registrar.playToClient(BooleanConfigPayload.TYPE, BooleanConfigPayload.CODEC, ClientNetworkHandler::handleBooleanConfig);
         registrar.playToClient(DoubleConfigPayload.TYPE, DoubleConfigPayload.CODEC, ClientNetworkHandler::handleDoubleConfig);
         registrar.playToServer(FireProjectilePayload.TYPE, FireProjectilePayload.CODEC, ServerNetworkHandler::handleFireProjectile);
+        registrar.playToServer(SetFlightRankPayload.TYPE, SetFlightRankPayload.CODEC, ServerNetworkHandler::handleSetFlightRank);
     }
 
     static void commonSetup(FMLCommonSetupEvent event) {

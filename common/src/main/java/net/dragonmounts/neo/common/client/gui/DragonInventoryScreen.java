@@ -6,12 +6,14 @@ import net.dragonmounts.neo.common.inventory.FluteSlot;
 import net.dragonmounts.neo.common.inventory.SlotListener;
 import net.dragonmounts.neo.common.network.c2s.RenameFlutePayload;
 import net.dragonmounts.neo.common.network.c2s.ToggleSittingByIDPayload;
+import net.dragonmounts.neo.common.network.c2s.SetFlightRankPayload;
 import net.dragonmounts.neo.common.network.c2s.ToggleTrustPayload;
 import net.dragonmounts.neo.compat.platform.ClientNetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.component.DataComponents;
@@ -41,12 +43,17 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
     private static final ResourceLocation HEALTH_SPRITE = makeId("dragon_panel/health");
     private static final ResourceLocation FOOD_SPRITE = makeId("dragon_panel/food");
     private static final Component TRUST_STATE = Component.translatable("button.neodragonmounts.trust_state");
+    private static final Component FLIGHT_RANK = Component.translatable("button.neodragonmounts.flight_rank");
+    private static final Component FLIGHT_RANK_TOOLTIP = Component.translatable("button.neodragonmounts.flight_rank.tooltip");
+    private static final Component FLIGHT_RANK_AUTO = Component.translatable("button.neodragonmounts.flight_rank.auto");
+    private static final int MAX_FLIGHT_RANK = 9;
     private static final Component SITTING_STATE = Component.translatable("button.neodragonmounts.sitting_state");
     private static final Component ORDER_TO_SIT = Component.translatable("button.neodragonmounts.order_to_sit");
     private static final Component ORDER_TO_STAND = Component.translatable("button.neodragonmounts.order_to_stand");
     private static final Component MESSAGE = Component.translatable("container.neodragonmounts.dragon_inventory");
     private IconToggleButton trustToggle;
     private TextToggleButton sittingToggle;
+    private Button flightRankButton;
     private EditBox name;
     private String health;
     private String armor;
@@ -81,6 +88,12 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         this.addWidget(this.sittingToggle = new TextToggleButton(x + 22, y + 194, 35, SITTING_STATE, this::handleToggleSitting, toggle ->
                 wrapDefaultNarrationMessage(toggle.getState() ? DragonInventoryScreen.ORDER_TO_SIT : DragonInventoryScreen.ORDER_TO_STAND)
         ));
+        // Flight-rank cycle button: click to advance the dragon's V-formation slot (Auto, 1..9).
+        this.flightRankButton = Button.builder(this.flightRankLabel(this.menu.dragon.getFlightRank()), this::handleCycleFlightRank)
+                .bounds(x + 59, y + 194, 67, 20)
+                .tooltip(Tooltip.create(FLIGHT_RANK_TOOLTIP))
+                .build();
+        this.addWidget(this.flightRankButton);
         this.containerTick();
     }
 
@@ -92,6 +105,7 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         this.armor = String.format("%.2f", dragon.getAttributeValue(Attributes.ARMOR));
         this.sittingToggle.setState(this.menu.sitting.get() != 0, ORDER_TO_STAND, ORDER_TO_SIT);
         this.trustToggle.setState(dragon.isTrustingAnyPlayer());
+        this.flightRankButton.setMessage(this.flightRankLabel(dragon.getFlightRank()));
     }
 
     @Override
@@ -117,6 +131,40 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
 
     public void handleToggleTrust(Button ignored) {
         ClientNetworkHandler.send(new ToggleTrustPayload(this.menu.dragon.getId()));
+    }
+
+    public void handleCycleFlightRank(Button ignored) {
+        var dragon = this.menu.dragon;
+        int next = dragon.getFlightRank() + 1;
+        // Skip numbers already taken by the owner's OTHER nearby dragons so two dragons
+        // don't end up sharing a rank. Auto (0) is always selectable.
+        java.util.Set<Integer> used = this.usedRanksNearby(dragon);
+        while (next <= MAX_FLIGHT_RANK && used.contains(next)) ++next;
+        if (next > MAX_FLIGHT_RANK) next = 0;   // wrap back to Auto
+        dragon.setFlightRank(next);             // optimistic client update; server is authoritative
+        this.flightRankButton.setMessage(this.flightRankLabel(next));
+        ClientNetworkHandler.send(new SetFlightRankPayload(dragon.getId(), next));
+    }
+
+    /** Ranks currently used by the owner's other nearby dragons (client-side, for the cycle UI). */
+    private java.util.Set<Integer> usedRanksNearby(net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity dragon) {
+        java.util.Set<Integer> used = new java.util.HashSet<>();
+        var owner = dragon.getOwner();
+        if (owner == null) return used;
+        var area = dragon.getBoundingBox().inflate(96.0);
+        for (var other : dragon.level().getEntitiesOfClass(
+                net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity.class, area,
+                d -> d != dragon && owner.equals(d.getOwner()))) {
+            int r = other.getFlightRank();
+            if (r > 0) used.add(r);
+        }
+        return used;
+    }
+
+    private Component flightRankLabel(int rank) {
+        return rank <= 0
+                ? FLIGHT_RANK_AUTO
+                : Component.translatable("button.neodragonmounts.flight_rank.value", rank);
     }
 
     public void handleToggleSitting(Button ignored) {
@@ -161,6 +209,7 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         this.name.render(graphics, x, y, ticks);
         this.trustToggle.render(graphics, x, y, ticks);
         this.sittingToggle.render(graphics, x, y, ticks);
+        this.flightRankButton.render(graphics, x, y, ticks);
         this.renderTooltip(graphics, x, y);
     }
 

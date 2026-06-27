@@ -47,6 +47,13 @@ public class ServerNetworkHandler {
         }
     }
 
+    public static void handleSetFlightRank(SetFlightRankPayload payload, IPayloadContext context) {
+        var player = (ServerPlayer) context.player();
+        if (player.serverLevel().getEntity(payload.dragon()) instanceof ServerDragonEntity dragon && !Relation.denyIfNotOwner(dragon, player)) {
+            dragon.setFlightRank(payload.rank());
+        }
+    }
+
     public static void handleTeleportDragon(TeleportDragonPayload payload, IPayloadContext context) {
         var player = (ServerPlayer) context.player();
         var dragon = FluteItem.getOrDeny(player, payload.dragon());

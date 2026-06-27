@@ -133,6 +133,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final EntityDataAccessor<Boolean> DATA_TRUST_OTHER = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     /** Bronco taming: set once the wild dragon has been fed enough to allow break-in rides. Distinct from DATA_TRUST_OTHER. */
     private static final EntityDataAccessor<Boolean> DATA_BREAK_IN_TRUST = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Player-set V-formation flight rank (0 = auto/unset; 1 = innermost wing, 2 = next, ...). */
+    private static final EntityDataAccessor<Integer> DATA_FLIGHT_RANK = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> DATA_CHEST_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<ItemStack> DATA_SADDLE_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<DragonVariant> DATA_DRAGON_VARIANT = SynchedEntityData.defineId(TameableDragonEntity.class, DragonVariant.SERIALIZER);
@@ -269,6 +271,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         builder.define(DATA_BREATHING, false);
         builder.define(DATA_TRUST_OTHER, false);
         builder.define(DATA_BREAK_IN_TRUST, false);
+        builder.define(DATA_FLIGHT_RANK, 0);
         builder.define(DATA_SADDLE_ITEM, ItemStack.EMPTY);
         builder.define(DATA_CHEST_ITEM, ItemStack.EMPTY);
         builder.define(DATA_DRAGON_VARIANT, DragonVariants.ENDER_FEMALE);
@@ -554,6 +557,36 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_BREAK_IN_TRUST, state);
     }
 
+    /** Player-set V-formation flight rank. 0 means "auto" (fall back to age-based ordering). */
+    public int getFlightRank() {
+        return this.entityData.get(DATA_FLIGHT_RANK);
+    }
+
+    public void setFlightRank(int rank) {
+        this.entityData.set(DATA_FLIGHT_RANK, Math.max(0, rank));
+    }
+
+    /**
+     * Assigns the lowest rank not already used by another of this owner's nearby dragons.
+     * Useful to avoid duplicate numbers when auto-ranking at spawn or from the GUI. Returns
+     * the rank chosen. If no owner/level context is available, leaves the dragon on Auto (0).
+     */
+    public int assignNextFreeRank() {
+        var owner = this.getOwner();
+        if (owner == null || this.level().isClientSide) return this.getFlightRank();
+        var used = new java.util.HashSet<Integer>();
+        var area = this.getBoundingBox().inflate(96.0);
+        for (var other : this.level().getEntitiesOfClass(TameableDragonEntity.class, area,
+                d -> d != this && owner.equals(d.getOwner()))) {
+            int r = other.getFlightRank();
+            if (r > 0) used.add(r);
+        }
+        int rank = 1;
+        while (used.contains(rank)) ++rank;
+        this.setFlightRank(rank);
+        return rank;
+    }
+
     //----------IDragonTypified.Mutable----------
 
     @Override
@@ -676,9 +709,25 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     @Override
     protected void tickRidden(Player player, Vec3 input) {
         super.tickRidden(player, input);
-        float rotY = this.getYRot();
+
         var rot = EntityUtil.getRiddenRotation(player);
-        rotY += Mth.wrapDegrees(rot.y - rotY) * 0.20F;   // was 0.08F — snappier, less lag
+        float lookYaw = rot.y;
+
+        // Desired heading = where the player is actually trying to GO, not just where the
+        // camera points. Combine strafe (xxa) + forward/back (zza) into a direction relative
+        // to the look yaw, so pressing A/D/S banks and turns the dragon to face that way
+        // instead of crab-walking sideways/backwards.
+        float targetYaw = lookYaw;
+        if (this.isFlying() && (player.xxa != 0.0F || player.zza != 0.0F)) {
+            // Angle of the input vector relative to "forward". In Minecraft yaw increases
+            // clockwise (viewed from above), and xxa is +1 for strafe-LEFT, so we negate xxa
+            // to map left input -> left (negative) turn. forward=0, left=-90, right=+90, back=180.
+            float inputAngle = (float) Math.toDegrees(Math.atan2(-player.xxa, player.zza));
+            targetYaw = lookYaw + inputAngle;
+        }
+
+        float rotY = this.getYRot();
+        rotY += Mth.wrapDegrees(targetYaw - rotY) * 0.20F;   // smooth turn toward the heading
         this.setRot(rotY, rot.x * 1.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
     }
@@ -697,22 +746,22 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                     forward < 0.0F ? forward * 0.25F : forward
             );
         }
+        // Flying: any movement key (W/A/S/D) means "go" — the dragon has already been turned
+        // to face that direction in tickRidden, so we just push FORWARD. No sideways strafe.
         float upward = 0.0F;
         float forward = 0.0F;
-        if (player.zza != 0.0F) {
+        boolean moving = player.zza != 0.0F || player.xxa != 0.0F;
+        if (moving) {
+            // climb/dive component from where the player is looking (pitch)
             float facing = player.getXRot() * MathUtil.TO_RAD_FACTOR;
-            float i = Mth.cos(facing);
-            float j = -Mth.sin(facing);
-            if (player.zza < 0.0F) {
-                i *= -0.5F;
-                j *= -0.5F;
-            }
-
+            float i = Mth.cos(facing);   // horizontal factor
+            float j = -Mth.sin(facing);  // vertical factor (look up -> climb)
+            // Only apply the pitch-dive when actively moving forward-ish; full magnitude.
             upward = j;
             forward = i;
         }
         return new Vec3(
-                player.xxa * 0.75F,
+                0.0,   // no lateral strafe — turning is handled by facing the movement direction
                 player.jumping ? upward + 0.5F : this.isDescending() ? upward - 0.5F : upward,
                 forward
         );

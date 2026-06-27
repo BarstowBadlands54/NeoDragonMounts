@@ -61,6 +61,10 @@ public class DMItems {
             DMBlocks.ICE_DRAGON_EGG,
             (block, props) -> makeDragonEggBlock(block, props.rarity(Rarity.UNCOMMON))
     );
+    public static final BlockItemHolder<HatchableDragonEggBlock, ?> LIGHT_DRAGON_EGG = DRAGON_EGGS.register(
+            DMBlocks.LIGHT_DRAGON_EGG,
+            (block, props) -> makeDragonEggBlock(block, props.rarity(Rarity.UNCOMMON))
+    );
     public static final BlockItemHolder<HatchableDragonEggBlock, ?> MOONLIGHT_DRAGON_EGG = DRAGON_EGGS.register(
             DMBlocks.MOONLIGHT_DRAGON_EGG,
             (block, props) -> makeDragonEggBlock(block, props.rarity(Rarity.UNCOMMON))

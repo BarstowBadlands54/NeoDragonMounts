@@ -144,6 +144,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
         tag.putBoolean(AGE_LOCKED_DATA_PARAMETER_KEY, this.isAgeLocked());
         tag.putBoolean("BreakInTrust", this.isBreakInTrusted());
+        tag.putInt("FlightRank", this.getFlightRank());
         tag.putInt(SHEARED_DATA_PARAMETER_KEY, this.isSheared() ? this.shearCooldown : 0);
         var items = this.inventory.saveItems(this.registryAccess());
         if (!items.isEmpty()) {
@@ -169,6 +170,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
         this.setInSittingPose(this.isOrderedToSit() && this.onGround());
         if (tag.contains("BreakInTrust")) {
             this.setBreakInTrusted(tag.getBoolean("BreakInTrust"));
+        }
+        if (tag.contains("FlightRank")) {
+            this.setFlightRank(tag.getInt("FlightRank"));
         }
         if (!this.firstTick && (this.age != age || stage != this.stage)) {
             ServerNetworkHandler.sendTracking(this, new SyncDragonAgePayload(this.getId(), this.age, this.stage));
