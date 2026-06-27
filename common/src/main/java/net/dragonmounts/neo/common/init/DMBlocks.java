@@ -130,7 +130,7 @@ public class DMBlocks {
                 makeDragonEgg(DragonTypes.DARK, props.lightLevel(DMBlocks::defaultEggLuminance))
         ));
         eggs.add(LIGHT_DRAGON_EGG = registerBlock("light_dragon_egg", props ->
-                makeDragonEgg(DragonTypes.DARK, props.lightLevel(DMBlocks::defaultEggLuminance))
+                makeDragonEgg(DragonTypes.LIGHT, props.lightLevel(DMBlocks::defaultEggLuminance))
         ));
         eggs.add(ENCHANTED_DRAGON_EGG = registerBlock("enchanted_dragon_egg", props ->
                 makeDragonEgg(DragonTypes.ENCHANTED, props.lightLevel(DMBlocks::defaultEggLuminance))

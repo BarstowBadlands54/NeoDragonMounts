@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.entity.ai.behavior;
 
+import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,9 +33,8 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
             if(dragon.isBaby()) {
                 return false;
             }
-
-            // if owner is on ground land next to owner
-            return dragon.getOwner().isFallFlying() || owner.fallDistance > 4;
+            boolean ownerFlyingMount = owner.getVehicle() instanceof ServerDragonEntity mount && mount.isFlying();
+            return owner.isFallFlying() || ownerFlyingMount || owner.fallDistance > 4;
         }
         return false;
     }
@@ -50,7 +50,7 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
         double followRange = 35.0;
 
         // CASE 1: owner is elytra-flying or riding a flying vehicle -> fly in a V FORMATION behind the owner, like birds.
-        if (owner.isFallFlying() || (owner.getVehicle() != null && !owner.onGround()))  {
+        if (owner.isFallFlying() || (owner.getVehicle() instanceof ServerDragonEntity dragonEntity && dragonEntity.isFlying()))  {
             Vec3 slot = computeFormationSlot(level, dragon, owner);
 
             double gap = dragon.position().distanceTo(slot);
