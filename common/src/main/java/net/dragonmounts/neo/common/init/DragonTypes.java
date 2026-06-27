@@ -114,8 +114,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .register(LightType::new, makeId("light"));
-                material.setDefense(HELMET, 4)
-                        .setDefense(BOOTS, 4);
+        material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
                 .model("normal", "base")   // TODO confirm body shape (old COMPAT)
                 .texture(makeId("textures/entity/dragon/aether/female/body.png"))

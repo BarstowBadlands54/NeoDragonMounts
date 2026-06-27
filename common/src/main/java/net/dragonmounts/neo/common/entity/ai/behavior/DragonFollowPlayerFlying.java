@@ -55,41 +55,54 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
 
             double gap = dragon.position().distanceTo(slot);
 
+            // Owner's (or their vehicle's) velocity — what the whole formation is travelling at.
+            Vec3 ownerVel = owner.getVehicle() != null
+                    ? owner.getVehicle().getDeltaMovement()
+                    : owner.getDeltaMovement();
+
             // If the dragon has fallen way behind (e.g. during a long firework boost), blink it
             // back into formation so the V doesn't permanently break apart.
             if (gap > 64.0) {
                 dragon.moveTo(slot.x, slot.y, slot.z, dragon.getYRot(), dragon.getXRot());
-                // inherit the owner's (or their vehicle's) momentum so it cruises, not stalls
-                Vec3 ownerVel = owner.getVehicle() != null
-                        ? owner.getVehicle().getDeltaMovement()
-                        : owner.getDeltaMovement();
-                dragon.setDeltaMovement(ownerVel);
+                dragon.setDeltaMovement(ownerVel);   // inherit momentum so it cruises, not stalls
                 return;
             }
 
-            // Owner's horizontal speed (theirs, or their vehicle's if mounted).
-            Vec3 ownerVel = owner.getVehicle() != null
-                    ? owner.getVehicle().getDeltaMovement()
-                    : owner.getDeltaMovement();
-            double ownerSpeed = Math.sqrt(ownerVel.x * ownerVel.x + ownerVel.z * ownerVel.z);
+            // The threshold between "cruise in formation" and "sprint to catch up" is DISTANCE,
+            // not speed. This is the key fix for the mid-speed spinning: a speed-based cutoff
+            // left a band where the dragon would catch its slot but the slot wasn't fleeing fast
+            // enough, so it oscillated back and forth around the point. Distance cleanly splits
+            // the two regimes regardless of how fast the owner is going.
+            final double FORMATION_RANGE = 12.0;   // within this -> cruise alongside (velocity-matched)
 
-            // DEADZONE: when the dragon is already near its slot AND the owner is hovering /
-            // crawling, don't keep re-targeting a point right next to the dragon — that makes
-            // the move control's atan2 heading whip around and the body spin. Instead just
-            // glide to a gentle stop and face the SAME way the owner is heading.
-            if (gap < 3.0 && ownerSpeed < 0.08) {
+            if (gap <= FORMATION_RANGE) {
+                // VELOCITY MATCHING: fly at the OWNER'S velocity plus a gentle proportional pull
+                // toward the slot. Because the dragon moves at the same speed as the formation,
+                // the slot is ~stationary RELATIVE to the dragon — there is no point to overshoot,
+                // so the heading never flips and the body never spins, at ANY owner speed.
+                Vec3 toSlot = slot.subtract(dragon.position());
+                // correction strength scales mildly with how far off-slot we are (capped), so a
+                // big gap still closes briskly but a small gap barely nudges (no oscillation).
+                double k = Math.min(0.35, 0.12 + gap * 0.03);
+                Vec3 correction = toSlot.scale(k);
+                Vec3 desired = ownerVel.add(correction);
+                // smooth toward the desired velocity instead of snapping (removes any jitter).
+                Vec3 dm = dragon.getDeltaMovement().scale(0.55).add(desired.scale(0.45));
+                dragon.setDeltaMovement(dm);
                 dragon.getNavigation().stop();
-                dragon.setDeltaMovement(dragon.getDeltaMovement().scale(0.8));   // ease to a hover
-                // align facing with the owner's heading (or the formation's forward) — stable.
-                float faceYaw = owner.getYRot();
+
+                // Hold a stable facing = the owner's heading. Never derive facing from the
+                // dragon's own motion here (that's what spun it); the owner's yaw is smooth.
+                float faceYaw = (owner.getVehicle() != null ? owner.getVehicle() : owner).getYRot();
                 float cur = dragon.getYRot();
-                dragon.setYRot(cur + net.minecraft.util.Mth.wrapDegrees(faceYaw - cur) * 0.2F);
-                dragon.yBodyRot = dragon.getYRot();
+                float newYaw = cur + net.minecraft.util.Mth.wrapDegrees(faceYaw - cur) * 0.25F;
+                dragon.setYRot(newYaw);
+                dragon.yBodyRot = dragon.yHeadRot = newYaw;
                 return;
             }
 
-            // Adaptive speed: the further from the slot, the faster it flies to catch up,
-            // then eases back to a steady cruise once it's in position. Base 2.5, up to ~8.0.
+            // FAR from slot -> sprint in via the move control (arrival damping in DragonMoveControl
+            // handles the final approach without overshoot). Adaptive speed scales with the gap.
             double speed = Math.min(8.0, 2.5 + gap * 0.35);
             dragon.getMoveControl().setWantedPosition(slot.x, slot.y, slot.z, speed);
             return;
@@ -154,17 +167,14 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
         int index = flock.indexOf(dragon);
         if (index < 0) index = 0;
 
-        // Formation orientation: based on the owner's horizontal flight direction. If the
-        // owner is riding something (e.g. another dragon), use the VEHICLE's velocity, since
-        // a passenger's own deltaMovement is usually zero.
-        Vec3 vel = owner.getVehicle() != null ? owner.getVehicle().getDeltaMovement() : owner.getDeltaMovement();
-        Vec3 forward = new Vec3(vel.x, 0.0, vel.z);
-        if (forward.lengthSqr() < 1.0E-4) {
-            // owner barely moving horizontally — fall back to look direction
-            Vec3 look = owner.getLookAngle();
-            forward = new Vec3(look.x, 0.0, look.z);
-            if (forward.lengthSqr() < 1.0E-4) forward = new Vec3(0.0, 0.0, 1.0);
-        }
+        // Formation orientation: ALWAYS the owner's (or their vehicle's) body yaw. Velocity is a
+        // jittery heading source — even at speed it can wobble enough to make the whole V spin —
+        // so we derive the forward direction purely from yaw, which changes smoothly. This keeps
+        // the formation rock-steady at every speed.
+        var headingEntity = owner.getVehicle() != null ? owner.getVehicle() : owner;
+        float yawRad = headingEntity.getYRot() * ((float) Math.PI / 180.0F);
+        Vec3 forward = new Vec3(-Math.sin(yawRad), 0.0, Math.cos(yawRad));
+        if (forward.lengthSqr() < 1.0E-4) forward = new Vec3(0.0, 0.0, 1.0);
         forward = forward.normalize();
         // Right-hand perpendicular (so we can place left/right wings).
         Vec3 right = new Vec3(-forward.z, 0.0, forward.x);
