@@ -82,6 +82,33 @@ public class DMArmorEffects {
         }
     });
 
+    public static final DescribedArmorEffect LIGHT = registerArmorEffect(makeId("light"), new DescribedArmorEffect() {
+        private ArmorEffectTooltip tooltip;
+
+        @Override
+        public boolean activate(ArmorEffectManager manager, Player player, int level) {
+            boolean flag = level > 3;
+            if (flag && !player.level().isClientSide) {
+                addOrResetEffect(player, MobEffects.GLOWING, 600, 0, true, true, true, 201);
+                addOrResetEffect(player, MobEffects.NIGHT_VISION, 600, 0, true, true, true, 201);
+            }
+            return flag;
+        }
+
+        @Override
+        public ArmorEffectTooltip getClientTooltip() {
+            if (this.tooltip == null) {
+                this.tooltip = new ArmorEffectTooltip(DragonTypes.LIGHT.getName(), new ArmorEffectDescriptor(
+                        Component.translatable("tooltip.armor_effect.neodragonmounts.light"),
+                        null,
+                        TRIGGER_PIECE_4,
+                        this::isLocalActive
+                ));
+            }
+            return this.tooltip;
+        }
+    });
+
     public static final DescribedArmorEffect ENCHANTED = registerArmorEffect(makeId("enchanted"), new DescribedArmorEffect() {
         private ArmorEffectTooltip tooltip;
 

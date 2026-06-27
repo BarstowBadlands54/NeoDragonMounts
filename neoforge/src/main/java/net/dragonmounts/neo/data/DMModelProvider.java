@@ -51,7 +51,7 @@ public class DMModelProvider extends ItemModelProvider {
                 DMItems.SKELETON_DRAGON_SPAWN_EGG, DMItems.STORM_DRAGON_SPAWN_EGG,
                 DMItems.SUNLIGHT_DRAGON_SPAWN_EGG, DMItems.TERRA_DRAGON_SPAWN_EGG,
                 DMItems.WATER_DRAGON_SPAWN_EGG, DMItems.WITHER_DRAGON_SPAWN_EGG,
-                DMItems.ZOMBIE_DRAGON_SPAWN_EGG,
+                DMItems.ZOMBIE_DRAGON_SPAWN_EGG, DMItems.LIGHT_DRAGON_SPAWN_EGG
         }) {
             withExistingParent(name(egg.get()), mcLoc("item/template_spawn_egg"));
         }

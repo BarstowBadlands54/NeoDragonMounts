@@ -11,6 +11,7 @@ import java.util.function.Function;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.dragonmounts.neo.common.client.variant.DefaultAppearance.registerArmorTexture;
 import static net.dragonmounts.neo.common.client.variant.VariantAppearance.TEXTURES_ROOT;
+import static net.dragonmounts.neo.common.init.DragonVariants.*;
 
 public class VariantAppearances {
     // Body shape used to come from a BuiltinFactory ModelLayerLocation; with GeckoLib the body
@@ -73,6 +74,10 @@ public class VariantAppearances {
     public static final VariantAppearance WILD_SCULK;
     public static final VariantAppearance MUTANT_SCULK;
     public static final VariantAppearance HOLLOWED;
+    public static final VariantAppearance FALLEN;
+    public static final VariantAppearance PRISM;
+    public static final VariantAppearance RADIANT;
+    public static final VariantAppearance SUNSET;
 
     static {
         var builder = builder()
@@ -89,6 +94,15 @@ public class VariantAppearances {
                 .withBreath(DMParticleSprites.DARK_BREATH);
         DARK_FEMALE = builder.build(makeId("dark/female"));
         DARK_MALE = builder.build(makeId("dark/male"));
+    }
+
+    static {
+        var builder = builder()
+                .withBreath(DMParticleSprites.AIRFLOW_BREATH);
+        FALLEN = builder.build(makeId("light/fallen"));
+        PRISM = builder.build(makeId("light/prism"));
+        RADIANT = builder.build(makeId("light/radiant"));
+        SUNSET = builder.build(makeId("light/sunset"));
     }
 
     static {
@@ -251,8 +265,12 @@ public class VariantAppearances {
             case "water_female" -> WATER_FEMALE;
             case "water_male" -> WATER_MALE;
             case "brine" -> BRINE;
-            case "wither" -> WITHER;
             case "zombie" -> ZOMBIE;
+            case "wither" -> WITHER;
+            case "fallen" -> FALLEN;
+            case "prism" -> PRISM;
+            case "radiant" -> RADIANT;
+            case "sunset" -> SUNSET;
             default -> throw new NoSuchElementException(
                     "There is no built-in variant appearance named \"" + key + "\". Please create a custom supplier."
             );

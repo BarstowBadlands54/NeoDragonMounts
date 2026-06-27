@@ -52,6 +52,7 @@ public class DMItemTagProvider extends FabricTagProvider.ItemTagProvider {
         this.addToParent(scales, DMItemTags.WATER_DRAGON_SCALES).add(DMItems.WATER_DRAGON_SCALES.key);
         this.addToParent(scales, DMItemTags.ZOMBIE_DRAGON_SCALES).add(DMItems.ZOMBIE_DRAGON_SCALES.key);
         this.addToParent(scales, DMItemTags.DARK_DRAGON_SCALES).add(DMItems.DARK_DRAGON_SCALES.key);
+        this.addToParent(scales, DMItemTags.LIGHT_DRAGON_SCALES).add(DMItems.LIGHT_DRAGON_SCALES.key);
         this.getOrCreateTagBuilder(DMItemTags.HARD_SHEARS)
                 .add(DMItems.DIAMOND_SHEARS.key)
                 .add(DMItems.NETHERITE_SHEARS.key);

@@ -25,6 +25,8 @@ import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 import static net.dragonmounts.neo.common.component.ScoreboardInfo.applyScores;
 import static net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity.FLYING_DATA_PARAMETER_KEY;
@@ -34,10 +36,17 @@ public class DragonAmuletItem extends AmuletItem<TameableDragonEntity> implement
     public static final MapCodec<Component> NAME_CODEC = ComponentSerialization.CODEC.fieldOf("CustomName");
     public static final MapCodec<Float> HEALTH_CODEC = Codec.FLOAT.fieldOf("Health");
     public final DragonType type;
+    public final TranslatableContents name;
 
     public DragonAmuletItem(DragonType type, Properties props) {
         super(TameableDragonEntity.class, props.component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
+        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return MutableComponent.create(this.name);
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.AbstractCandleBlock;
 import net.minecraft.world.level.block.CampfireBlock;
@@ -40,18 +41,15 @@ public class AetherBreath extends DragonBreath {
             level.levelEvent(null, 1009, pos, 0);
             level.setBlockAndUpdate(pos, state.setValue(CampfireBlock.LIT, false));
             return new BreathAffectedBlock();
+        } else if (state.is(BlockTags.FIRE) && ServerConfig.INSTANCE.aetherExtinguishesFire.get()) {
+            level.destroyBlock(pos, true, this.dragon);   // extinguish, same as WaterBreath
+            return new BreathAffectedBlock();
         } else if (ServerConfig.INSTANCE.destructiveBreath.get() && state.is(DMBlockTags.AIRFLOW_DESTRUCTIBLE)) {
-            // effects- which occur after the block has been exposed for sufficient time
-            // soft blocks such as sand, leaves, grass, flowers, plants, etc get blown away (destroyed)
-            // blows away snow but not ice
-            // shatters panes, but not glass
-            // extinguish torches
-            // causes fire to spread rapidly
             if (hit.getMaxHitDensity() > getDestroyDensity(level, pos, state)) {
                 level.destroyBlock(pos, true, this.dragon);
                 return new BreathAffectedBlock();
             }
-            // TODO spread fire
+            // TODO spread fire   ← contributor's spot, untouched
         }
         return hit;
     }

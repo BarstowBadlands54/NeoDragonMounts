@@ -22,6 +22,7 @@ public interface DMItemTags {
     TagKey<Item> DRAGON_SADDLES = create("dragon_saddles");
     TagKey<Item> AETHER_DRAGON_SCALES = create("dragon_scales/aether");
     TagKey<Item> DARK_DRAGON_SCALES = create("dragon_scales/dark");
+    TagKey<Item> LIGHT_DRAGON_SCALES = create("dragon_scales/light");
     TagKey<Item> ENCHANTED_DRAGON_SCALES = create("dragon_scales/enchanted");
     TagKey<Item> ENDER_DRAGON_SCALES = create("dragon_scales/ender");
     TagKey<Item> FIRE_DRAGON_SCALES = create("dragon_scales/fire");

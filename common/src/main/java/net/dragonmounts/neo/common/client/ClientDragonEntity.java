@@ -31,6 +31,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ClientDragonEntity extends TameableDragonEntity {
+
+    // --- Wing-flap sound (replaces the old DragonAnimator-driven flap) ---
+    // The wing cycle advances FAST when hovering and SLOW when moving forward, exactly
+    // like the original animator: anim += flying ? 0.070 - clamp(speed/0.05)*0.035 : 0.035.
+    // A flap sound plays each time the wings cross from up to down.
+    private float flapAnim = 0.0F;
+    private float flapAnimPrev = 0.0F;
+    private boolean flapWingsDown = false;
     public final DragonHeadLocator<ClientDragonEntity> headLocator = new DragonHeadLocator<>(this);
     public int controlFlags;
     private float pendingJumpPower;
@@ -67,6 +75,39 @@ public class ClientDragonEntity extends TameableDragonEntity {
         );
     }
 
+    /**
+     * Drives the wing-flap sound without the old animator. The flap cycle speeds up when
+     * hovering and slows when moving forward (matching the original NeoDragonMounts feel),
+     * and a sound fires on each down-stroke.
+     */
+    private void tickWingFlapSound() {
+        this.flapAnimPrev = this.flapAnim;
+        if (!this.isFlying() || this.isInWater()) {
+            this.flapWingsDown = false;
+            return;
+        }
+        // Cycle speed: fast in hover (0.070), slowing toward 0.035 as horizontal speed rises.
+        final float speedMax = 0.05F;
+        var motion = this.getDeltaMovement();
+        float speedEnt = (float) (motion.x * motion.x + motion.z * motion.z);
+        this.flapAnim += 0.070F - MathUtil.clamp(speedEnt / speedMax) * 0.035F;
+
+        // Down-stroke detection on the sine cycle (same test the animator used).
+        float base = this.flapAnim * (MathUtil.PI * 2.0F);
+        boolean wingsDown = net.minecraft.util.Mth.sin(base - 1.0F) > 0.0F;
+        if (wingsDown && !this.flapWingsDown) {
+            float horizontal = (float) Math.sqrt(speedEnt);
+            this.level().playLocalSound(
+                    this,
+                    SoundEvents.ENDER_DRAGON_FLAP,
+                    this.getSoundSource(),
+                    0.8F + (this.getAgeScale() - horizontal),
+                    1.0F
+            );
+        }
+        this.flapWingsDown = wingsDown;
+    }
+
     @Override
     public void aiStep() {
         this.wasOnGround = this.onGround();
@@ -79,6 +120,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
         this.headLocator.tick();
         this.headLocator.calculateHeadAndNeck(this.neckSegments, this.getXRot(), this.yHeadRot - this.yBodyRot);
         this.updateRenderPitchAndRoll();
+        this.tickWingFlapSound();
 
         this.breathHelper.tick();
         if (!this.isAgeLocked()) {

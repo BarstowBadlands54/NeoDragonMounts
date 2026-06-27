@@ -75,7 +75,7 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
                                   float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
         super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
 
-        if (animatable.getPassengers().size() == 1 && animatable.isFlying()) {
+        if (animatable.isFlying()) {   // bank under a rider OR during autonomous flight (bronco / follow)
             float pitch = Mth.lerp(partialTick, animatable.renderPitchO, animatable.renderPitch);
             poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
 

@@ -65,6 +65,7 @@ public class DMBlocks {
 
     public static final BlockHolder<HatchableDragonEggBlock> AETHER_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> DARK_DRAGON_EGG;
+    public static final BlockHolder<HatchableDragonEggBlock> LIGHT_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> ENCHANTED_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> ENDER_DRAGON_EGG;
     public static final BlockHolder<HatchableDragonEggBlock> FIRE_DRAGON_EGG;
@@ -82,6 +83,7 @@ public class DMBlocks {
     public static final BlockHolder<HatchableDragonEggBlock> ZOMBIE_DRAGON_EGG;
     public static final BlockHolder<DragonScaleBlock> AETHER_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> DARK_DRAGON_SCALE_BLOCK;
+    public static final BlockHolder<DragonScaleBlock> LIGHT_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> ENCHANTED_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> ENDER_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> FIRE_DRAGON_SCALE_BLOCK;
@@ -125,6 +127,9 @@ public class DMBlocks {
                 makeDragonEgg(DragonTypes.AETHER, props.lightLevel(DMBlocks::defaultEggLuminance))
         ));
         eggs.add(DARK_DRAGON_EGG = registerBlock("dark_dragon_egg", props ->
+                makeDragonEgg(DragonTypes.DARK, props.lightLevel(DMBlocks::defaultEggLuminance))
+        ));
+        eggs.add(LIGHT_DRAGON_EGG = registerBlock("light_dragon_egg", props ->
                 makeDragonEgg(DragonTypes.DARK, props.lightLevel(DMBlocks::defaultEggLuminance))
         ));
         eggs.add(ENCHANTED_DRAGON_EGG = registerBlock("enchanted_dragon_egg", props ->
@@ -179,6 +184,7 @@ public class DMBlocks {
         var blocks = ImmutableList.<BlockHolder<DragonScaleBlock>>builderWithExpectedSize(15);
         blocks.add(AETHER_DRAGON_SCALE_BLOCK = registerBlock("aether_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.AETHER, props)));
         blocks.add(DARK_DRAGON_SCALE_BLOCK = registerBlock("dark_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.DARK, props)));
+        blocks.add(LIGHT_DRAGON_SCALE_BLOCK = registerBlock("light_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.LIGHT, props)));
         blocks.add(ENCHANTED_DRAGON_SCALE_BLOCK = registerBlock("enchanted_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.ENCHANTED, props)));
         blocks.add(ENDER_DRAGON_SCALE_BLOCK = registerBlock("ender_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.ENDER, props)));
         blocks.add(FIRE_DRAGON_SCALE_BLOCK = registerBlock("fire_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.FIRE, props)));

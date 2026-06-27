@@ -86,6 +86,7 @@ public class DMEntityLootProvider extends SimpleFabricLootTableProvider {
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         this.makeLoot(output, DragonTypes.AETHER, this::dropMeat);
         this.makeLoot(output, DragonTypes.DARK, this::dropMeat);
+        this.makeLoot(output, DragonTypes.LIGHT, this::dropMeat);
         this.makeLoot(output, DragonTypes.ENCHANTED, this::dropMeat);
         this.makeLoot(output, DragonTypes.ENDER, this::dropMeat);
         this.makeLoot(output, DragonTypes.FIRE, this::dropMeat);

@@ -131,6 +131,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final EntityDataAccessor<Boolean> DATA_BREATHING = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SHEARED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_TRUST_OTHER = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Bronco taming: set once the wild dragon has been fed enough to allow break-in rides. Distinct from DATA_TRUST_OTHER. */
+    private static final EntityDataAccessor<Boolean> DATA_BREAK_IN_TRUST = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<ItemStack> DATA_CHEST_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<ItemStack> DATA_SADDLE_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<DragonVariant> DATA_DRAGON_VARIANT = SynchedEntityData.defineId(TameableDragonEntity.class, DragonVariant.SERIALIZER);
@@ -266,6 +268,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         builder.define(DATA_HOVER_DISABLED, false);
         builder.define(DATA_BREATHING, false);
         builder.define(DATA_TRUST_OTHER, false);
+        builder.define(DATA_BREAK_IN_TRUST, false);
         builder.define(DATA_SADDLE_ITEM, ItemStack.EMPTY);
         builder.define(DATA_CHEST_ITEM, ItemStack.EMPTY);
         builder.define(DATA_DRAGON_VARIANT, DragonVariants.ENDER_FEMALE);
@@ -371,7 +374,17 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public @Nullable Player getControllingPassenger() {
+        // Untamed dragons are never controlled by their rider: during a break-in
+        // attempt the dragon flies ITSELF (via its move control) while the player
+        // merely clings on. Only a tamed dragon yields control to the rider.
+        if (!this.isTame()) return null;
         return !this.isNoAi() && this.getFirstPassenger() instanceof Player player ? player : null;
+    }
+
+    /** The player currently clinging to an untamed dragon during a break-in (may not be the controller). */
+    @Nullable
+    public Player getBreakInRider() {
+        return this.getFirstPassenger() instanceof Player p ? p : null;
     }
 
     @Override
@@ -530,6 +543,15 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     public void setTrustingAnyPlayer(boolean state) {
         this.entityData.set(DATA_TRUST_OTHER, state);
+    }
+
+    /** Bronco taming: whether this wild dragon has been fed enough to be mounted for break-in. */
+    public boolean isBreakInTrusted() {
+        return this.entityData.get(DATA_BREAK_IN_TRUST);
+    }
+
+    public void setBreakInTrusted(boolean state) {
+        this.entityData.set(DATA_BREAK_IN_TRUST, state);
     }
 
     //----------IDragonTypified.Mutable----------
@@ -811,18 +833,22 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
         float targetPitch = 0.0F;
         float targetRoll = 0.0F;
-        if (this.getPassengers().size() == 1 && this.isFlying()) {
+        // Bank whenever the dragon is flying — under a rider OR flying itself (e.g. a
+        // bronco break-in ride, or following its owner). Pitch comes from vertical
+        // velocity, roll from how fast the heading is turning.
+        if (this.isFlying()) {
             Vec3 v = this.getDeltaMovement();
             double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
 
-            // only pitch when actually flying forward — not when hovering or going straight up (spacebar)
+            // only pitch when actually flying forward — not when hovering or going straight up
             if (horizontal > 0.08) {
                 targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
             } else {
                 targetPitch = 0.0F;   // hovering / vertical ascent -> level out
             }
 
-            // roll unchanged
+            // Roll from heading turn-rate. Use the driver's intended yaw when a player
+            // is steering (snappier), otherwise the dragon's own yaw (autonomous flight).
             Player driver = this.getControllingPassenger();
             float yaw = (driver != null) ? driver.getYRot() : this.getYRot();
             float turn = Mth.wrapDegrees(yaw - this.lastYRotForRoll);

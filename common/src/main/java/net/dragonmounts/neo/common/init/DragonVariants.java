@@ -28,6 +28,10 @@ public class DragonVariants {
     public static final DragonVariant BREEZE;
     public static final DragonVariant DARK_FEMALE;
     public static final DragonVariant DARK_MALE;
+    public static final DragonVariant FALLEN;
+    public static final DragonVariant PRISM;
+    public static final DragonVariant RADIANT;
+    public static final DragonVariant SUNSET;
     public static final DragonVariant ENCHANTED_FEMALE;
     public static final DragonVariant ENCHANTED_MALE;
     public static final DragonVariant ENDER_FEMALE;
@@ -132,6 +136,10 @@ public class DragonVariants {
         variants.add(AETHER_MALE = make(supplier, DragonTypes.AETHER, "aether_male", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BREEZE = make(supplier, DragonTypes.AETHER, "breeze", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(DARK_FEMALE = make(supplier, DragonTypes.DARK, "dark_female", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FALLEN = make(supplier, DragonTypes.LIGHT, "fallen", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(PRISM = make(supplier, DragonTypes.LIGHT, "prism", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(RADIANT = make(supplier, DragonTypes.LIGHT, "radiant", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(SUNSET = make(supplier, DragonTypes.LIGHT, "sunset", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(DARK_MALE = make(supplier, DragonTypes.DARK, "dark_male", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ENCHANTED_FEMALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_female", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ENCHANTED_MALE = make(supplier, DragonTypes.ENCHANTED, "enchanted_male", DragonProjectiles.DRAGON_FIREBALL));

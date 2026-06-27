@@ -24,6 +24,7 @@ import static net.minecraft.world.item.ArmorItem.Type.*;
 public class DragonTypes {
     public static final DragonType AETHER;
     public static final DragonType DARK;
+    public static final DragonType LIGHT;
     public static final DragonType ENCHANTED;
     public static final DragonType ENDER;
     public static final DragonType FIRE;
@@ -104,7 +105,17 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
                 .register(DarkType::new, makeId("dark"));
-        material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
+        LIGHT = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
+                .model("winged_horned", "winged_horned")
+                .texture(makeId("textures/entity/dragon/light/prism/body.png"))
+                .setMaterial(DMItemTags.LIGHT_DRAGON_SCALES)
+                .setScaleColor(MapColor.COLOR_YELLOW)
+                .addImmunity(DamageTypes.MAGIC)
+                .addImmunity(DamageTypes.HOT_FLOOR)
+                .addImmunity(DamageTypes.LIGHTNING_BOLT)
+                .register(LightType::new, makeId("light"));
+                material.setDefense(HELMET, 4)
+                        .setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
                 .model("normal", "base")   // TODO confirm body shape (old COMPAT)
                 .texture(makeId("textures/entity/dragon/aether/female/body.png"))

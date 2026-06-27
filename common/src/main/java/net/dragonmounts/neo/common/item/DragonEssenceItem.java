@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.ITEM_TRANSLATION_KEY_PREFIX;
 import static net.dragonmounts.neo.common.component.ScoreboardInfo.applyScores;
@@ -44,10 +46,17 @@ public class DragonEssenceItem extends Item implements DragonTypified, EntityCon
     public static final String TRANSLATION_KEY = ITEM_TRANSLATION_KEY_PREFIX + "dragon_essence";
 
     public final DragonType type;
+    public final TranslatableContents name;
 
     public DragonEssenceItem(DragonType type, Properties props) {
         super(props.stacksTo(1).component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
+        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return MutableComponent.create(this.name);
     }
 
     @Override

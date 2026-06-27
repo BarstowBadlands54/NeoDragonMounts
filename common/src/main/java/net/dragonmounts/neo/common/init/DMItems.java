@@ -104,6 +104,7 @@ public class DMItems {
     public static final BlockItemHolder<FlammableBlock, ?> DRAGON_NEST = BLOCK_TAB.register(DMBlocks.DRAGON_NEST, BlockItem::new);
     public static final BlockItemHolder<DragonScaleBlock, ?> AETHER_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.AETHER_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> DARK_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.DARK_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
+    public static final BlockItemHolder<DragonScaleBlock, ?> LIGHT_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.LIGHT_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> ENCHANTED_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.ENCHANTED_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> ENDER_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.ENDER_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> FIRE_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.FIRE_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
@@ -134,6 +135,7 @@ public class DMItems {
     public static final ItemHolder<DragonScalesItem> WATER_DRAGON_SCALES = MISC_TAB.register("water_dragon_scales", props -> makeDragonScales(DragonTypes.WATER, props));
     public static final ItemHolder<DragonScalesItem> ZOMBIE_DRAGON_SCALES = MISC_TAB.register("zombie_dragon_scales", props -> makeDragonScales(DragonTypes.ZOMBIE, props));
     public static final ItemHolder<DragonScalesItem> DARK_DRAGON_SCALES = MISC_TAB.register("dark_dragon_scales", props -> makeDragonScales(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonScalesItem> LIGHT_DRAGON_SCALES = MISC_TAB.register("light_dragon_scales", props -> makeDragonScales(DragonTypes.LIGHT, props));
     // Shears
     public static final ItemHolder<TieredShearsItem> DIAMOND_SHEARS = TOOL_TAB.register("diamond_shears", props ->
             makeTieredShears(Tiers.DIAMOND, props)
@@ -211,6 +213,7 @@ public class DMItems {
     public static final ItemHolder<DragonScaleSwordItem> ZOMBIE_DRAGON_SCALE_SWORD = COMBAT_TAB.register("zombie_dragon_scale_sword", props -> makeDragonScaleSword(DragonTypes.ZOMBIE, props));
     public static final ItemHolder<DragonScaleSwordItem> SCULK_DRAGON_SCALE_SWORD = COMBAT_TAB.register("sculk_dragon_scale_sword", props -> makeDragonScaleSword(DragonTypes.SCULK, props.fireResistant()));
     public static final ItemHolder<DragonScaleSwordItem> DARK_DRAGON_SCALE_SWORD = COMBAT_TAB.register("dark_dragon_scale_sword", props -> makeDragonScaleSword(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonScaleSwordItem> LIGHT_DRAGON_SCALE_SWORD = COMBAT_TAB.register("light_dragon_scale_sword", props -> makeDragonScaleSword(DragonTypes.LIGHT, props));
     // Dragon Scale Tools - Aether
     public static final ItemHolder<DragonScaleShovelItem> AETHER_DRAGON_SCALE_SHOVEL = TOOL_TAB.register("aether_dragon_scale_shovel", props -> makeDragonScaleShovel(DragonTypes.AETHER, props));
     public static final ItemHolder<DragonScalePickaxeItem> AETHER_DRAGON_SCALE_PICKAXE = TOOL_TAB.register("aether_dragon_scale_pickaxe", props -> makeDragonScalePickaxe(DragonTypes.AETHER, props));
@@ -286,6 +289,11 @@ public class DMItems {
     public static final ItemHolder<DragonScalePickaxeItem> DARK_DRAGON_SCALE_PICKAXE = TOOL_TAB.register("dark_dragon_scale_pickaxe", props -> makeDragonScalePickaxe(DragonTypes.DARK, props));
     public static final ItemHolder<DragonScaleAxeItem> DARK_DRAGON_SCALE_AXE = registerAxe("dark_dragon_scale_axe", props -> makeDragonScaleAxe(DragonTypes.DARK, props));
     public static final ItemHolder<DragonScaleHoeItem> DARK_DRAGON_SCALE_HOE = TOOL_TAB.register("dark_dragon_scale_hoe", props -> makeDragonScaleHoe(DragonTypes.DARK, props));
+    // Dragon Scale Tools - Light
+    public static final ItemHolder<DragonScaleShovelItem> LIGHT_DRAGON_SCALE_SHOVEL = TOOL_TAB.register("light_dragon_scale_shovel", props -> makeDragonScaleShovel(DragonTypes.LIGHT, props));
+    public static final ItemHolder<DragonScalePickaxeItem> LIGHT_DRAGON_SCALE_PICKAXE = TOOL_TAB.register("light_dragon_scale_pickaxe", props -> makeDragonScalePickaxe(DragonTypes.LIGHT, props));
+    public static final ItemHolder<DragonScaleAxeItem> LIGHT_DRAGON_SCALE_AXE = registerAxe("light_dragon_scale_axe", props -> makeDragonScaleAxe(DragonTypes.LIGHT, props));
+    public static final ItemHolder<DragonScaleHoeItem> LIGHT_DRAGON_SCALE_HOE = TOOL_TAB.register("light_dragon_scale_hoe", props -> makeDragonScaleHoe(DragonTypes.LIGHT, props));
     // Dragon Scale Bows
     public static final ItemHolder<DragonScaleBowItem> AETHER_DRAGON_SCALE_BOW = COMBAT_TAB.register("aether_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.AETHER, props));
     public static final ItemHolder<DragonScaleBowItem> WATER_DRAGON_SCALE_BOW = COMBAT_TAB.register("water_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.WATER, props));
@@ -302,6 +310,7 @@ public class DMItems {
     public static final ItemHolder<DragonScaleBowItem> ZOMBIE_DRAGON_SCALE_BOW = COMBAT_TAB.register("zombie_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.ZOMBIE, props));
     public static final ItemHolder<DragonScaleBowItem> SCULK_DRAGON_SCALE_BOW = COMBAT_TAB.register("sculk_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.SCULK, props.fireResistant()));
     public static final ItemHolder<DragonScaleBowItem> DARK_DRAGON_SCALE_BOW = COMBAT_TAB.register("dark_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonScaleBowItem> LIGHT_DRAGON_SCALE_BOW = COMBAT_TAB.register("light_dragon_scale_bow", props -> makeDragonScaleBow(DragonTypes.LIGHT, props));
     // Dragon Scale Shields
     public static final ItemHolder<DragonScaleShieldItem> AETHER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("aether_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.AETHER, props));
     public static final ItemHolder<DragonScaleShieldItem> WATER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("water_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.WATER, props));
@@ -320,6 +329,7 @@ public class DMItems {
     public static final ItemHolder<DragonScaleShieldItem> ZOMBIE_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("zombie_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.ZOMBIE, props));
     public static final ItemHolder<DragonScaleShieldItem> SCULK_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("sculk_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.SCULK, props.fireResistant()));
     public static final ItemHolder<DragonScaleShieldItem> DARK_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("dark_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonScaleShieldItem> LIGHT_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("light_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.LIGHT, props));
     // Dragon Scale Armors
     public static final DragonScaleArmorSuit AETHER_DRAGON_SCALE_ARMORS = makeSuit(
             DragonTypes.AETHER,
@@ -471,12 +481,25 @@ public class DMItems {
             "dark_dragon_scale_boots",
             DMItems::makeDragonScaleArmor
     );
+    public static final DragonScaleArmorSuit LIGHT_DRAGON_SCALE_ARMORS = makeSuit(
+            DragonTypes.LIGHT,
+            DMArmorEffects.LIGHT,
+            COMBAT_TAB,
+            "light_dragon_scale_helmet",
+            "light_dragon_scale_chestplate",
+            "light_dragon_scale_leggings",
+            "light_dragon_scale_boots",
+            DMItems::makeDragonScaleArmor
+    );
     // Dragon Spawn Eggs
     public static final ItemHolder<DragonSpawnEggItem> AETHER_DRAGON_SPAWN_EGG = DRAGON_SPAWN_EGGS.register("aether_dragon_spawn_egg", props ->
             makeDragonSpawnEgg(DragonTypes.AETHER, props)
     );
     public static final ItemHolder<DragonSpawnEggItem> DARK_DRAGON_SPAWN_EGG = DRAGON_SPAWN_EGGS.register("dark_dragon_spawn_egg", props ->
             makeDragonSpawnEgg(DragonTypes.DARK, props)
+    );
+    public static final ItemHolder<DragonSpawnEggItem> LIGHT_DRAGON_SPAWN_EGG = DRAGON_SPAWN_EGGS.register("light_dragon_spawn_egg", props ->
+            makeDragonSpawnEgg(DragonTypes.LIGHT, props)
     );
     public static final ItemHolder<DragonSpawnEggItem> ENCHANTED_DRAGON_SPAWN_EGG = DRAGON_SPAWN_EGGS.register("enchanted_dragon_spawn_egg", props ->
             makeDragonSpawnEgg(DragonTypes.ENCHANTED, props)

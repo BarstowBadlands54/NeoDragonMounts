@@ -31,6 +31,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
     public final BooleanEntry smeltingBreath;
     public final BooleanEntry quenchingBreath;
     public final BooleanEntry frostyBreath;
+    public final BooleanEntry aetherExtinguishesFire;
     public final DoubleEntry baseArmor;
     public final DoubleEntry baseArmorToughness;
     public final DoubleEntry baseBodySize;
@@ -74,6 +75,9 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
         );
         EntryUtil.register(registry, this.frostyBreath =
                 config(builder, "frostyBreath", true, "Whether blizzard-like dragon breath can leave snow on ground")
+        );
+        EntryUtil.register(registry, this.aetherExtinguishesFire =
+                config(builder, "aetherExtinguishesFire", false, "Whether airflow-like dragon breath extinguishes fire blocks instead of spreading fire")
         );
         EntryUtil.register(registry, this.baseArmor =
                 config(builder, "baseArmor", 8.0, 0.0, 30.0, "The base armor of a newly spawned dragon at adulthood", this::invalidateAttributes)

@@ -18,6 +18,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
     public final BooleanEntry smeltingBreath;
     public final BooleanEntry quenchingBreath;
     public final BooleanEntry frostyBreath;
+    public final BooleanEntry aetherExtinguishesFire;
     public final DoubleEntry baseArmor;
     public final DoubleEntry baseArmorToughness;
     public final DoubleEntry baseBodySize;
@@ -42,6 +43,7 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
         this.smeltingBreath = Dummy.get();
         this.quenchingBreath = Dummy.get();
         this.frostyBreath = Dummy.get();
+        this.aetherExtinguishesFire= Dummy.get();
         this.baseArmor = Dummy.get();
         this.baseArmorToughness = Dummy.get();
         this.baseBodySize = Dummy.get();
