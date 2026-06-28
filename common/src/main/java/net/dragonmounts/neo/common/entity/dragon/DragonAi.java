@@ -103,10 +103,16 @@ public class DragonAi {
     static void initFightActivity(Brain<ServerDragonEntity> brain) {
         brain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10,
                 ImmutableList.<BehaviorControl<? super ServerDragonEntity>>of(
+                        // Aerial positioning first: if the fight warrants flying (airborne target,
+                        // or we're hurt vs a ground target) this takes the dragon into the air and
+                        // holds an attack position. It doesn't attack itself.
+                        new DragonAerialCombat(),
+                        // Breath BEFORE the walk-to-melee + bite. When a breath is warranted it halts
+                        // the dragon and breathes; otherwise it does nothing and the dragon walks in
+                        // and bites as normal.
+                        new DragonBreathAttack(),
                         SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0F),
-                        // DEBUG: bite disabled, breath forced, to verify the breath system fires.
-                        // MeleeAttack.create(40),
-                        new DebugForceBreath(),
+                        MeleeAttack.create(40),
                         StopAttackingIfTargetInvalid.create(),
                         EraseMemoryIf.create(BehaviorUtils::isBreeding, MemoryModuleType.ATTACK_TARGET)
                 ), MemoryModuleType.ATTACK_TARGET);
