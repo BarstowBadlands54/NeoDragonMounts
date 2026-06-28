@@ -11,6 +11,7 @@
   "button.neodragonmounts.toggle_following": "従う / 散策",
   "button.neodragonmounts.toggle_siting": "座る / 立つ",
   "commands.neodragonmounts.stage.set": "%sの年齢層は次のように設定されました: %s",
+  "commands.neodragonmounts.no_dragon_found": "近くにドラゴンが見つかりません",
   "container.neodragonmounts.dragon_core": "ドラゴンコア",
   "dragon_type.neodragonmounts.aether": "エーテル",
   "dragon_type.neodragonmounts.dark": "ダーク",
@@ -163,5 +164,7 @@
   "tooltip.neodragonmounts.custom_name": "名前: %s",
   "tooltip.neodragonmounts.health": "健康: %s",
   "tooltip.neodragonmounts.owner_name": "所有者: %s",
-  "block.neodragonmounts.light_dragon_egg": "光のドラゴンの卵"
+  "block.neodragonmounts.light_dragon_egg": "光のドラゴンの卵",
+  "button.neodragonmounts.flight_rank.auto": "V字飛行の位置",
+  "button.neodragonmounts.flight_rank.tooltip": "編隊飛行時のこのドラゴンのV字隊形での位置を設定します"
 }

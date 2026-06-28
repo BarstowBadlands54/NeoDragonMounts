@@ -13,9 +13,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Autonomous fire-breath attack for an UNRIDDEN dragon in combat. Bites trivial foes; breathes
  * fire on genuinely dangerous targets (heavily armoured players, high-health / hard-hitting NPCs).
- *
- * DIAGNOSTIC BUILD: prints to the server console on every canUse evaluation so we can see which
- * gate is blocking the breath. Remove the System.out lines once it's confirmed working.
+ * Also breathes continuously when it has taken to the air to chase a flying target — an aerial
+ * duel should be fought with fire, not by flapping in for a bite.
  */
 public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     private static final int BATTLE_LONG_TICKS = 200;      // 10s
@@ -24,7 +23,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     private static final float STRONG_ATTACK = 7.0F;
     private static final double MAX_BREATH_RANGE_SQR = 32.0 * 32.0;
     private static final int BREATH_DURATION = 40;         // 2s
-    private static final int BREATH_COOLDOWN = 160;        // 8s
+    private static final int BREATH_COOLDOWN = 40;         // 2s between bursts
 
     private long targetAcquiredAt = -1;
     private LivingEntity trackedTarget;
@@ -37,19 +36,12 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
 
     @Override
     protected boolean canUse(ServerLevel level, TameableDragonEntity dragon) {
-        if (dragon.isRiddenByPlayer()) { return false; }
-        if (!dragon.breathHelper.canBreathe()) {
-            System.out.println("[BreathAI] blocked: canBreathe=false (breath not initialized for this type)");
-            return false;
-        }
-        if (!dragon.getLifeStage().isOldEnough(DragonLifeStage.FLEDGLING)) {
-            System.out.println("[BreathAI] blocked: too young, stage=" + dragon.getLifeStage());
-            return false;
-        }
+        if (dragon.isRiddenByPlayer()) return false;
+        if (!dragon.breathHelper.canBreathe()) return false;
+        if (!dragon.getLifeStage().isOldEnough(DragonLifeStage.FLEDGLING)) return false;
 
         LivingEntity target = dragon.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
         if (target == null || !target.isAlive()) {
-            System.out.println("[BreathAI] blocked: no ATTACK_TARGET (dragon isn't in FIGHT against anyone)");
             this.targetAcquiredAt = -1;
             this.trackedTarget = null;
             return false;
@@ -61,27 +53,30 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         }
 
         double distSqr = dragon.distanceToSqr(target);
-        if (distSqr > MAX_BREATH_RANGE_SQR) {
-            System.out.println("[BreathAI] blocked: out of range, dist=" + Math.sqrt(distSqr));
-            return false;
+        if (distSqr > MAX_BREATH_RANGE_SQR) return false;
+
+        // AERIAL DUEL: when WE have taken to the air to fight a flying target, breathe constantly.
+        // No threat-gating and no cooldown here — an airborne chase against a flying foe should be
+        // a continuous stream of fire. (We are unridden; the isRiddenByPlayer check above already
+        // excludes a player-controlled dragon.)
+        if (dragon.isFlying() && isAirborne(target)) {
+            return true;
         }
 
+        // Otherwise apply the normal sparing cooldown. Overflow-safe: only gate after the first
+        // burst (before that lastBreathEnd is Long.MIN_VALUE and the subtraction would overflow).
         long now = dragon.level().getGameTime();
-        // Overflow-safe cooldown: only gate AFTER the first burst. Before that, lastBreathEnd is
-        // unset and (now - Long.MIN_VALUE) would overflow into a bogus huge value.
         if (this.hasBreathedOnce && now - this.lastBreathEnd < BREATH_COOLDOWN) {
-            System.out.println("[BreathAI] blocked: on cooldown, " + (BREATH_COOLDOWN - (now - this.lastBreathEnd)) + " ticks left");
             return false;
         }
 
-        boolean decision = this.shouldBreathe(dragon, target, now);
-        System.out.println("[BreathAI] target=" + target.getName().getString()
-                + " armor=" + target.getArmorValue()
-                + " maxHp=" + target.getMaxHealth()
-                + " atk=" + (target.getAttribute(Attributes.ATTACK_DAMAGE) != null ? target.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : "n/a")
-                + " dist=" + Math.sqrt(distSqr)
-                + " -> shouldBreathe=" + decision);
-        return decision;
+        return this.shouldBreathe(dragon, target, now);
+    }
+
+    /** Is the target meaningfully off the ground (another flying dragon, phantom, etc.)? */
+    private boolean isAirborne(LivingEntity target) {
+        if (target instanceof TameableDragonEntity d && d.isFlying()) return true;
+        return !target.onGround() && target.fallDistance == 0.0F && !target.onClimbable();
     }
 
     private boolean shouldBreathe(TameableDragonEntity dragon, LivingEntity target, long now) {
@@ -102,9 +97,9 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
 
     /**
      * Rotate the dragon's BODY (and head) to face the target. The breath fires along
-     * dragon.getLookAngle(), which is derived from the body yRot/xRot — NOT the head. The
-     * LookAtTargetSink only turns the head, so without this the breath would shoot wherever the
-     * body happens to point. We aim from the dragon's eye to the target's centre of mass.
+     * dragon.getLookAngle(), which is derived from the body yRot/xRot — NOT the head. We aim from
+     * the dragon's eye to the target's centre of mass so the breath connects, including pitching
+     * up/down when the target is above or below us in the air.
      */
     private void faceTarget(TameableDragonEntity dragon, LivingEntity target) {
         Vec3 from = dragon.getEyePosition();
@@ -117,12 +112,12 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         float wantYaw = (float) (Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
         float wantPitch = (float) (-(Mth.atan2(dy, horiz) * (180.0 / Math.PI)));
 
-        // smooth the yaw turn a little so it doesn't snap; pitch can track directly
         float newYaw = approachDegrees(dragon.getYRot(), wantYaw, 25.0F);
         dragon.setYRot(newYaw);
         dragon.yBodyRot = newYaw;
         dragon.yHeadRot = newYaw;
-        dragon.setXRot(Mth.clamp(wantPitch, -75.0F, 75.0F));
+        // pitch tracks directly so it aims up/down at airborne targets; wider clamp for steep dives
+        dragon.setXRot(Mth.clamp(wantPitch, -85.0F, 85.0F));
     }
 
     /** Move `current` toward `target` (degrees) by at most maxStep, wrapping correctly. */
@@ -145,7 +140,6 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         dragon.getNavigation().stop();
         if (target != null) this.faceTarget(dragon, target);
         dragon.setBreathing(true);
-        System.out.println("[BreathAI] FIRING breath -> isBreathing=" + dragon.isBreathing());
     }
 
     @Override
@@ -157,7 +151,10 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
                 || dragon.distanceToSqr(target) > MAX_BREATH_RANGE_SQR;
         boolean controlled = dragon.isRiddenByPlayer();
 
-        if (expired || targetGone || controlled) {
+        // In an aerial duel we keep the burst going as long as the target stays in range, so the
+        // 2s burst limit doesn't cut the fire stream short mid-chase.
+        boolean aerialDuel = dragon.isFlying() && target != null && isAirborne(target);
+        if ((expired && !aerialDuel) || targetGone || controlled) {
             this.doStop(level, dragon, time);
             return;
         }
@@ -165,7 +162,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         dragon.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
         dragon.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         dragon.getNavigation().stop();
-        this.faceTarget(dragon, target);   // keep the BODY aimed so the breath tracks the target
+        this.faceTarget(dragon, target);   // keep the BODY aimed (yaw + pitch) at the target
         dragon.setBreathing(true);
     }
 

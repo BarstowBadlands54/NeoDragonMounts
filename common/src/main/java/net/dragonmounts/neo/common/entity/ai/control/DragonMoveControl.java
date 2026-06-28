@@ -81,50 +81,30 @@ public class DragonMoveControl extends MoveControl {
             // ---- AIR (flight) ----
             else {
                 double dist = Math.sqrt(squared);
-
-                // ARRIVAL DAMPING: only turn toward the target and drive forward when we're
-                // meaningfully far from it. When the dragon is basically ON its target (e.g. a
-                // formation slot right next to it), turning toward that near point makes the
-                // atan2 heading flip violently as the dragon drifts past — it overshoots, flips
-                // ~180°, charges back, overshoots again. That back-and-forth IS the spinning.
-                // So inside a small "brake radius" we hold heading and coast instead of chasing.
-                final double BRAKE_RADIUS = 2.5;   // blocks; within this, stop re-aiming/charging
-                final double ARRIVE_EPS   = 0.2;  // blocks; basically arrived -> coast only
-
-                float baseSpeed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
-
-                if (dist < ARRIVE_EPS) {
-                    // arrived: don't turn, don't thrust — just let momentum bleed off smoothly.
-                    dragon.setSpeed(0.0F);
-                    dragon.setZza(0.0F);
-                    if (dragon.isFlying()) dragon.setYya(0.0F);
-                } else {
-                    // Scale speed down as we approach so we decelerate into the target instead
-                    // of blowing through it (which is what caused the overshoot/flip oscillation).
-                    double brakeFactor = Math.min(1.0, dist / BRAKE_RADIUS);
-                    float speed = (float) (baseSpeed * brakeFactor);
-
-                    // Only re-aim heading when far enough out that the heading is stable. Close in,
-                    // keep the current yaw so a near, drifting target can't whip us around.
-                    if (dist > BRAKE_RADIUS) {
-                        dragon.setYRot(this.rotlerp(
-                                dragon.getYRot(),
-                                (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F,
-                                30.0F
-                        ));
-                    }
-                    dragon.yBodyRot = dragon.getYRot();
-
-                    dragon.setSpeed(speed);
-                    if (dist > Mth.EPSILON || Math.abs(distY) > Mth.EPSILON) {
+                float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
+                dragon.setSpeed(speed);
+                // While breathing, DON'T steer rotation toward the flight heading — the breath
+                // behavior's faceTarget owns yaw AND pitch so the breath aims at the target.
+                // Overriding here is what made an airborne dragon fire level/along its path
+                // instead of angling down at a target below it. We still allow vertical thrust
+                // so it can hold altitude.
+                boolean breathing = dragon.isBreathing();
+                if (!breathing) {
+                    dragon.setYRot(this.rotlerp(
+                            dragon.getYRot(),
+                            (float) (Mth.atan2(distZ, distX) * 180.0F / MathUtil.PI) - 90.0F,
+                            30.0F
+                    ));
+                }
+                if (dist > Mth.EPSILON || Math.abs(distY) > Mth.EPSILON) {
+                    if (!breathing) {
                         dragon.setXRot(this.rotlerp(
                                 dragon.getXRot(),
                                 (float) (Mth.atan2(distY, dist) * -180.0F / MathUtil.PI),
                                 85.0F
                         ));
-                        // vertical thrust also damped by the same brake factor near arrival
-                        dragon.setYya(distY > 0.0 ? speed : -speed);
                     }
+                    dragon.setYya(distY > 0.0 ? speed : -speed);
                 }
             }
         } else if (dragon.isInWater()) {

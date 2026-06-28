@@ -11,6 +11,7 @@
   "button.neodragonmounts.toggle_following": "Suivre / Errer",
   "button.neodragonmounts.toggle_siting": "Asseoir / Lever",
   "commands.neodragonmounts.stage.set": "Le stade de %s a été défini en tant que : %s",
+  "commands.neodragonmounts.no_dragon_found": "Aucun dragon à proximité",
   "container.neodragonmounts.dragon_core": "Coeur Draconique",
   "dragon_type.neodragonmounts.aether": "Ethéré",
   "dragon_type.neodragonmounts.dark": "Sombre",
@@ -164,5 +165,7 @@
   "tooltip.neodragonmounts.custom_name": "Nom: %s",
   "tooltip.neodragonmounts.health": "Vie: %s",
   "tooltip.neodragonmounts.owner_name": "Propriétaire: %s",
-  "block.neodragonmounts.light_dragon_egg": "Œuf de dragon de lumière"
+  "block.neodragonmounts.light_dragon_egg": "Œuf de dragon de lumière",
+  "button.neodragonmounts.flight_rank.auto": "Position en Vol en V",
+  "button.neodragonmounts.flight_rank.tooltip": "Définit la place de ce dragon dans la formation en V lors du vol groupé"
 }

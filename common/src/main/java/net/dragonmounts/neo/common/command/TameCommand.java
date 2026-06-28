@@ -21,15 +21,27 @@ import static net.dragonmounts.neo.common.command.DMCommands.getSingleProfileOrE
 
 public class TameCommand {
     public static ArgumentBuilder<CommandSourceStack, ?> register(Predicate<CommandSourceStack> permission) {
-        return Commands.literal("tame").requires(permission).then(Commands.argument("targets", EntityArgument.entities())
-                .executes(context -> tame(context, EntityArgument.getEntities(context, "targets")))
-                .then(Commands.argument("owner", GameProfileArgument.gameProfile())
-                        .executes(context -> tame(context, EntityArgument.getEntities(context, "targets"), getSingleProfileOrException(context, "owner")))
-                        .then(Commands.argument("forced", BoolArgumentType.bool()).executes(
-                                context -> tame(context, BoolArgumentType.getBool(context, "forced"))
-                        ))
-                )
-        );
+        return Commands.literal("tame").requires(permission)
+                // No-selector form: `/dragonmounts tame` tames the dragon you're riding, looking
+                // at, or nearest to — for the player who ran it. Handy for testing.
+                .executes(context -> tameResolved(context))
+                .then(Commands.argument("targets", EntityArgument.entities())
+                        .executes(context -> tame(context, EntityArgument.getEntities(context, "targets")))
+                        .then(Commands.argument("owner", GameProfileArgument.gameProfile())
+                                .executes(context -> tame(context, EntityArgument.getEntities(context, "targets"), getSingleProfileOrException(context, "owner")))
+                                .then(Commands.argument("forced", BoolArgumentType.bool()).executes(
+                                        context -> tame(context, BoolArgumentType.getBool(context, "forced"))
+                                ))
+                        )
+                );
+    }
+
+
+    /** Tame the auto-resolved nearby dragon (ridden / looked-at / nearest) to the running player. */
+    private static int tameResolved(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        var dragon = DMCommands.resolveNearbyDragon(context.getSource());
+        var owner = context.getSource().getPlayerOrException().getGameProfile();
+        return tame(context, java.util.List.of(dragon), owner, true);
     }
 
     private static int tame(CommandContext<CommandSourceStack> context, Collection<? extends Entity> targets) throws CommandSyntaxException {
