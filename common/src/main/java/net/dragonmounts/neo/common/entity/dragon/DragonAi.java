@@ -101,12 +101,15 @@ public class DragonAi {
     }
 
     static void initFightActivity(Brain<ServerDragonEntity> brain) {
-        brain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10, ImmutableList.of(
-                SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0F),
-                MeleeAttack.create(40),
-                StopAttackingIfTargetInvalid.create(),
-                EraseMemoryIf.create(BehaviorUtils::isBreeding, MemoryModuleType.ATTACK_TARGET)
-        ), MemoryModuleType.ATTACK_TARGET);
+        brain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10,
+                ImmutableList.<BehaviorControl<? super ServerDragonEntity>>of(
+                        SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0F),
+                        // DEBUG: bite disabled, breath forced, to verify the breath system fires.
+                        // MeleeAttack.create(40),
+                        new DebugForceBreath(),
+                        StopAttackingIfTargetInvalid.create(),
+                        EraseMemoryIf.create(BehaviorUtils::isBreeding, MemoryModuleType.ATTACK_TARGET)
+                ), MemoryModuleType.ATTACK_TARGET);
     }
 
     static void initControlledActivity(Brain<ServerDragonEntity> brain) {

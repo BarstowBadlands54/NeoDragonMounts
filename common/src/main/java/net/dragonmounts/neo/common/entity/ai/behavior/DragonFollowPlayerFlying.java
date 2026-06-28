@@ -30,10 +30,10 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
                 return false;
             }
 
-            if(dragon.isBaby()) {
+            if (dragon.isBaby()) {
                 return false;
             }
-            boolean ownerFlyingMount = owner.getVehicle() instanceof ServerDragonEntity mount && mount.isFlying();
+            boolean ownerFlyingMount = owner.getVehicle() instanceof ServerDragonEntity mount && mount.isFlying() && mount.isTame();
             return owner.isFallFlying() || ownerFlyingMount || owner.fallDistance > 4;
         }
         return false;
@@ -49,8 +49,11 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
         double dist = dragon.distanceTo(owner);
         double followRange = 35.0;
 
+        if (owner.getVehicle() instanceof ServerDragonEntity dragonEntity) {
+            dragon.setSprinting(dragonEntity.isSprinting());
+        }
         // CASE 1: owner is elytra-flying or riding a flying vehicle -> fly in a V FORMATION behind the owner, like birds.
-        if (owner.isFallFlying() || (owner.getVehicle() instanceof ServerDragonEntity dragonEntity && dragonEntity.isFlying()))  {
+        if (owner.isFallFlying() || (owner.getVehicle() instanceof ServerDragonEntity dragonEntity && (dragonEntity.isFlying() || dragon.isSwimming()))) {
             Vec3 slot = computeFormationSlot(level, dragon, owner);
 
             double gap = dragon.position().distanceTo(slot);
@@ -67,6 +70,7 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
                 dragon.setDeltaMovement(ownerVel);   // inherit momentum so it cruises, not stalls
                 return;
             }
+
 
             // The threshold between "cruise in formation" and "sprint to catch up" is DISTANCE,
             // not speed. This is the key fix for the mid-speed spinning: a speed-based cutoff
@@ -103,7 +107,7 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
 
             // FAR from slot -> sprint in via the move control (arrival damping in DragonMoveControl
             // handles the final approach without overshoot). Adaptive speed scales with the gap.
-            double speed = Math.min(8.0, 2.5 + gap * 0.35);
+            double speed = Math.min(14.0, 6.5 + gap * 0.35);
             dragon.getMoveControl().setWantedPosition(slot.x, slot.y, slot.z, speed);
             return;
         }
