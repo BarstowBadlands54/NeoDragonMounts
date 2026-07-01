@@ -97,14 +97,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
         float base = this.flapAnim * (MathUtil.PI * 2.0F);
         boolean wingsDown = net.minecraft.util.Mth.sin(base - 1.0F) > 0.0F;
         if (wingsDown && !this.flapWingsDown) {
-            float horizontal = (float) Math.sqrt(speedEnt);
-            // Louder when hovering, softer when moving fast — but the raw formula
-            // 0.8 + (ageScale - horizontal) goes to zero/negative at ride flight speed
-            // (horizontal can exceed ageScale), which silenced the flap whenever the
-            // dragon was actually moving while ridden. Cap the speed softening and floor
-            // the result so a moving dragon still flaps audibly.
-            float speedSoftening = Math.min(horizontal, 0.5F);   // at most -0.5, never silences
-            float volume = Mth.clamp(0.8F + this.getAgeScale() - speedSoftening, 0.5F, 1.5F);
+            float volume = getVolume(speedEnt);
             this.level().playLocalSound(
                     this,
                     SoundEvents.ENDER_DRAGON_FLAP,
@@ -114,6 +107,17 @@ public class ClientDragonEntity extends TameableDragonEntity {
             );
         }
         this.flapWingsDown = wingsDown;
+    }
+
+    private float getVolume(float speedEnt) {
+        float horizontal = (float) Math.sqrt(speedEnt);
+        // Louder when hovering, softer when moving fast — but the raw formula
+        // 0.8 + (ageScale - horizontal) goes to zero/negative at ride flight speed
+        // (horizontal can exceed ageScale), which silenced the flap whenever the
+        // dragon was actually moving while ridden. Cap the speed softening and floor
+        // the result so a moving dragon still flaps audibly.
+        float volume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
+        return volume;
     }
 
     @Override
