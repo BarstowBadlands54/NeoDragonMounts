@@ -75,6 +75,7 @@ public class ClientDragonEntity extends TameableDragonEntity {
         );
     }
 
+
     /**
      * Drives the wing-flap sound without the old animator. The flap cycle speeds up when
      * hovering and slows when moving forward (matching the original NeoDragonMounts feel),
@@ -97,11 +98,18 @@ public class ClientDragonEntity extends TameableDragonEntity {
         boolean wingsDown = net.minecraft.util.Mth.sin(base - 1.0F) > 0.0F;
         if (wingsDown && !this.flapWingsDown) {
             float horizontal = (float) Math.sqrt(speedEnt);
+            // Louder when hovering, softer when moving fast — but the raw formula
+            // 0.8 + (ageScale - horizontal) goes to zero/negative at ride flight speed
+            // (horizontal can exceed ageScale), which silenced the flap whenever the
+            // dragon was actually moving while ridden. Cap the speed softening and floor
+            // the result so a moving dragon still flaps audibly.
+            float speedSoftening = Math.min(horizontal, 0.5F);   // at most -0.5, never silences
+            float volume = Mth.clamp(0.8F + this.getAgeScale() - speedSoftening, 0.5F, 1.5F);
             this.level().playLocalSound(
                     this,
                     SoundEvents.ENDER_DRAGON_FLAP,
                     this.getSoundSource(),
-                    0.8F + (this.getAgeScale() - horizontal),
+                    volume,
                     1.0F
             );
         }

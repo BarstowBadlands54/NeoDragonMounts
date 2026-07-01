@@ -46,11 +46,11 @@ public class BreathSound extends AbstractTickableSoundInstance {
         this.y = pos.y;
         this.z = pos.z;
         if (this.timeout) {
-            this.volume *= 0.5F;
+            this.volume *= 0.7F;
         } else {
             var player = Minecraft.getInstance().player;
             this.volume = player == null ? 0.0F :
-                    this.dragon.getAgeScale() * (1.0F - MathUtil.clamp((float) pos.distanceTo(player.position()) / 40.0F));
+                    this.dragon.getAgeScale() * (1.0F - MathUtil.clamp((float) pos.distanceTo(player.position()) / 80.0F));
         }
     }
 

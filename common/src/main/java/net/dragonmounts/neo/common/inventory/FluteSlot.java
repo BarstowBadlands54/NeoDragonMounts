@@ -3,6 +3,7 @@ package net.dragonmounts.neo.common.inventory;
 import com.mojang.datafixers.util.Pair;
 import net.dragonmounts.neo.common.capability.FluteHolder;
 import net.dragonmounts.neo.common.component.FluteSound;
+import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.dragonmounts.neo.compat.platform.DMAttachments;
 import net.minecraft.core.component.DataComponents;
@@ -22,6 +23,7 @@ public class FluteSlot extends Slot {
     public final DragonInventoryHandler inventory;
     public SlotListener<? super FluteSlot> listener;
     public String desiredName;
+    private TameableDragonEntity dragon;
 
     public FluteSlot(
             DragonInventoryHandler handler,
@@ -32,6 +34,7 @@ public class FluteSlot extends Slot {
                 handler.player,
                 DMAttachments.FLUTE_HOLDER
         ), handler, x, y);
+        this.dragon = handler.dragon;
     }
 
     public FluteSlot(
@@ -54,7 +57,17 @@ public class FluteSlot extends Slot {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        return !stack.isEmpty() && DMItems.FLUTE.is(stack);
+        return !stack.isEmpty() && DMItems.FLUTE.is(stack) && !dragon.isBaby();
+    }
+
+    @Override
+    public boolean mayPickup(Player player) {
+        return !dragon.isBaby();
+    }
+
+    @Override
+    public boolean isActive() {
+        return !dragon.isBaby();
     }
 
     @Override

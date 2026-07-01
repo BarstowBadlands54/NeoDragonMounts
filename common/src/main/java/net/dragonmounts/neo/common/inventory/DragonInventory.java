@@ -194,7 +194,8 @@ public class DragonInventory implements Container, StackedContentsCompatible {
     }
 
     @Override
-    public void setChanged() {}
+    public void setChanged() {
+    }
 
     @Override
     public boolean stillValid(Player player) {

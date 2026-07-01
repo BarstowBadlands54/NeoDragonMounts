@@ -120,12 +120,17 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return isDragonSaddle(stack);
+            return !this.dragon.isBaby() && isDragonSaddle(stack);
         }
 
         @Override
         public boolean mayPickup(Player player) {
-            return !this.dragon.hasControllingPassenger();
+            return !this.dragon.isBaby() && !this.dragon.hasControllingPassenger();
+        }
+
+        @Override
+        public boolean isActive() {
+            return !this.dragon.isBaby();
         }
 
         @Override
@@ -143,20 +148,27 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
     public static class ArmorSlot extends Slot {
         public static final ResourceLocation ICON = makeId("item/empty_dragon_armor");
+        public final TameableDragonEntity dragon;
 
         public ArmorSlot(DragonInventory inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
+            this.dragon=inventory.dragon;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return isDragonArmor(stack);
+            return isDragonArmor(stack) && !dragon.isBaby();
         }
 
         @Override
         public boolean mayPickup(Player player) {
             var stack = this.getItem();
-            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) && super.mayPickup(player);
+            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) && !dragon.isBaby() && super.mayPickup(player);
+        }
+
+        @Override
+        public boolean isActive() {
+            return !dragon.isBaby();
         }
 
         @Override
@@ -171,15 +183,28 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
     }
 
     public static class ChestSlot extends Slot {
+        public final TameableDragonEntity dragon;
+
         public static final ResourceLocation ICON = makeId("item/empty_chest");
 
         public ChestSlot(DragonInventory inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
+            this.dragon=inventory.dragon;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return isChest(stack);
+            return isChest(stack) && !this.dragon.isBaby();
+        }
+
+        @Override
+        public boolean mayPickup(Player player) {
+            return !dragon.isBaby();
+        }
+
+        @Override
+        public boolean isActive() {
+            return !dragon.isBaby();
         }
 
         @Override
