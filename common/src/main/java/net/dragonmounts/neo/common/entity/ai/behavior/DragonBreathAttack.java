@@ -36,7 +36,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
 
     @Override
     protected boolean canUse(ServerLevel level, TameableDragonEntity dragon) {
-        if (dragon.isRiddenByPlayer()) return false;
+        if (dragon.isControlledByPlayer()) return false;
         if (!dragon.breathHelper.canBreathe()) return false;
         if (!dragon.getLifeStage().isOldEnough(DragonLifeStage.FLEDGLING)) return false;
 
@@ -149,7 +149,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         boolean expired = this.burstStart < 0 || (time - this.burstStart) >= BREATH_DURATION;
         boolean targetGone = target == null || !target.isAlive()
                 || dragon.distanceToSqr(target) > MAX_BREATH_RANGE_SQR;
-        boolean controlled = dragon.isRiddenByPlayer();
+        boolean controlled = dragon.isControlledByPlayer();
 
         // In an aerial duel we keep the burst going as long as the target stays in range, so the
         // 2s burst limit doesn't cut the fire stream short mid-chase.

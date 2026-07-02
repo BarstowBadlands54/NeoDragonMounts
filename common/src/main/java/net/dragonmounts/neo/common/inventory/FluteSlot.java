@@ -23,7 +23,7 @@ public class FluteSlot extends Slot {
     public final DragonInventoryHandler inventory;
     public SlotListener<? super FluteSlot> listener;
     public String desiredName;
-    private TameableDragonEntity dragon;
+    TameableDragonEntity dragon;
 
     public FluteSlot(
             DragonInventoryHandler handler,
@@ -34,7 +34,7 @@ public class FluteSlot extends Slot {
                 handler.player,
                 DMAttachments.FLUTE_HOLDER
         ), handler, x, y);
-        this.dragon = handler.dragon;
+        this.dragon=handler.dragon;
     }
 
     public FluteSlot(
@@ -62,11 +62,6 @@ public class FluteSlot extends Slot {
 
     @Override
     public boolean mayPickup(Player player) {
-        return !dragon.isBaby();
-    }
-
-    @Override
-    public boolean isActive() {
         return !dragon.isBaby();
     }
 

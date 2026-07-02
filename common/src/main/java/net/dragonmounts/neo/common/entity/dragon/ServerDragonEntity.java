@@ -23,7 +23,6 @@ import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -71,39 +70,67 @@ public class ServerDragonEntity extends TameableDragonEntity {
     public final DragonHeadLocator<ServerDragonEntity> headLocator = new DragonHeadLocator<>(this);
 
     // --- Bronco-style taming (server-only state) ---
-    /** Counts up while an untamed dragon is being ridden; when it exceeds buckThreshold the dragon bucks the rider. */
+    /**
+     * Counts up while an untamed dragon is being ridden; when it exceeds buckThreshold the dragon bucks the rider.
+     */
     private int rideTicks = 0;
-    /** Randomized number of ticks the player must stay mounted before the dragon attempts to buck. */
+    /**
+     * Randomized number of ticks the player must stay mounted before the dragon attempts to buck.
+     */
     private int buckThreshold = 0;
-    /** Successful rides accumulated toward taming. */
-    private int tameProgress = 0;
-    /** How many successful rides are needed to tame. */
+    /**
+     * Successful rides accumulated toward taming.
+     */
+    private int breakProgress = 0;
+    /**
+     * How many successful rides are needed to tame.
+     */
     public static final int RIDES_TO_TAME = 5;
-    /** Player must hang on at least this many ticks for the ride to "count" as successful. */
+    /**
+     * Player must hang on at least this many ticks for the ride to "count" as successful.
+     */
     public static final int SUCCESS_RIDE_TICKS = 60; // 3 seconds
-    /** Min/max ticks before a buck attempt. */
+    /**
+     * Min/max ticks before a buck attempt.
+     */
     public static final int BUCK_MIN_TICKS = 70;   // ~3.5s
     public static final int BUCK_MAX_TICKS = 160;  // ~8s
-    /** How high (blocks above the start) the dragon climbs while bucking. */
+    /**
+     * How high (blocks above the start) the dragon climbs while bucking.
+     */
     public static final double BRONCO_CLIMB_HEIGHT = 40.0;
-    /** Speed multiplier for the bronco climb (DragonFollowPlayerFlying uses ~1.5-2.0). */
+    /**
+     * Speed multiplier for the bronco climb (DragonFollowPlayerFlying uses ~1.5-2.0).
+     */
     public static final double BRONCO_FLY_SPEED = 2.0;
-    /** Horizontal radius (blocks) of the wild sweep while bucking — bigger = wider flight. */
+    /**
+     * Horizontal radius (blocks) of the wild sweep while bucking — bigger = wider flight.
+     */
     public static final double BRONCO_SWEEP_RADIUS = 24.0;
-    /** Position where the current break-in ride began (anchors the wide sweep + climb target). */
+    /**
+     * Position where the current break-in ride began (anchors the wide sweep + climb target).
+     */
     private double breakInStartX = 0.0;
     private double breakInStartY = 0.0;
     private double breakInStartZ = 0.0;
-    /** The player currently attempting to break in this dragon (server-side). */
+    /**
+     * The player currently attempting to break in this dragon (server-side).
+     */
     @Nullable
     private java.util.UUID breakingInPlayer = null;
 
     // --- Saddle-less flight grace (a tamed dragon will fly briefly without a saddle, then insist on one) ---
-    /** Ticks spent flying-while-ridden with no saddle. */
+    /**
+     * Ticks spent flying-while-ridden with no saddle.
+     */
     private int noSaddleFlightTicks = 0;
-    /** Warn the rider once they've flown this long without a saddle. */
+    /**
+     * Warn the rider once they've flown this long without a saddle.
+     */
     public static final int NO_SADDLE_WARN_TICKS = 100;   // ~5s
-    /** After this long with no saddle, the dragon stops cooperating and sets the rider down. */
+    /**
+     * After this long with no saddle, the dragon stops cooperating and sets the rider down.
+     */
     public static final int NO_SADDLE_LAND_TICKS = 300;   // ~15s
     private boolean noSaddleWarned = false;
 
@@ -306,6 +333,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
             }
         }
     }
+
     @Override
     protected void removePassenger(Entity passenger) {
         boolean wasDriver = (passenger instanceof Player);
@@ -384,21 +412,24 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     /**
-     * Bronco-style taming tick. While an untamed dragon carries a rider:
-     *  - it forces itself airborne and flies erratically,
-     *  - after a randomized delay it BUCKS the rider off (mid-air = a real fall),
-     *  - if the rider hung on long enough, the ride counts toward taming,
-     *  - enough successful rides -> tamed.
+     * Bronco-style taming tick. While an unbroken dragon carries a rider:
+     * - it forces itself airborne and flies erratically,
+     * - after a randomized delay it BUCKS the rider off (mid-air = a real fall),
+     * - if the rider hung on long enough, the ride counts toward taming,
+     * - enough successful rides -> tamed.
      */
     private void tickBronco() {
         if (this.level().isClientSide) return;
 
         // The player clinging on during a break-in (untamed dragon).
         Player rider = this.getBreakInRider();
-        if (this.isTame() || rider == null || !this.isBreakInTrusted()) {
+        if (rider == null || (this.isBreakInTrusted() && isTame())) {
             this.rideTicks = 0;
             return;
         }
+
+        System.out.println(this.isBreakInTrusted() + "break");
+        System.out.println(isTame() + "tame");
 
         // Safety: baby dragons can never be broken in.
         if (this.isBaby()) {
@@ -446,14 +477,15 @@ public class ServerDragonEntity extends TameableDragonEntity {
             boolean success = this.rideTicks >= SUCCESS_RIDE_TICKS;
             // Would this successful ride be the one that finally tames it?
             boolean willTame = success
-                    && (this.tameProgress + 1) >= RIDES_TO_TAME
+                    && (this.breakProgress + 1) >= RIDES_TO_TAME
                     && this.breakingInPlayer != null
                     && rider.getUUID().equals(this.breakingInPlayer);
 
             if (willTame) {
                 // BROKEN IN — accept the rider. Do NOT buck. Keep flying a victory lap.
-                ++this.tameProgress;
+                ++this.breakProgress;
                 this.tame(rider);
+                this.setBreakInTrusted(true);
                 this.level().broadcastEntityEvent(this, ON_TAMING_SUCCEED); // hearts
                 this.rideTicks = 0;
                 // Dragon is tamed now; the rider keeps flying. The saddle-less flight
@@ -479,7 +511,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         rider.hurtMarked = true;
 
         if (success) {
-            ++this.tameProgress;   // progress, but not the final ride
+            ++this.breakProgress;   // progress, but not the final ride
         }
         level.broadcastEntityEvent(this, ON_TAMING_FAIL); // smoke either way — it threw you
 
@@ -525,7 +557,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 this.fluidHeight.isEmpty() || DoubleIterators.all(
                         this.fluidHeight.values().doubleIterator(),
                         value -> value == 0.0
-                ) || this.isRiddenByPlayer()
+                ) || this.isControlledByPlayer()
         ));
     }
 
@@ -563,15 +595,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
                         this.setInLove(player);
                     }
                 } else if (!this.isTame()) {
-                    // Bronco taming: feeding no longer tames directly — it builds TRUST.
-                    // Once the dragon trusts players, it can be mounted (and broken in).
-                    if (!this.isBreakInTrusted()) {
-                        if (this.random.nextFloat() < food.tamingProbability()) {
-                            this.setBreakInTrusted(true);
-                            level.broadcastEntityEvent(this, ON_TAMING_SUCCEED); // reuse heart particles for "now trusts"
-                        } else {
-                            level.broadcastEntityEvent(this, ON_TAMING_FAIL);
-                        }
+                    if (this.random.nextFloat() < food.tamingProbability()) {
+                        this.tame(player);
+                        level.broadcastEntityEvent(this, ON_TAMING_SUCCEED); // reuse heart particles for "now trusts"
+                    } else {
+                        level.broadcastEntityEvent(this, ON_TAMING_FAIL);
                     }
                     // already trusting: feeding still heals/ages but no further effect here
                 }
@@ -720,9 +748,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
     @Override
     protected void addPassenger(Entity passenger) {
-        boolean flag = this.isRiddenByPlayer();
+        boolean flag = this.isControlledByPlayer();
         super.addPassenger(passenger);
-        if (!flag && this.isRiddenByPlayer()) {
+        if (!flag && this.isControlledByPlayer()) {
             this.getBrain().setMemory(DMMemories.IS_CONTROLLED, Unit.INSTANCE);
         }
     }

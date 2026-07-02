@@ -371,8 +371,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return new ItemStack(this.getDragonType().getInstance(DragonSpawnEggItem.class, DMItems.ENDER_DRAGON_SPAWN_EGG.get()));
     }
 
-    public boolean isRiddenByPlayer() {
-        return this.getFirstPassenger() instanceof Player;
+    public boolean isControlledByPlayer() {
+        return this.getFirstPassenger() instanceof Player && isBreakInTrusted();
     }
 
     @Override

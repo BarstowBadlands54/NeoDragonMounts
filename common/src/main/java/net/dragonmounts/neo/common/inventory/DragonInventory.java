@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 
@@ -73,17 +74,19 @@ public class DragonInventory implements Container, StackedContentsCompatible {
     }
 
     public boolean onInteract(ItemStack stack) {
-        if (isDragonArmor(stack) && this.armor.get().isEmpty()) {
-            this.dragon.setItemSlot(EquipmentSlot.BODY, stack.split(1));
-            return true;
-        }
-        if (isDragonSaddle(stack) && this.saddle.get().isEmpty()) {
-            this.saddle.set(stack.split(1));
-            return true;
-        }
-        if (isChest(stack) && this.chest.get().isEmpty()) {
-            this.chest.set(stack.split(1));
-            return true;
+        if (!dragon.isBaby()) {
+            if (isDragonArmor(stack) && this.armor.get().isEmpty()) {
+                this.dragon.setItemSlot(EquipmentSlot.BODY, stack.split(1));
+                return true;
+            }
+            if (isDragonSaddle(stack) && this.saddle.get().isEmpty()) {
+                this.saddle.set(stack.split(1));
+                return true;
+            }
+            if (isChest(stack) && this.chest.get().isEmpty()) {
+                this.chest.set(stack.split(1));
+                return true;
+            }
         }
         return false;
     }

@@ -75,7 +75,6 @@ public class ClientDragonEntity extends TameableDragonEntity {
         );
     }
 
-
     /**
      * Drives the wing-flap sound without the old animator. The flap cycle speeds up when
      * hovering and slows when moving forward (matching the original NeoDragonMounts feel),
@@ -97,12 +96,12 @@ public class ClientDragonEntity extends TameableDragonEntity {
         float base = this.flapAnim * (MathUtil.PI * 2.0F);
         boolean wingsDown = net.minecraft.util.Mth.sin(base - 1.0F) > 0.0F;
         if (wingsDown && !this.flapWingsDown) {
-            float volume = getVolume(speedEnt);
+            float horizontal = (float) Math.sqrt(speedEnt);
             this.level().playLocalSound(
                     this,
                     SoundEvents.ENDER_DRAGON_FLAP,
                     this.getSoundSource(),
-                    volume,
+                    getVolume(speedEnt),
                     1.0F
             );
         }
