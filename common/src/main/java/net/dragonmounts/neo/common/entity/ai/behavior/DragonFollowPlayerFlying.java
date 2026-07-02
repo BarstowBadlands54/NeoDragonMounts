@@ -30,6 +30,10 @@ public class DragonFollowPlayerFlying extends GoalBehavior<TameableDragonEntity>
                 return false;
             }
 
+            if(!dragon.isBreakInTrusted()) {
+                return false;
+            }
+            
             if (dragon.isBaby()) {
                 return false;
             }
