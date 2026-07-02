@@ -563,10 +563,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
         boolean isOwner = this.isOwnedBy(player);
         ItemStack stack = player.getItemInHand(hand);
 
-        System.out.println(this.isBreakInTrusted() + "break");
-        System.out.println(isTame() + "tame");
-        System.out.println(isOwner + "isOwner");
-
         if (!this.isBreathing()) {
             DragonFood food = DragonFood.getInstance(stack);
 
