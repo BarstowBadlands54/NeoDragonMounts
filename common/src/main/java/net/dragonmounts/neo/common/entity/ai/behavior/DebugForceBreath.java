@@ -27,7 +27,7 @@ public class DebugForceBreath extends GoalBehavior<TameableDragonEntity> {
 
     @Override
     protected boolean canUse(ServerLevel level, TameableDragonEntity dragon) {
-        if (dragon.isControlledByPlayer()) return false;
+        if (dragon.isBeingRiddenByPlayer()) return false;
         LivingEntity target = dragon.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
         if (target == null || !target.isAlive()) return false;
         boolean canBreathe = dragon.breathHelper.canBreathe();
@@ -55,7 +55,7 @@ public class DebugForceBreath extends GoalBehavior<TameableDragonEntity> {
         LivingEntity target = dragon.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
         if (target == null || !target.isAlive()
                 || dragon.distanceToSqr(target) > MAX_RANGE_SQR
-                || dragon.isControlledByPlayer()) {
+                || dragon.isBeingRiddenByPlayer()) {
             this.doStop(level, dragon, time);
             return;
         }

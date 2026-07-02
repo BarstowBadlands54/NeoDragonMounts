@@ -12,7 +12,7 @@ public class ControlledByPlayer extends GoalBehavior<ServerDragonEntity> {
 
     @Override
     protected boolean canContinueToUse(ServerLevel level, ServerDragonEntity dragon) {
-        return dragon.isControlledByPlayer();
+        return dragon.isBeingRiddenByPlayer();
     }
 
     @Override

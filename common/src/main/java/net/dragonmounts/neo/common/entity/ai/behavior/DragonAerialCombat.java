@@ -46,7 +46,7 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
 
     @Override
     protected boolean canUse(ServerLevel level, TameableDragonEntity dragon) {
-        if (dragon.isControlledByPlayer()) return false;
+        if (dragon.isBeingRiddenByPlayer()) return false;
         if (dragon.isBaby()) return false;            // babies can't fly
         if (dragon.isInWater()) return false;
 
@@ -105,7 +105,7 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
     public void tickOrStop(ServerLevel level, TameableDragonEntity dragon, long time) {
         LivingEntity target = dragon.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
         if (target == null || !target.isAlive()
-                || dragon.isControlledByPlayer()
+                || dragon.isBeingRiddenByPlayer()
                 || dragon.distanceToSqr(target) > ENGAGE_RANGE_SQR
                 || !this.shouldFly(dragon, target)) {
             this.doStop(level, dragon, time);

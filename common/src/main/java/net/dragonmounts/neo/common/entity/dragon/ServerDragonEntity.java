@@ -428,9 +428,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
             return;
         }
 
-        System.out.println(this.isBreakInTrusted() + "break");
-        System.out.println(isTame() + "tame");
-
         // Safety: baby dragons can never be broken in.
         if (this.isBaby()) {
             this.ejectPassengers();
@@ -557,7 +554,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 this.fluidHeight.isEmpty() || DoubleIterators.all(
                         this.fluidHeight.values().doubleIterator(),
                         value -> value == 0.0
-                ) || this.isControlledByPlayer()
+                ) || this.isBeingRiddenByPlayer()
         ));
     }
 
@@ -565,6 +562,10 @@ public class ServerDragonEntity extends TameableDragonEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         boolean isOwner = this.isOwnedBy(player);
         ItemStack stack = player.getItemInHand(hand);
+
+        System.out.println(this.isBreakInTrusted() + "break");
+        System.out.println(isTame() + "tame");
+        System.out.println(isOwner + "isOwner");
 
         if (!this.isBreathing()) {
             DragonFood food = DragonFood.getInstance(stack);
@@ -619,7 +620,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
 
         // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
-        if (!this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
+        if (this.isTame() && !this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.setOrderedToSit(false);
@@ -748,9 +749,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
     @Override
     protected void addPassenger(Entity passenger) {
-        boolean flag = this.isControlledByPlayer();
+        boolean flag = this.isBeingRiddenByPlayer();
         super.addPassenger(passenger);
-        if (!flag && this.isControlledByPlayer()) {
+        if (!flag && this.isBeingRiddenByPlayer()) {
             this.getBrain().setMemory(DMMemories.IS_CONTROLLED, Unit.INSTANCE);
         }
     }
@@ -800,7 +801,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Inventory is only accessible on a TAMED dragon, and only by its owner.
         // An untamed dragon — even one that trusts the player and is being ridden
         // during a break-in attempt — never exposes its inventory.
-        if (!this.isTame() || !this.isOwnedBy(player)) return;
+        if (!this.isTame() || !this.isBreakInTrusted() || !this.isOwnedBy(player)) return;
         player.openMenu(this);
     }
 

@@ -371,8 +371,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return new ItemStack(this.getDragonType().getInstance(DragonSpawnEggItem.class, DMItems.ENDER_DRAGON_SPAWN_EGG.get()));
     }
 
-    public boolean isControlledByPlayer() {
-        return this.getFirstPassenger() instanceof Player && isBreakInTrusted();
+    public boolean isBeingRiddenByPlayer() {
+        return this.getFirstPassenger() instanceof Player;
     }
 
     @Override
@@ -381,7 +381,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // attempt the dragon flies ITSELF (via its move control) while the player
         // merely clings on. Only a tamed dragon yields control to the rider.
         if (!this.isTame()) return null;
-        return !this.isNoAi() && this.getFirstPassenger() instanceof Player player ? player : null;
+        return !this.isNoAi() && isBreakInTrusted() && this.getFirstPassenger() instanceof Player player ? player : null;
     }
 
     /** The player currently clinging to an untamed dragon during a break-in (may not be the controller). */

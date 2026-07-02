@@ -120,12 +120,12 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return isDragonSaddle(stack) && !dragon.isBaby();
+            return isDragonSaddle(stack) && !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
         public boolean mayPickup(Player player) {
-            return !this.dragon.hasControllingPassenger() && !dragon.isBaby();
+            return !this.dragon.hasControllingPassenger() && !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
@@ -152,13 +152,13 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return !this.dragon.isBaby() && isDragonArmor(stack);
+            return !this.dragon.isBaby() && dragon.isBreakInTrusted() && isDragonArmor(stack);
         }
 
         @Override
         public boolean mayPickup(Player player) {
             var stack = this.getItem();
-            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) && super.mayPickup(player) && !dragon.isBaby();
+            return (stack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) && super.mayPickup(player) && !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
@@ -183,12 +183,12 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return isChest(stack) && !dragon.isBaby();
+            return isChest(stack) && !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
         public boolean mayPickup(Player player) {
-            return !dragon.isBaby();
+            return !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
@@ -212,12 +212,12 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return !dragon.isBaby();
+            return !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
         public boolean mayPickup(Player player) {
-            return !dragon.isBaby();
+            return !dragon.isBaby() && dragon.isBreakInTrusted();
         }
 
         @Override
