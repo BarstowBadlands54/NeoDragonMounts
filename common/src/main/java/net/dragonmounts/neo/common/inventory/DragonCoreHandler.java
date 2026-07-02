@@ -20,7 +20,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
  * @see net.minecraft.world.inventory.ShulkerBoxMenu
  */
 public class DragonCoreHandler extends AbstractContainerMenu {
-    public static final ResourceLocation ESSENCE_ICON = makeId("slot/essence");
+    public static final ResourceLocation ESSENCE_ICON = makeId("item/empty_essence");
     public final Container container;
 
     public DragonCoreHandler(int id, Inventory inventory, BlockPos pos) {

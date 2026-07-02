@@ -799,7 +799,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Inventory is only accessible on a TAMED dragon, and only by its owner.
         // An untamed dragon — even one that trusts the player and is being ridden
         // during a break-in attempt — never exposes its inventory.
-        if (!this.isTame() || !this.isOwnedBy(player)) return;
+        if (!this.isTame() || !this.isOwnedBy(player) || !this.isBreakInTrusted()) return;
         player.openMenu(this);
     }
 
