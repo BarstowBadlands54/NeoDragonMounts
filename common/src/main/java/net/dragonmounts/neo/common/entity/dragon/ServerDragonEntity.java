@@ -219,17 +219,19 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     public void spawnEssence(ItemStack stack) {
-        var pos = this.blockPosition();
-        var level = this.level();
-        var state = DMBlocks.DRAGON_CORE.defaultBlockState().setValue(HORIZONTAL_FACING, this.getDirection());
-        if (!DragonCoreBlock.tryPlaceAt(level, pos, state, stack)) {
-            int y = pos.getY(), max = Math.min(y + 5, level.getMaxBuildHeight());
-            var mutable = pos.mutable();
-            while (++y < max) {
-                if (DragonCoreBlock.tryPlaceAt(level, mutable.setY(y), state, stack)) return;
-            }
-        } else return;
-        level.addFreshEntity(new ItemEntity(level, this.getX(), this.getY(), this.getZ(), stack));
+        if (!isBaby()) {
+            var pos = this.blockPosition();
+            var level = this.level();
+            var state = DMBlocks.DRAGON_CORE.defaultBlockState().setValue(HORIZONTAL_FACING, this.getDirection());
+            if (!DragonCoreBlock.tryPlaceAt(level, pos, state, stack)) {
+                int y = pos.getY(), max = Math.min(y + 5, level.getMaxBuildHeight());
+                var mutable = pos.mutable();
+                while (++y < max) {
+                    if (DragonCoreBlock.tryPlaceAt(level, mutable.setY(y), state, stack)) return;
+                }
+            } else return;
+            level.addFreshEntity(new ItemEntity(level, this.getX(), this.getY(), this.getZ(), stack));
+        }
     }
 
     @Override
