@@ -11,7 +11,6 @@ import java.util.function.Function;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 import static net.dragonmounts.neo.common.client.variant.DefaultAppearance.registerArmorTexture;
 import static net.dragonmounts.neo.common.client.variant.VariantAppearance.TEXTURES_ROOT;
-import static net.dragonmounts.neo.common.init.DragonVariants.*;
 
 public class VariantAppearances {
     // Body shape used to come from a BuiltinFactory ModelLayerLocation; with GeckoLib the body
@@ -28,9 +27,9 @@ public class VariantAppearances {
         registerArmorTexture(category, makeId("diamond_dragon_armor"),   folder.withSuffix("/diamond.png"));
         registerArmorTexture(category, makeId("netherite_dragon_armor"), folder.withSuffix("/netherite.png"));
     }
-    public static final VariantAppearance AETHER_FEMALE;
-    public static final VariantAppearance AETHER_MALE;
+    public static final VariantAppearance AETHER;
     public static final VariantAppearance BREEZE;
+    public static final VariantAppearance WIND;
     public static final VariantAppearance DARK_FEMALE;
     public static final VariantAppearance DARK_MALE;
     public static final VariantAppearance ENCHANTED_FEMALE;
@@ -38,23 +37,23 @@ public class VariantAppearances {
     public static final VariantAppearance ENDER_FEMALE;
     public static final VariantAppearance ENDER_MALE;
     public static final VariantAppearance ENDER_RARE;
-    public static final VariantAppearance FIRE_FEMALE;
-    public static final VariantAppearance FIRE_MALE;
+    public static final VariantAppearance BLAZE;
+    public static final VariantAppearance FIRE;
     public static final VariantAppearance BLUE_FIRE;
-    public static final VariantAppearance FOREST_FEMALE;
-    public static final VariantAppearance FOREST_MALE;
-    public static final VariantAppearance FOREST_DRY_FEMALE;
-    public static final VariantAppearance FOREST_DRY_MALE;
-    public static final VariantAppearance FOREST_TAIGA_FEMALE;
-    public static final VariantAppearance FOREST_TAIGA_MALE;
-    public static final VariantAppearance ICE_FEMALE;
-    public static final VariantAppearance ICE_MALE;
-    public static final VariantAppearance MOONLIGHT_FEMALE;
-    public static final VariantAppearance MOONLIGHT_MALE;
+    public static final VariantAppearance COLD;
+    public static final VariantAppearance DRY;
+    public static final VariantAppearance JUNGLE;
+    public static final VariantAppearance NATURE;
+    public static final VariantAppearance WARM;
+    public static final VariantAppearance ALPINE;
+    public static final VariantAppearance SNOW;
+    public static final VariantAppearance ICEBERG;
+    public static final VariantAppearance STARLIGHT;
+    public static final VariantAppearance CONSTELLATION;
     public static final VariantAppearance ECLIPSE;
-    public static final VariantAppearance NETHER_FEMALE;
-    public static final VariantAppearance NETHER_MALE;
-    public static final VariantAppearance SOUL;
+    public static final VariantAppearance MAGMA;
+    public static final VariantAppearance VOLCANIC;
+    public static final VariantAppearance SOUL_FIRE;
     public static final VariantAppearance SKELETON;
     public static final VariantAppearance STRAY;
     public static final VariantAppearance BOGGED;
@@ -82,8 +81,8 @@ public class VariantAppearances {
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
-        AETHER_FEMALE = builder.build(makeId("aether/female"));
-        AETHER_MALE = builder.build(makeId("aether/male"));
+        WIND = builder.build(makeId("aether/wind"));
+        AETHER = builder.build(makeId("aether/aether"));
         BREEZE = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
                 .build(makeId("aether/breeze"));
@@ -121,42 +120,42 @@ public class VariantAppearances {
 
     static {
         var builder = builder();
-        FIRE_FEMALE = builder.build(makeId("fire/female"));
-        FIRE_MALE = builder.build(makeId("fire/male"));
+        BLAZE = builder.build(makeId("fire/female"));
+        FIRE = builder.build(makeId("fire/male"));
         BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue"));
     }
 
     static {
         var builder = builder().withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
         var glow = makeId(TEXTURES_ROOT + "forest/glow.png");
-        FOREST_FEMALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/female_body.png"), glow);
-        FOREST_MALE = builder.build(makeId(TEXTURES_ROOT + "forest/forest/male_body.png"), glow);
-        FOREST_DRY_FEMALE = builder.build(makeId(TEXTURES_ROOT + "forest/dry/female_body.png"), glow);
-        FOREST_DRY_MALE = builder.build(makeId(TEXTURES_ROOT + "forest/dry/male_body.png"), glow);
-        FOREST_TAIGA_FEMALE = builder.build(makeId(TEXTURES_ROOT + "forest/taiga/female_body.png"), glow);
-        FOREST_TAIGA_MALE = builder.build(makeId(TEXTURES_ROOT + "forest/taiga/male_body.png"), glow);
+        COLD = builder.build(makeId(TEXTURES_ROOT + "forest/cold/body.png"), glow);
+        DRY = builder.build(makeId(TEXTURES_ROOT + "forest/dry/body.png"), glow);
+        JUNGLE = builder.build(makeId(TEXTURES_ROOT + "forest/jungle/body.png"), glow);
+        NATURE = builder.build(makeId(TEXTURES_ROOT + "forest/nature/body.png"), glow);
+        WARM = builder.build(makeId(TEXTURES_ROOT + "forest/warm/body.png"), glow);
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY);
-        ICE_FEMALE = builder.build(makeId("ice/female"));
-        ICE_MALE = builder.build(makeId("ice/male"));
+        ALPINE = builder.build(makeId("ice/alpine"));
+        SNOW = builder.build(makeId("ice/snow"));
+        ICEBERG = builder.build(makeId("ice/iceberg"));
     }
 
     static {
         var builder = builder().withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
-        MOONLIGHT_FEMALE = builder.build(makeId("moonlight/female"));
-        MOONLIGHT_MALE = builder.build(makeId("moonlight/male"));
+        STARLIGHT = builder.build(makeId("moonlight/constellation"));
+        CONSTELLATION = builder.build(makeId("moonlight/starlight"));
         ECLIPSE = builder.build(makeId("moonlight/eclipse"));
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY);
-        NETHER_FEMALE = builder.build(makeId("nether/female"));
-        NETHER_MALE = builder.build(makeId("nether/male"));
-        SOUL = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("nether/soul"));
+        MAGMA = builder.build(makeId("nether/magma"));
+        VOLCANIC = builder.build(makeId("nether/volcanic"));
+        SOUL_FIRE = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("nether/soul_fire"));
     }
 
     static {
@@ -221,8 +220,8 @@ public class VariantAppearances {
 
     public static Function<String, VariantAppearance> getBuiltinSupplier() {
         return key -> switch (key) {
-            case "aether_female" -> AETHER_FEMALE;
-            case "aether_male" -> AETHER_MALE;
+            case "aether" -> AETHER;
+            case "wind" -> WIND;
             case "breeze" -> BREEZE;
             case "dark_female" -> DARK_FEMALE;
             case "dark_male" -> DARK_MALE;
@@ -231,23 +230,23 @@ public class VariantAppearances {
             case "ender_female" -> ENDER_FEMALE;
             case "ender_male" -> ENDER_MALE;
             case "ender_rare" -> ENDER_RARE;
-            case "fire_female" -> FIRE_FEMALE;
-            case "fire_male" -> FIRE_MALE;
+            case "blaze" -> BLAZE;
+            case "fire" -> FIRE;
             case "blue_fire" -> BLUE_FIRE;
-            case "forest_female" -> FOREST_FEMALE;
-            case "forest_male" -> FOREST_MALE;
-            case "forest_dry_female" -> FOREST_DRY_FEMALE;
-            case "forest_dry_male" -> FOREST_DRY_MALE;
-            case "forest_taiga_female" -> FOREST_TAIGA_FEMALE;
-            case "forest_taiga_male" -> FOREST_TAIGA_MALE;
-            case "ice_female" -> ICE_FEMALE;
-            case "ice_male" -> ICE_MALE;
-            case "moonlight_female" -> MOONLIGHT_FEMALE;
-            case "moonlight_male" -> MOONLIGHT_MALE;
+            case "cold" -> COLD;
+            case "dry" -> DRY;
+            case "jungle" -> JUNGLE;
+            case "nature" -> NATURE;
+            case "warm" -> WARM;
+            case "alpine" -> ALPINE;
+            case "iceberg" -> ICEBERG;
+            case "snow" -> SNOW;
+            case "constellation" -> CONSTELLATION;
+            case "starlight" -> STARLIGHT;
             case "eclipse" -> ECLIPSE;
-            case "nether_female" -> NETHER_FEMALE;
-            case "nether_male" -> NETHER_MALE;
-            case "soul" -> SOUL;
+            case "magma" -> MAGMA;
+            case "volcanic" -> VOLCANIC;
+            case "soul_fire" -> SOUL_FIRE;
             case "wild_sculk" -> WILD_SCULK;
             case "mutant_sculk" -> MUTANT_SCULK;
             case "hollowed" -> HOLLOWED;
