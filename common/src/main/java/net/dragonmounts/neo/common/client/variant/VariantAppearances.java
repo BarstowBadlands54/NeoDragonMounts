@@ -45,7 +45,6 @@ public class VariantAppearances {
     public static final VariantAppearance FIRE_FIRE;
     public static final VariantAppearance FIRE_BLUE_FIRE;
     public static final VariantAppearance FOREST_COLD;
-    public static final VariantAppearance FOREST_DRY;
     public static final VariantAppearance FOREST_JUNGLE;
     public static final VariantAppearance FOREST_NATURE;
     public static final VariantAppearance FOREST_WARM;
@@ -139,7 +138,6 @@ public class VariantAppearances {
         var builder = builder().withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
         var glow = makeId(TEXTURES_ROOT + "forest/glow.png");
         FOREST_COLD = builder.build(makeId(TEXTURES_ROOT + "forest/cold/body.png"), glow);
-        FOREST_DRY = builder.build(makeId(TEXTURES_ROOT + "forest/dry/body.png"), glow);
         FOREST_JUNGLE = builder.build(makeId(TEXTURES_ROOT + "forest/jungle/body.png"), glow);
         FOREST_NATURE = builder.build(makeId(TEXTURES_ROOT + "forest/nature/body.png"), glow);
         FOREST_WARM = builder.build(makeId(TEXTURES_ROOT + "forest/warm/body.png"), glow);
@@ -254,7 +252,6 @@ public class VariantAppearances {
             case "fire" -> FIRE_FIRE;
             case "blue_fire" -> FIRE_BLUE_FIRE;
             case "cold" -> FOREST_COLD;
-            case "dry" -> FOREST_DRY;
             case "jungle" -> FOREST_JUNGLE;
             case "nature" -> FOREST_NATURE;
             case "warm" -> FOREST_WARM;

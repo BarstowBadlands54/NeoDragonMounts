@@ -29,6 +29,7 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
         super(context, new DragonGeoModel());
         addRenderLayer(new DragonGlowLayer(this));
         addRenderLayer(new DragonTackLayer(this));
+        addRenderLayer(new DragonArmorLayer(this));
     }
 
     /** Scale the model by life stage so hatchlings render small and grow to adult size. */
@@ -82,5 +83,10 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
             float roll = Mth.lerp(partialTick, animatable.renderRollO, animatable.renderRoll);
             poseStack.mulPose(Axis.ZP.rotationDegrees(-roll));   // bank into turns
         }
+    }
+
+    @Override
+    protected float getDeathMaxRotation(TameableDragonEntity animatable) {
+        return 0.0F;
     }
 }

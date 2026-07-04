@@ -45,7 +45,6 @@ public class DragonVariants {
     public static final DragonVariant BLUE_FIRE;
     public static final DragonVariant NATURE;
     public static final DragonVariant COLD;
-    public static final DragonVariant DRY;
     public static final DragonVariant JUNGLE;
     public static final DragonVariant WARM;
     public static final DragonVariant ALPINE;
@@ -159,7 +158,6 @@ public class DragonVariants {
         variants.add(FIRE = make(supplier, DragonTypes.FIRE, "fire", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BLUE_FIRE = make(supplier, DragonTypes.FIRE, "blue_fire", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(COLD = make(supplier, DragonTypes.FOREST, "cold", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(DRY = make(supplier, DragonTypes.FOREST, "dry", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(JUNGLE = make(supplier, DragonTypes.FOREST, "jungle", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(NATURE = make(supplier, DragonTypes.FOREST, "nature", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WARM = make(supplier, DragonTypes.FOREST, "warm", DragonProjectiles.DRAGON_FIREBALL));
