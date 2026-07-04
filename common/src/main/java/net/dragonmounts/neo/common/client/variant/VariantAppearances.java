@@ -74,7 +74,7 @@ public class VariantAppearances {
     public static final VariantAppearance WATER_POND;
     public static final VariantAppearance WATER_TIDAL;
     public static final VariantAppearance WITHER;
-    public static final VariantAppearance ZOMBIE;
+    public static final VariantAppearance ZOMBIE_NORMAL;
     public static final VariantAppearance ZOMBIE_DROWNED;
     public static final VariantAppearance ZOMBIE_HUSK;
     public static final VariantAppearance SCULK_WILD;
@@ -169,10 +169,10 @@ public class VariantAppearances {
     }
 
     static {
-        var builder = builder().setArmorCategory("skeleton");
-        SKELETON_SKELETON = builder.build(makeId("skeleton/normal"));
-        SKELETON_STRAY = builder.build(makeId("skeleton/stray"));
-        SKELETON_BOGGED = builder.build(makeId("skeleton/bogged"));
+        var builder = builder().setArmorCategory("skeleton").withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY);
+        SKELETON_SKELETON = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("skeleton/normal"));
+        SKELETON_STRAY = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("skeleton/stray"));
+        SKELETON_BOGGED = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("skeleton/bogged"));
     }
 
     static {
@@ -211,15 +211,15 @@ public class VariantAppearances {
     }
 
     static {
-        ZOMBIE = builder()
+        ZOMBIE_NORMAL = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
-                .build(makeId("zombie"));
+                .build(makeId("zombie/zombie"));
         ZOMBIE_DROWNED = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
-                .build(makeId("drowned"));
+                .build(makeId("zombie/drowned"));
         ZOMBIE_HUSK = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
-                .build(makeId("husk"));
+                .build(makeId("zombie/husk"));
     }
 
     static {
@@ -285,7 +285,7 @@ public class VariantAppearances {
             case "tidal" -> WATER_TIDAL;
             case "pond" -> WATER_POND;
             case "brine" -> WATER_BRINE;
-            case "zombie" -> ZOMBIE;
+            case "zombie" -> ZOMBIE_NORMAL;
             case "drowned" -> ZOMBIE_DROWNED;
             case "husk" -> ZOMBIE_HUSK;
             case "wither" -> WITHER;

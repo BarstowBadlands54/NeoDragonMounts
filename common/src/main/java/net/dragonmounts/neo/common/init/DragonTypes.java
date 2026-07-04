@@ -9,10 +9,8 @@ import net.dragonmounts.neo.compat.registry.DragonTypeBuilder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.MapColor;
@@ -82,7 +80,7 @@ public class DragonTypes {
                 //.addHabitat(BiomeKeys.MUTATED_MESA_ROCK)
                 .register(TerraType::new, makeId("terra"));
         ZOMBIE = new DragonTypeBuilder(0x5A5602, material, tier)
-                .model("winged_horned", "winged_horned")   // TODO confirm body shape (old COMPAT_TAIL_HORNED)
+                .model("skeleton", "skeleton")
                 .texture(makeId("textures/entity/dragon/zombie/body.png"))
                 .setMaterial(DMItemTags.ZOMBIE_DRAGON_SCALES)
                 .setScaleColor(MapColor.TERRACOTTA_GREEN)
@@ -117,7 +115,7 @@ public class DragonTypes {
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
                 .model("normal", "base")   // TODO confirm body shape (old COMPAT)
-                .texture(makeId("textures/entity/dragon/aether/female/body.png"))
+                .texture(makeId("textures/entity/dragon/aether/aether/body.png"))
                 .setMaterial(DMItemTags.AETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_LIGHT_BLUE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -131,7 +129,7 @@ public class DragonTypes {
                 .register(AetherType::new, makeId("aether"));
         FIRE = new DragonTypeBuilder(0x960B0F, material, tier)
                 .model("normal", "base")
-                .texture(makeId("textures/entity/dragon/fire/female/body.png"))
+                .texture(makeId("textures/entity/dragon/fire/fire/body.png"))
                 .setMaterial(DMItemTags.FIRE_DRAGON_SCALES)
                 .setScaleColor(MapColor.FIRE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -150,7 +148,7 @@ public class DragonTypes {
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
                 .model("horned_antlers", "horned_antlers")
-                .texture(makeId("textures/entity/dragon/forest/forest/female_body.png"))
+                .texture(makeId("textures/entity/dragon/forest/nature/body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
                 .addImmunity(DamageTypes.MAGIC)
@@ -172,7 +170,7 @@ public class DragonTypes {
                 .register(ForestType::new, makeId("forest"));
         ICE = new DragonTypeBuilder(0x00F2FF, material, tier)
                 .model("tail_scale_inclined", "base")
-                .texture(makeId("textures/entity/dragon/ice/female/body.png"))
+                .texture(makeId("textures/entity/dragon/ice/frost/body.png"))
                 .setMaterial(DMItemTags.ICE_DRAGON_SCALES)
                 .setScaleColor(MapColor.SNOW)
                 .addImmunity(DamageTypes.MAGIC)
@@ -189,13 +187,13 @@ public class DragonTypes {
                 .register(IceType::new, makeId("ice"));
         STORM = new DragonTypeBuilder(0xF5F1E9, material, tier)
                 .model("tail_horned", "base")
-                .texture(makeId("textures/entity/dragon/storm/female/body.png"))
+                .texture(makeId("textures/entity/dragon/storm/thunder/body.png"))
                 .setMaterial(DMItemTags.STORM_DRAGON_SCALES)
                 .setScaleColor(MapColor.WOOL)
                 .register(StormType::new, makeId("storm"));
         SUNLIGHT = new DragonTypeBuilder(0xFFDE00, material, tier)
                 .model("normal", "base")
-                .texture(makeId("textures/entity/dragon/sunlight/female/body.png"))
+                .texture(makeId("textures/entity/dragon/sunlight/aurora/body.png"))
                 .setMaterial(DMItemTags.SUNLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_YELLOW)
                 .addHabitat(Blocks.GLOWSTONE)
@@ -205,7 +203,7 @@ public class DragonTypes {
                 .register(SunlightType::new, makeId("sunlight"));
         WATER = new DragonTypeBuilder(0x4F69A8, material, tier)
                 .model("scale_sharpened", "base")
-                .texture(makeId("textures/entity/dragon/water/female/body.png"))
+                .texture(makeId("textures/entity/dragon/water/pond/body.png"))
                 .setMaterial(DMItemTags.WATER_DRAGON_SCALES)
                 .setScaleColor(MapColor.WATER)
                 .addImmunity(DamageTypes.DROWN)
@@ -220,7 +218,7 @@ public class DragonTypes {
         //modify builder
         ENCHANTED = new DragonTypeBuilder(0x8359AE, material.setEnchantmentValue(30), tier.setEnchantmentValue(30))
                 .model("normal", "base")
-                .texture(makeId("textures/entity/dragon/enchanted/female/body.png"))
+                .texture(makeId("textures/entity/dragon/enchanted/enchanting/body.png"))
                 .setMaterial(DMItemTags.ENCHANTED_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_PURPLE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -264,7 +262,7 @@ public class DragonTypes {
         //modify builders
         NETHER = new DragonTypeBuilder(0xE5B81B, material.setDurabilityFactor(55).setToughness(8.0F), new ItemTierBuilder(netherite, 2700, 8.0F, 6.0F).setEnchantmentValue(11))
                 .model("scale_sharpened", "base")
-                .texture(makeId("textures/entity/dragon/nether/female/body.png"))
+                .texture(makeId("textures/entity/dragon/nether/magma/body.png"))
                 .setMaterial(DMItemTags.NETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.NETHER)
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, 5.0D, AttributeModifier.Operation.ADD_VALUE)

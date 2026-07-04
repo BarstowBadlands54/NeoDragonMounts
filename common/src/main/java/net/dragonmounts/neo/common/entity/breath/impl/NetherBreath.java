@@ -75,9 +75,13 @@ public class NetherBreath extends FireBreath {
     }
 
     protected void burnBlock(ServerLevel level, BlockPos sideToIgnite, RandomSource random) {
-        BlockState fire = "soul".equals(this.dragon.getVariant().identifier.getPath())
-                ? DMBlocks.BLUE_FIRE.get().defaultBlockState()   // soul variant -> blue fire
-                : Blocks.FIRE.defaultBlockState();                       // nether male/female -> red/orange fire
+        BlockState fire = "soul_fire".equals(this.dragon.getVariant().identifier.getPath()) ||
+         "soul_fire".equals(this.dragon.getVariant().identifier.getPath()) ||
+         "skeleton".equals(this.dragon.getVariant().identifier.getPath()) ||
+         "bogged".equals(this.dragon.getVariant().identifier.getPath()) ||
+         "stray".equals(this.dragon.getVariant().identifier.getPath()) // had to manually put it here or now
+                ? DMBlocks.BLUE_FIRE.get().defaultBlockState()
+                : Blocks.FIRE.defaultBlockState();
         level.setBlockAndUpdate(sideToIgnite, fire);
         level.playSound(
                 null,

@@ -36,6 +36,11 @@ public class ClientDragonEntity extends TameableDragonEntity {
     // The wing cycle advances FAST when hovering and SLOW when moving forward, exactly
     // like the original animator: anim += flying ? 0.070 - clamp(speed/0.05)*0.035 : 0.035.
     // A flap sound plays each time the wings cross from up to down.
+    // Same "descending fast" threshold used by the movement AnimationController's DIVE state
+    // (see TameableDragonEntity#registerControllers) — a dragon gliding/diving is coasting on
+    // its wings, not flapping them, so no flap sound should play during that state either.
+    private static final double DIVE_VERTICAL_SPEED = -0.35;
+
     private float flapAnim = 0.0F;
     private float flapAnimPrev = 0.0F;
     private boolean flapWingsDown = false;
@@ -78,11 +83,12 @@ public class ClientDragonEntity extends TameableDragonEntity {
     /**
      * Drives the wing-flap sound without the old animator. The flap cycle speeds up when
      * hovering and slows when moving forward (matching the original NeoDragonMounts feel),
-     * and a sound fires on each down-stroke.
+     * and a sound fires on each down-stroke. Suppressed entirely while gliding/diving fast,
+     * since the wings are held out coasting rather than flapping.
      */
     private void tickWingFlapSound() {
         this.flapAnimPrev = this.flapAnim;
-        if (!this.isFlying() || this.isInWater()) {
+        if (!this.isFlying() || this.isInWater() || this.getDeltaMovement().y < DIVE_VERTICAL_SPEED) {
             this.flapWingsDown = false;
             return;
         }

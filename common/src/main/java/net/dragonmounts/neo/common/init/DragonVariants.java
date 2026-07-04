@@ -76,7 +76,9 @@ public class DragonVariants {
     public static final DragonVariant WATER_TIDAL;
     public static final DragonVariant WATER_BRINE;
     public static final DragonVariant WITHER;
-    public static final DragonVariant ZOMBIE;
+    public static final DragonVariant ZOMBIE_DROWNED;
+    public static final DragonVariant ZOMBIE_HUSK;
+    public static final DragonVariant ZOMBIE_NORMAL;
 
     static BlockHolder<DragonHeadStandingBlock> registerStandingHead(DragonHead head, String name) {
         return registerBlock(name, props ->
@@ -189,7 +191,9 @@ public class DragonVariants {
         variants.add(WATER_TIDAL = make(supplier, DragonTypes.WATER, "tidal", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WATER_BRINE = make(supplier, DragonTypes.WATER, "brine", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WITHER = make(supplier, DragonTypes.WITHER, "wither", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(ZOMBIE = make(supplier, DragonTypes.ZOMBIE, "zombie", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ZOMBIE_DROWNED = make(supplier, DragonTypes.ZOMBIE, "drowned", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ZOMBIE_HUSK = make(supplier, DragonTypes.ZOMBIE, "husk", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ZOMBIE_NORMAL = make(supplier, DragonTypes.ZOMBIE, "zombie", DragonProjectiles.DRAGON_FIREBALL));
         BUILTIN_VALUES = variants.build();
     }
 }
