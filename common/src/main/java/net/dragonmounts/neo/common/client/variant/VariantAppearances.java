@@ -189,7 +189,7 @@ public class VariantAppearances {
 
     static {
         var builder = builder();
-        TERRA_CRYSTALLINE = builder.build(makeId("terra/crystaline"));
+        TERRA_CRYSTALLINE = builder.build(makeId("terra/crystalline"));
         TERRA_MESA = builder.build(makeId("terra/mesa"));
         TERRA_VALLEY = builder.build(makeId("terra/valley"));
     }
