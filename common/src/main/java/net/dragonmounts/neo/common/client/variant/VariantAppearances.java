@@ -27,63 +27,70 @@ public class VariantAppearances {
         registerArmorTexture(category, makeId("diamond_dragon_armor"),   folder.withSuffix("/diamond.png"));
         registerArmorTexture(category, makeId("netherite_dragon_armor"), folder.withSuffix("/netherite.png"));
     }
-    public static final VariantAppearance AETHER;
-    public static final VariantAppearance BREEZE;
-    public static final VariantAppearance WIND;
-    public static final VariantAppearance DARK_FEMALE;
-    public static final VariantAppearance DARK_MALE;
-    public static final VariantAppearance ENCHANTED_FEMALE;
-    public static final VariantAppearance ENCHANTED_MALE;
+
+    public static final VariantAppearance AETHER_AETHER;
+    public static final VariantAppearance AETHER_BREEZE;
+    public static final VariantAppearance AETHER_WIND;
+    public static final VariantAppearance DARK_BLOODMOON;
+    public static final VariantAppearance DARK_DEMON;
+    public static final VariantAppearance DARK_IMP;
+    public static final VariantAppearance DARK_UNDERWORLD;
+    public static final VariantAppearance ENCHANTED_ENCHANTING;
+    public static final VariantAppearance ENCHANTED_SHIMMER;
+    public static final VariantAppearance ENCHANTED_SPARKLING;
     public static final VariantAppearance ENDER_FEMALE;
     public static final VariantAppearance ENDER_MALE;
     public static final VariantAppearance ENDER_RARE;
-    public static final VariantAppearance BLAZE;
-    public static final VariantAppearance FIRE;
-    public static final VariantAppearance BLUE_FIRE;
-    public static final VariantAppearance COLD;
-    public static final VariantAppearance DRY;
-    public static final VariantAppearance JUNGLE;
-    public static final VariantAppearance NATURE;
-    public static final VariantAppearance WARM;
-    public static final VariantAppearance ALPINE;
-    public static final VariantAppearance SNOW;
-    public static final VariantAppearance ICEBERG;
-    public static final VariantAppearance STARLIGHT;
-    public static final VariantAppearance CONSTELLATION;
-    public static final VariantAppearance ECLIPSE;
-    public static final VariantAppearance MAGMA;
-    public static final VariantAppearance VOLCANIC;
-    public static final VariantAppearance SOUL_FIRE;
-    public static final VariantAppearance SKELETON;
-    public static final VariantAppearance STRAY;
-    public static final VariantAppearance BOGGED;
-    public static final VariantAppearance STORM_FEMALE;
-    public static final VariantAppearance STORM_MALE;
-    public static final VariantAppearance BRONZED_STORM;
-    public static final VariantAppearance SUNLIGHT_FEMALE;
-    public static final VariantAppearance SUNLIGHT_MALE;
-    public static final VariantAppearance AURORA;
-    public static final VariantAppearance TERRA_FEMALE;
-    public static final VariantAppearance TERRA_MALE;
-    public static final VariantAppearance WATER_FEMALE;
-    public static final VariantAppearance WATER_MALE;
-    public static final VariantAppearance BRINE;
+    public static final VariantAppearance FIRE_BLAZE;
+    public static final VariantAppearance FIRE_FIRE;
+    public static final VariantAppearance FIRE_BLUE_FIRE;
+    public static final VariantAppearance FOREST_COLD;
+    public static final VariantAppearance FOREST_DRY;
+    public static final VariantAppearance FOREST_JUNGLE;
+    public static final VariantAppearance FOREST_NATURE;
+    public static final VariantAppearance FOREST_WARM;
+    public static final VariantAppearance ICE_ALPINE;
+    public static final VariantAppearance ICE_SNOW;
+    public static final VariantAppearance ICE_ICEBERG;
+    public static final VariantAppearance MOONLIGHT_STARLIGHT;
+    public static final VariantAppearance MOONLIGHT_CONSTELLATION;
+    public static final VariantAppearance MOONLIGHT_ECLIPSE;
+    public static final VariantAppearance NETHER_MAGMA;
+    public static final VariantAppearance NETHER_VOLCANIC;
+    public static final VariantAppearance NETHER_SOUL_FIRE;
+    public static final VariantAppearance SKELETON_SKELETON;
+    public static final VariantAppearance SKELETON_STRAY;
+    public static final VariantAppearance SKELETON_BOGGED;
+    public static final VariantAppearance STORM_LIGHTNING;
+    public static final VariantAppearance STORM_THUNDER;
+    public static final VariantAppearance STORM_BRONZED;
+    public static final VariantAppearance SUNLIGHT_AURORA;
+    public static final VariantAppearance SUNLIGHT_SUNRISE;
+    public static final VariantAppearance SUNLIGHT_SUNSET;
+    public static final VariantAppearance TERRA_VALLEY;
+    public static final VariantAppearance TERRA_MESA;
+    public static final VariantAppearance TERRA_CRYSTALINE;
+    public static final VariantAppearance WATER_BRINE;
+    public static final VariantAppearance WATER_POND;
+    public static final VariantAppearance WATER_TIDAL;
     public static final VariantAppearance WITHER;
     public static final VariantAppearance ZOMBIE;
-    public static final VariantAppearance WILD_SCULK;
-    public static final VariantAppearance MUTANT_SCULK;
-    public static final VariantAppearance HOLLOWED;
-    public static final VariantAppearance FALLEN;
-    public static final VariantAppearance PRISM;
-    public static final VariantAppearance RADIANT;
-    public static final VariantAppearance SUNSET;
+    public static final VariantAppearance ZOMBIE_DROWNED;
+    public static final VariantAppearance ZOMBIE_HUSK;
+    public static final VariantAppearance SCULK_WILD;
+    public static final VariantAppearance SCULK_WMUTANT;
+    public static final VariantAppearance SCULK_HOLLOWED;
+    public static final VariantAppearance LIGHT_FALLEN;
+    public static final VariantAppearance LIGHT_PRISM;
+    public static final VariantAppearance LIGHT_RADIANT;
+    public static final VariantAppearance LIGHT_SUNSET;
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
-        WIND = builder.build(makeId("aether/wind"));
-        AETHER = builder.build(makeId("aether/aether"));
-        BREEZE = builder()
+        AETHER_WIND = builder.build(makeId("aether/wind"));
+        AETHER_AETHER = builder.build(makeId("aether/aether"));
+        AETHER_BREEZE = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
                 .build(makeId("aether/breeze"));
     }
@@ -91,23 +98,26 @@ public class VariantAppearances {
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.DARK_BREATH);
-        DARK_FEMALE = builder.build(makeId("dark/female"));
-        DARK_MALE = builder.build(makeId("dark/male"));
+        DARK_BLOODMOON = builder.build(makeId("dark/bloodmoon"));
+        DARK_DEMON = builder.build(makeId("dark/demon"));
+        DARK_IMP = builder.build(makeId("dark/imp"));
+        DARK_UNDERWORLD = builder.build(makeId("dark/underworld"));
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH);
-        FALLEN = builder.build(makeId("light/fallen"));
-        PRISM = builder.build(makeId("light/prism"));
-        RADIANT = builder.build(makeId("light/radiant"));
-        SUNSET = builder.build(makeId("light/sunset"));
+        LIGHT_FALLEN = builder.build(makeId("light/fallen"));
+        LIGHT_PRISM = builder.build(makeId("light/prism"));
+        LIGHT_RADIANT = builder.build(makeId("light/radiant"));
+        LIGHT_SUNSET = builder.build(makeId("light/sunset"));
     }
 
     static {
         var builder = builder();
-        ENCHANTED_FEMALE = builder.build(makeId("enchanted/female"));
-        ENCHANTED_MALE = builder.build(makeId("enchanted/male"));
+        ENCHANTED_ENCHANTING = builder.build(makeId("enchanted/enchanting"));
+        ENCHANTED_SHIMMER = builder.build(makeId("enchanted/shimmer"));
+        ENCHANTED_SPARKLING = builder.build(makeId("enchanted/sparkling"));
     }
 
     static {
@@ -120,77 +130,78 @@ public class VariantAppearances {
 
     static {
         var builder = builder();
-        BLAZE = builder.build(makeId("fire/female"));
-        FIRE = builder.build(makeId("fire/male"));
-        BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue"));
+        FIRE_BLAZE = builder.build(makeId("fire/blaze"));
+        FIRE_FIRE = builder.build(makeId("fire/fire"));
+        FIRE_BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue_fire"));
     }
 
     static {
         var builder = builder().withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY);
         var glow = makeId(TEXTURES_ROOT + "forest/glow.png");
-        COLD = builder.build(makeId(TEXTURES_ROOT + "forest/cold/body.png"), glow);
-        DRY = builder.build(makeId(TEXTURES_ROOT + "forest/dry/body.png"), glow);
-        JUNGLE = builder.build(makeId(TEXTURES_ROOT + "forest/jungle/body.png"), glow);
-        NATURE = builder.build(makeId(TEXTURES_ROOT + "forest/nature/body.png"), glow);
-        WARM = builder.build(makeId(TEXTURES_ROOT + "forest/warm/body.png"), glow);
+        FOREST_COLD = builder.build(makeId(TEXTURES_ROOT + "forest/cold/body.png"), glow);
+        FOREST_DRY = builder.build(makeId(TEXTURES_ROOT + "forest/dry/body.png"), glow);
+        FOREST_JUNGLE = builder.build(makeId(TEXTURES_ROOT + "forest/jungle/body.png"), glow);
+        FOREST_NATURE = builder.build(makeId(TEXTURES_ROOT + "forest/nature/body.png"), glow);
+        FOREST_WARM = builder.build(makeId(TEXTURES_ROOT + "forest/warm/body.png"), glow);
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY);
-        ALPINE = builder.build(makeId("ice/alpine"));
-        SNOW = builder.build(makeId("ice/snow"));
-        ICEBERG = builder.build(makeId("ice/iceberg"));
+        ICE_ALPINE = builder.build(makeId("ice/alpine"));
+        ICE_SNOW = builder.build(makeId("ice/snow"));
+        ICE_ICEBERG = builder.build(makeId("ice/iceberg"));
     }
 
     static {
         var builder = builder().withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
-        STARLIGHT = builder.build(makeId("moonlight/constellation"));
-        CONSTELLATION = builder.build(makeId("moonlight/starlight"));
-        ECLIPSE = builder.build(makeId("moonlight/eclipse"));
+        MOONLIGHT_STARLIGHT = builder.build(makeId("moonlight/starlight"));
+        MOONLIGHT_CONSTELLATION = builder.build(makeId("moonlight/constellation"));
+        MOONLIGHT_ECLIPSE = builder.build(makeId("moonlight/eclipse"));
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY);
-        MAGMA = builder.build(makeId("nether/magma"));
-        VOLCANIC = builder.build(makeId("nether/volcanic"));
-        SOUL_FIRE = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("nether/soul_fire"));
+        NETHER_MAGMA = builder.build(makeId("nether/magma"));
+        NETHER_VOLCANIC = builder.build(makeId("nether/volcanic"));
+        NETHER_SOUL_FIRE = builder.withBreath(DMParticleSprites.SOUL_BREATH).build(makeId("nether/soul_fire"));
     }
 
     static {
         var builder = builder().setArmorCategory("skeleton");
-        SKELETON = builder.build(makeId("skeleton/normal"));
-        STRAY = builder.build(makeId("skeleton/stray"));
-        BOGGED = builder.build(makeId("skeleton/bogged"));
+        SKELETON_SKELETON = builder.build(makeId("skeleton/normal"));
+        SKELETON_STRAY = builder.build(makeId("skeleton/stray"));
+        SKELETON_BOGGED = builder.build(makeId("skeleton/bogged"));
     }
 
     static {
         var builder = builder();
-        STORM_FEMALE = builder.build(makeId("storm/female"));
-        STORM_MALE = builder.build(makeId("storm/male"));
-        BRONZED_STORM = builder.build(makeId("storm/bronzed"));
+        STORM_LIGHTNING = builder.build(makeId("storm/lightning"));
+        STORM_THUNDER = builder.build(makeId("storm/thunder"));
+        STORM_BRONZED = builder.build(makeId("storm/bronzed"));
     }
 
     static {
         var builder = builder();
-        SUNLIGHT_FEMALE = builder.build(makeId("sunlight/female"));
-        SUNLIGHT_MALE = builder.build(makeId("sunlight/male"));
-        AURORA = builder.build(makeId("sunlight/aurora"));
+        SUNLIGHT_SUNRISE = builder.build(makeId("sunlight/sunrise"));
+        SUNLIGHT_SUNSET = builder.build(makeId("sunlight/sunset"));
+        SUNLIGHT_AURORA = builder.build(makeId("sunlight/aurora"));
     }
 
     static {
         var builder = builder();
-        TERRA_FEMALE = builder.build(makeId("terra/female"));
-        TERRA_MALE = builder.build(makeId("terra/male"));
+        TERRA_CRYSTALINE = builder.build(makeId("terra/crystaline"));
+        TERRA_MESA = builder.build(makeId("terra/mesa"));
+        TERRA_VALLEY = builder.build(makeId("terra/valley"));
     }
 
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.WATER_BREATH, WaterBreathParticle.FACTORY);
-        WATER_FEMALE = builder.build(makeId("water/female"));
-        WATER_MALE = builder.build(makeId("water/male"));
-        BRINE = builder.build(makeId("water/brine"));
+        WATER_POND = builder.build(makeId("water/pond"));
+        WATER_TIDAL = builder.build(makeId("water/tidal"));
+        WATER_BRINE = builder.build(makeId("water/brine"));
     }
 
     static {
@@ -203,13 +214,19 @@ public class VariantAppearances {
         ZOMBIE = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
                 .build(makeId("zombie"));
+        ZOMBIE_DROWNED = builder()
+                .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
+                .build(makeId("drowned"));
+        ZOMBIE_HUSK = builder()
+                .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
+                .build(makeId("husk"));
     }
 
     static {
         var builder = builder().setArmorCategory("sculk");
-        WILD_SCULK = builder.build(makeId("sculk/wild_type"));
-        MUTANT_SCULK = builder.build(makeId("sculk/mutant"));
-        HOLLOWED = builder.build(makeId("sculk/hollowed"));
+        SCULK_WILD = builder.build(makeId("sculk/wild_type"));
+        SCULK_WMUTANT = builder.build(makeId("sculk/mutant"));
+        SCULK_HOLLOWED = builder.build(makeId("sculk/hollowed"));
     }
 
     static {
@@ -220,56 +237,62 @@ public class VariantAppearances {
 
     public static Function<String, VariantAppearance> getBuiltinSupplier() {
         return key -> switch (key) {
-            case "aether" -> AETHER;
-            case "wind" -> WIND;
-            case "breeze" -> BREEZE;
-            case "dark_female" -> DARK_FEMALE;
-            case "dark_male" -> DARK_MALE;
-            case "enchanted_female" -> ENCHANTED_FEMALE;
-            case "enchanted_male" -> ENCHANTED_MALE;
+            case "aether" -> AETHER_AETHER;
+            case "wind" -> AETHER_WIND;
+            case "breeze" -> AETHER_BREEZE;
+            case "bloodmoon" -> DARK_BLOODMOON;
+            case "demon" -> DARK_DEMON;
+            case "imp" -> DARK_IMP;
+            case "underworld" -> DARK_UNDERWORLD;
+            case "enchanting" -> ENCHANTED_ENCHANTING;
+            case "shimmer" -> ENCHANTED_SHIMMER;
+            case "sparkling" -> ENCHANTED_SPARKLING;
             case "ender_female" -> ENDER_FEMALE;
             case "ender_male" -> ENDER_MALE;
             case "ender_rare" -> ENDER_RARE;
-            case "blaze" -> BLAZE;
-            case "fire" -> FIRE;
-            case "blue_fire" -> BLUE_FIRE;
-            case "cold" -> COLD;
-            case "dry" -> DRY;
-            case "jungle" -> JUNGLE;
-            case "nature" -> NATURE;
-            case "warm" -> WARM;
-            case "alpine" -> ALPINE;
-            case "iceberg" -> ICEBERG;
-            case "snow" -> SNOW;
-            case "constellation" -> CONSTELLATION;
-            case "starlight" -> STARLIGHT;
-            case "eclipse" -> ECLIPSE;
-            case "magma" -> MAGMA;
-            case "volcanic" -> VOLCANIC;
-            case "soul_fire" -> SOUL_FIRE;
-            case "wild_sculk" -> WILD_SCULK;
-            case "mutant_sculk" -> MUTANT_SCULK;
-            case "hollowed" -> HOLLOWED;
-            case "skeleton" -> SKELETON;
-            case "stray" -> STRAY;
-            case "bogged" -> BOGGED;
-            case "storm_female" -> STORM_FEMALE;
-            case "storm_male" -> STORM_MALE;
-            case "bronzed_storm" -> BRONZED_STORM;
-            case "sunlight_female" -> SUNLIGHT_FEMALE;
-            case "sunlight_male" -> SUNLIGHT_MALE;
-            case "aurora" -> AURORA;
-            case "terra_female" -> TERRA_FEMALE;
-            case "terra_male" -> TERRA_MALE;
-            case "water_female" -> WATER_FEMALE;
-            case "water_male" -> WATER_MALE;
-            case "brine" -> BRINE;
+            case "blaze" -> FIRE_BLAZE;
+            case "fire" -> FIRE_FIRE;
+            case "blue_fire" -> FIRE_BLUE_FIRE;
+            case "cold" -> FOREST_COLD;
+            case "dry" -> FOREST_DRY;
+            case "jungle" -> FOREST_JUNGLE;
+            case "nature" -> FOREST_NATURE;
+            case "warm" -> FOREST_WARM;
+            case "alpine" -> ICE_ALPINE;
+            case "iceberg" -> ICE_ICEBERG;
+            case "snow" -> ICE_SNOW;
+            case "starlight" -> MOONLIGHT_STARLIGHT;
+            case "constellation" -> MOONLIGHT_CONSTELLATION;
+            case "eclipse" -> MOONLIGHT_ECLIPSE;
+            case "magma" -> NETHER_MAGMA;
+            case "volcanic" -> NETHER_VOLCANIC;
+            case "soul_fire" -> NETHER_SOUL_FIRE;
+            case "wild_sculk" -> SCULK_WILD;
+            case "mutant_sculk" -> SCULK_WMUTANT;
+            case "hollowed" -> SCULK_HOLLOWED;
+            case "skeleton" -> SKELETON_SKELETON;
+            case "stray" -> SKELETON_STRAY;
+            case "bogged" -> SKELETON_BOGGED;
+            case "lightning" -> STORM_LIGHTNING;
+            case "thunder" -> STORM_THUNDER;
+            case "bronzed_storm" -> STORM_BRONZED;
+            case "sunrise" -> SUNLIGHT_SUNRISE;
+            case "sunset" -> SUNLIGHT_SUNSET;
+            case "aurora" -> SUNLIGHT_AURORA;
+            case "valley" -> TERRA_VALLEY;
+            case "crystaline" -> TERRA_CRYSTALINE;
+            case "mesa" -> TERRA_MESA;
+            case "tidal" -> WATER_TIDAL;
+            case "pond" -> WATER_POND;
+            case "brine" -> WATER_BRINE;
             case "zombie" -> ZOMBIE;
+            case "drowned" -> ZOMBIE_DROWNED;
+            case "husk" -> ZOMBIE_HUSK;
             case "wither" -> WITHER;
-            case "fallen" -> FALLEN;
-            case "prism" -> PRISM;
-            case "radiant" -> RADIANT;
-            case "sunset" -> SUNSET;
+            case "fallen" -> LIGHT_FALLEN;
+            case "prism" -> LIGHT_PRISM;
+            case "radiant" -> LIGHT_RADIANT;
+            case "light_sunset" -> LIGHT_SUNSET;
             default -> throw new NoSuchElementException(
                     "There is no built-in variant appearance named \"" + key + "\". Please create a custom supplier."
             );

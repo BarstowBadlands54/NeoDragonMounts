@@ -54,7 +54,7 @@ public class DragonTypes {
                 .setEnchantmentValue(11);
         MOONLIGHT = new DragonTypeBuilder(0x2C427C, material, tier)
                 .model("normal", "base")
-                .texture(makeId("textures/entity/dragon/moonlight/female/body.png"))
+                .texture(makeId("textures/entity/dragon/moonlight/constellation/body.png"))
                 .setMaterial(DMItemTags.MOONLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLUE)
                 .addHabitat(Blocks.BLUE_GLAZED_TERRACOTTA)
@@ -97,7 +97,7 @@ public class DragonTypes {
                 .register(ZombieType::new, makeId("zombie"));
         DARK = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
                 .model("normal", "base")
-                .texture(makeId("textures/entity/dragon/dark/female/body.png"))
+                .texture(makeId("textures/entity/dragon/dark/bloodmoon/body.png"))
                 .setMaterial(DMItemTags.DARK_DRAGON_SCALES)
                 .setScaleColor(MapColor.DEEPSLATE)
                 .addImmunity(DamageTypes.MAGIC)
@@ -149,7 +149,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
-                .model("normal", "base")   // TODO confirm body shape (old COMPAT)
+                .model("horned_antlers", "horned_antlers")
                 .texture(makeId("textures/entity/dragon/forest/forest/female_body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
