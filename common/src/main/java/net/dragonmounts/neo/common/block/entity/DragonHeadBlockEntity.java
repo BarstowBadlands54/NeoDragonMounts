@@ -8,6 +8,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED;
@@ -38,6 +40,11 @@ public class DragonHeadBlockEntity extends BlockEntity implements GeoBlockEntity
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+//        controllers.add(new AnimationController<>(this, "jaw_controller", 3, state ->
+//                state.setAndContinue(this.active
+//                        ? RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.dragon_head.jaw_open")
+//                        : RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.jaw_close"))
+//        ));
     }
 
     @Override

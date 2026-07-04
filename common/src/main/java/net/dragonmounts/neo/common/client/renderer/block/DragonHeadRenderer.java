@@ -15,6 +15,10 @@ public class DragonHeadRenderer extends GeoBlockRenderer<DragonHeadBlockEntity> 
         super(new DragonHeadBlockGeoModel());
     }
 
+    private static final double WALL_Y_OFFSET = 0.15;      // raise the wall head — increase to move it up
+    private static final double WALL_Z_OFFSET = 0.12;      // push flush to the wall — increase to push it further back
+    private static final double STANDING_Y_OFFSET = 0.0;   // raise the standing head, if it needs it too
+
     @Override
     protected void rotateBlock(Direction facing, PoseStack poseStack) {
         DragonHeadBlockEntity be = this.animatable;
@@ -27,12 +31,14 @@ public class DragonHeadRenderer extends GeoBlockRenderer<DragonHeadBlockEntity> 
         if (state.hasProperty(BlockStateProperties.ROTATION_16)) {
             float yRot = -state.getValue(BlockStateProperties.ROTATION_16) * 22.5F;
             poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+            poseStack.translate(0.0, STANDING_Y_OFFSET, 0.0);
             return;
         }
         // Wall head: face the mounted direction (+180 to flip geo model's facing)
         if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
             float yRot = -state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180.0F;
             poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
+            poseStack.translate(0.0, WALL_Y_OFFSET, WALL_Z_OFFSET);
             return;
         }
         super.rotateBlock(facing, poseStack);

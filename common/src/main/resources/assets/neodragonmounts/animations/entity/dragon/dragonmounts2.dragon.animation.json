@@ -2230,6 +2230,30 @@
 					"scale": 0.92
 				}
 			}
+		},
+		"animation.dragonmounts2.dragon.jaw_open": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.35,
+			"bones": {
+				"bone.jaw": {
+					"rotation": {
+						"0.0": [7.5, 0, 0],
+						"0.35": [-35, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.dragonmounts2.dragon.jaw_close": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.35,
+			"bones": {
+				"bone.jaw": {
+					"rotation": {
+						"0.0": [-35, 0, 0],
+						"0.35": [7.5, 0, 0]
+					}
+				}
+			}
 		}
 	}
 }
