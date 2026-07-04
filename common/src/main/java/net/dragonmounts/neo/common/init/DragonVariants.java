@@ -70,7 +70,7 @@ public class DragonVariants {
     public static final DragonVariant SUNLIGHT_AURORA;
     public static final DragonVariant TERRA_VALLEY;
     public static final DragonVariant TERRA_MESA;
-    public static final DragonVariant TERRA_CRYSTALINE;
+    public static final DragonVariant TERRA_CRYSTALLINE;
     public static final DragonVariant WATER_POND;
     public static final DragonVariant WATER_TIDAL;
     public static final DragonVariant WATER_BRINE;
@@ -184,7 +184,7 @@ public class DragonVariants {
         variants.add(SUNLIGHT_AURORA = make(supplier, DragonTypes.SUNLIGHT, "aurora", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(TERRA_VALLEY = make(supplier, DragonTypes.TERRA, "valley", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(TERRA_MESA = make(supplier, DragonTypes.TERRA, "mesa", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(TERRA_CRYSTALINE = make(supplier, DragonTypes.TERRA, "crystaline", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(TERRA_CRYSTALLINE = make(supplier, DragonTypes.TERRA, "crystalline", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WATER_POND = make(supplier, DragonTypes.WATER, "pond", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WATER_TIDAL = make(supplier, DragonTypes.WATER, "tidal", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WATER_BRINE = make(supplier, DragonTypes.WATER, "brine", DragonProjectiles.DRAGON_FIREBALL));

@@ -843,6 +843,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // 1) LOCOMOTION state machine
         controllers.add(new AnimationController<>(this, "movement", 5, state -> {
+            if (this.isDeadOrDying()) return PlayState.STOP;
             if (this.isFlying() && !isInWater()) {
                 Vec3 v = this.getDeltaMovement();
                 double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);

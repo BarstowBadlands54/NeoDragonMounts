@@ -263,7 +263,10 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
         double oz = (random.nextDouble() - 0.5) * 2;
         level.addParticle(type.eggParticle, px, py, pz, ox, oy, oz);
         if ((++this.age & 1) == 0 && type != DragonTypes.ENDER) {
-            level.addParticle(new DustParticleOptions(new Vector3f(type.color, type.color, type.color), 1.0F), px, py + 0.8, pz, ox, oy, oz);
+            float r = ((type.color >> 16) & 0xFF) / 255F;
+            float g = ((type.color >> 8) & 0xFF) / 255F;
+            float b = (type.color & 0xFF) / 255F;
+            level.addParticle(new DustParticleOptions(new Vector3f(r, g, b), 1.0F), px, py + 0.8, pz, ox, oy, oz);
         }
     }
 
