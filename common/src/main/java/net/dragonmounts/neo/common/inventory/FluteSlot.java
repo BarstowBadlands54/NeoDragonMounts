@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class FluteSlot extends Slot {
-    public static final ResourceLocation ICON = makeId("textures/gui/sprites/slot/empty_flute.png");
+    public static final ResourceLocation ICON = makeId("item/empty_flute.png");
     public final FluteHolder holder;
     public final DragonInventoryHandler inventory;
     public SlotListener<? super FluteSlot> listener;

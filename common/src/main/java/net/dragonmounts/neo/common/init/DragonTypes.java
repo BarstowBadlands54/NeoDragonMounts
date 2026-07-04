@@ -147,7 +147,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
-                .model("horned_antlers", "horned_antlers")
+                .model("horned_antlers", "base")
                 .texture(makeId("textures/entity/dragon/forest/nature/body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
