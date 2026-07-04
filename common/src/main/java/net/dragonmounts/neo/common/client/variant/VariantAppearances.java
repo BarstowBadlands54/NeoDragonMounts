@@ -68,7 +68,7 @@ public class VariantAppearances {
     public static final VariantAppearance SUNLIGHT_SUNSET;
     public static final VariantAppearance TERRA_VALLEY;
     public static final VariantAppearance TERRA_MESA;
-    public static final VariantAppearance TERRA_CRYSTALINE;
+    public static final VariantAppearance TERRA_CRYSTALLINE;
     public static final VariantAppearance WATER_BRINE;
     public static final VariantAppearance WATER_POND;
     public static final VariantAppearance WATER_TIDAL;
@@ -189,7 +189,7 @@ public class VariantAppearances {
 
     static {
         var builder = builder();
-        TERRA_CRYSTALINE = builder.build(makeId("terra/crystaline"));
+        TERRA_CRYSTALLINE = builder.build(makeId("terra/crystaline"));
         TERRA_MESA = builder.build(makeId("terra/mesa"));
         TERRA_VALLEY = builder.build(makeId("terra/valley"));
     }
@@ -277,7 +277,7 @@ public class VariantAppearances {
             case "sunset" -> SUNLIGHT_SUNSET;
             case "aurora" -> SUNLIGHT_AURORA;
             case "valley" -> TERRA_VALLEY;
-            case "crystaline" -> TERRA_CRYSTALINE;
+            case "crystalline" -> TERRA_CRYSTALLINE;
             case "mesa" -> TERRA_MESA;
             case "tidal" -> WATER_TIDAL;
             case "pond" -> WATER_POND;
