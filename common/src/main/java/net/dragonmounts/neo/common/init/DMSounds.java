@@ -12,6 +12,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_CHEST = create("entity.dragon.chest");
     public static final SoundEvent DRAGON_DEATH = create("entity.dragon.death");
     public static final SoundEvent DRAGON_DEATH_ZOMBIE = create("entity.dragon.death.zombie");
+    public static final SoundEvent DRAGON_FLAP = create("entity.dragon.flap");
     public static final SoundEvent DRAGON_ROAR = create("entity.dragon.roar");
     public static final SoundEvent DRAGON_ROAR_HATCHLING = create("entity.dragon.roar.hatchling");
     public static final SoundEvent DRAGON_ROAR_WATER = create("entity.dragon.roar.water");

@@ -274,6 +274,17 @@
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon_egg.crack"
   },
+  "entity.dragon.flap": {
+    "sounds": [
+      "neodragonmounts:entity/dragon/flap/flap1",
+      "neodragonmounts:entity/dragon/flap/flap2",
+      "neodragonmounts:entity/dragon/flap/flap3",
+      "neodragonmounts:entity/dragon/flap/flap4",
+      "neodragonmounts:entity/dragon/flap/flap5",
+      "neodragonmounts:entity/dragon/flap/flap6"
+    ],
+    "subtitle": "subtitles.entity.ender_dragon.flap"
+  },
   "item.flute.blow.short": {
     "sounds": [
       "neodragonmounts:item/flute_short"

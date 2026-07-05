@@ -131,9 +131,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final EntityDataAccessor<Boolean> DATA_BREATHING = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SHEARED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_TRUST_OTHER = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Bronco taming: set once the wild dragon has been fed enough to allow break-in rides. Distinct from DATA_TRUST_OTHER. */
+    /**
+     * Bronco taming: set once the wild dragon has been fed enough to allow break-in rides. Distinct from DATA_TRUST_OTHER.
+     */
     private static final EntityDataAccessor<Boolean> DATA_BREAK_IN_TRUST = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    /** Player-set V-formation flight rank (0 = auto/unset; 1 = innermost wing, 2 = next, ...). */
+    /**
+     * Player-set V-formation flight rank (0 = auto/unset; 1 = innermost wing, 2 = next, ...).
+     */
     private static final EntityDataAccessor<Integer> DATA_FLIGHT_RANK = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> DATA_CHEST_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<ItemStack> DATA_SADDLE_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -384,7 +388,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return !this.isNoAi() && isBreakInTrusted() && this.getFirstPassenger() instanceof Player player ? player : null;
     }
 
-    /** The player currently clinging to an untamed dragon during a break-in (may not be the controller). */
+    /**
+     * The player currently clinging to an untamed dragon during a break-in (may not be the controller).
+     */
     @Nullable
     public Player getBreakInRider() {
         return this.getFirstPassenger() instanceof Player p ? p : null;
@@ -411,23 +417,22 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
         if (this.getPassengers().size() == 1 && this.isFlying()) {
             float pitch = Mth.lerp(partialTick, this.renderPitchO, this.renderPitch);
-            float roll  = Mth.lerp(partialTick, this.renderRollO, this.renderRoll);
+            float roll = Mth.lerp(partialTick, this.renderRollO, this.renderRoll);
             base = base.xRot(-pitch * MathUtil.TO_RAD_FACTOR);   // pitch shifts seat fwd/back+up/down
             base = base.zRot(-roll * MathUtil.TO_RAD_FACTOR);     // roll shifts seat left/right (the part you want)
         }
         return base.yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
     }
 
+    //----------MobEntity----------
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return !effectInstance.is(MobEffects.WEAKNESS) && !this.getVariant().type.isImmuneTo(effectInstance.getEffect()) && super.canBeAffected(effectInstance);
+    }
+
     @Override
     protected Component getTypeName() {
         return this.getDragonType().getFormattedName("entity.neodragonmounts.dragon.name");
-    }
-
-    //----------MobEntity----------
-
-    @Override
-    public boolean canBeAffected(MobEffectInstance effect) {
-        return !effect.is(MobEffects.WEAKNESS) && super.canBeAffected(effect);
     }
 
     @Override
@@ -548,7 +553,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_TRUST_OTHER, state);
     }
 
-    /** Bronco taming: whether this wild dragon has been fed enough to be mounted for break-in. */
+    /**
+     * Bronco taming: whether this wild dragon has been fed enough to be mounted for break-in.
+     */
     public boolean isBreakInTrusted() {
         return this.entityData.get(DATA_BREAK_IN_TRUST);
     }
@@ -557,7 +564,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_BREAK_IN_TRUST, state);
     }
 
-    /** Player-set V-formation flight rank. 0 means "auto" (fall back to age-based ordering). */
+    /**
+     * Player-set V-formation flight rank. 0 means "auto" (fall back to age-based ordering).
+     */
     public int getFlightRank() {
         return this.entityData.get(DATA_FLIGHT_RANK);
     }
@@ -598,6 +607,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         }
         if (reset) this.setHealth(this.getMaxHealth());
     }
+
     @Override
     public final DragonType getDragonType() {
         return this.getVariant().type;
@@ -614,9 +624,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_SHEARED, cooldown > 0);
     }
 
-    public int getProjectileCooldown() { return this.projectileCooldown; }
+    public int getProjectileCooldown() {
+        return this.projectileCooldown;
+    }
 
-    public void setProjectileCooldown(int ticks) { this.projectileCooldown = ticks; }
+    public void setProjectileCooldown(int ticks) {
+        this.projectileCooldown = ticks;
+    }
 
     @Override
     public boolean readyForShearing(ServerLevel level, ItemStack stack) {
@@ -731,6 +745,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.setRot(rotY, rot.x * 1.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
     }
+
     public @Nullable DragonProjectileAbility getProjectile() {
         DragonProjectileAbility p = this.getVariant().projectile;   // variant override wins
         return p != null ? p : this.getVariant().getDragonType().getProjectile();
@@ -842,26 +857,51 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // 1) LOCOMOTION state machine
-        controllers.add(new AnimationController<>(this, "movement", 5, state -> {
-            if (this.isDeadOrDying()) return PlayState.STOP;
-            if (this.isFlying() && !isInWater()) {
-                Vec3 v = this.getDeltaMovement();
-                double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
-                if (v.y < -0.35) return state.setAndContinue(DIVE);   // descending fast
-                if (horizontal > 0.08 || getPassengers().size() > 1) return state.setAndContinue(FLAP);   // moving forward
-                return state.setAndContinue(HOVER);                          // stationary in air
-            }
-            if (this.isInWater()) {
-                return state.setAndContinue(SWIM);
-            } else {  // NEW swim check
-                if (this.isInSittingPose()) return state.setAndContinue(SIT);
-                if (state.isMoving()) {
-                    return state.setAndContinue(WALK);
-                } else {
-                    return state.setAndContinue(IDLE);
-                }
-            }
-        }));
+        float volume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
+        controllers.add(
+                new AnimationController<>(this, "movement", 5, state -> {
+                    if (this.isDeadOrDying()) return PlayState.STOP;
+                    if (this.isFlying() && !isInWater()) {
+                        Vec3 v = this.getDeltaMovement();
+                        double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
+
+                        if (v.y < -0.35) return state.setAndContinue(DIVE);
+                        if (horizontal > 0.08 || getPassengers().size() > 1)
+                            return state.setAndContinue(FLAP);
+
+                        return state.setAndContinue(HOVER);
+                    }
+
+                    if (this.isInWater())
+                        return state.setAndContinue(SWIM);
+
+                    if (this.isInSittingPose())
+                        return state.setAndContinue(SIT);
+
+                    return state.setAndContinue(state.isMoving() ? WALK : IDLE);
+                })
+                        .setSoundKeyframeHandler(event -> {
+                            String sound = event.getKeyframeData().getSound();
+
+                            SoundEvent soundEvent = switch (sound) {
+                                case "entity.dragon.flap" -> DMSounds.DRAGON_FLAP;
+                                default -> null;
+                            };
+
+                            if (soundEvent != null) {
+                                this.level().playLocalSound(
+                                        this.getX(),
+                                        this.getY(),
+                                        this.getZ(),
+                                        soundEvent,
+                                        this.getSoundSource(),
+                                        volume,
+                                        1.0F,
+                                        false
+                                );
+                            }
+                        })
+        );
 
         // 2) FIRE BREATH — independent layer, plays on TOP of flap/walk/etc.
         controllers.add(new AnimationController<>(this, "breath", 3, state ->
@@ -909,6 +949,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         }
 
         this.renderPitch += (targetPitch - this.renderPitch) * 0.2F;
-        this.renderRoll  += (targetRoll  - this.renderRoll)  * 0.25F;
+        this.renderRoll += (targetRoll - this.renderRoll) * 0.25F;
     }
 }

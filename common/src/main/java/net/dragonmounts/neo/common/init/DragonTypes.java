@@ -9,6 +9,7 @@ import net.dragonmounts.neo.compat.registry.DragonTypeBuilder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.biome.Biomes;
@@ -147,7 +148,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
-                .model("horned_antlers", "base")
+                .model("horned_antlers", "horned_antlers")
                 .texture(makeId("textures/entity/dragon/forest/nature/body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
@@ -155,7 +156,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
-//                .addEffectImmunity(MobEffects.POISON)
+                .addEffectImmunity(MobEffects.POISON)
                 .setSneezeParticle(ParticleTypes.HAPPY_VILLAGER)
                 //.addHabitat(Blocks.YELLOW_FLOWER)
                 //.addHabitat(Blocks.RED_FLOWER)

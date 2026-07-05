@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
@@ -25,12 +26,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiFunction;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
-
+//fabric
 public final class DragonTypeBuilder {
     public static final ResourceLocation BONUS_ID = makeId("dragon_type_bonus");
     public final int color;
     public final ImmutableMultimap.Builder<Holder<Attribute>, AttributeModifier> attributes = ImmutableMultimap.builder();
     public final ImmutableSet.Builder<ResourceKey<DamageType>> immunities = ImmutableSet.builder();
+    public final ImmutableSet.Builder<Holder<MobEffect>> effectImmunities = ImmutableSet.builder();
     public final ImmutableSet.Builder<Block> blocks = ImmutableSet.builder();
     public final ImmutableSet.Builder<ResourceKey<Biome>> biomes = ImmutableSet.builder();
     public final @Nullable ItemTierBuilder tier;
@@ -124,4 +126,10 @@ public final class DragonTypeBuilder {
         this.texture = texture;
         return this;
     }
+
+    public DragonTypeBuilder addEffectImmunity(Holder<MobEffect> effect) {
+        this.effectImmunities.add(effect);
+        return this;
+    }
+
 }

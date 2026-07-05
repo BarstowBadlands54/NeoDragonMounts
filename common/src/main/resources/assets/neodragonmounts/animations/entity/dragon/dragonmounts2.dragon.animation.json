@@ -1653,8 +1653,8 @@
 				}
 			},
 			"sound_effects": {
-				"0.25": {
-					"effect": "wings_flap"
+				"1": {
+					"effect": "entity.dragon.flap"
 				}
 			}
 		},
@@ -1921,8 +1921,8 @@
 				}
 			},
 			"sound_effects": {
-				"0.0": {
-					"effect": "wings_flap"
+				"0.58": {
+					"effect": "entity.dragon.flap"
 				}
 			}
 		},

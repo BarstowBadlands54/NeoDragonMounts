@@ -32,6 +32,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,6 +50,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -80,6 +82,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
+    private final Set<Holder<MobEffect>> effectImmunities = new HashSet<>();
     private final Set<Block> blocks;
     private final Set<ResourceKey<Biome>> biomes;
     private ResourceKey<LootTable> lootTable;
@@ -147,6 +150,10 @@ public class DragonType implements TooltipProvider, DragonTypified {
 
     public boolean isInvulnerableTo(DamageSource source) {
         return !this.immunities.isEmpty() && source.typeHolder().is(this.immunities::contains);
+    }
+
+    public boolean isImmuneTo(Holder<MobEffect> effect) {
+        return this.effectImmunities.contains(effect);
     }
 
     public void tickServer(ServerDragonEntity dragon) {}
