@@ -89,8 +89,8 @@ public class DMArmorEffects {
         public boolean activate(ArmorEffectManager manager, Player player, int level) {
             boolean flag = level > 3;
             if (flag && !player.level().isClientSide) {
-                addOrResetEffect(player, MobEffects.GLOWING, 600, 0, true, true, true, 201);
-                addOrResetEffect(player, MobEffects.NIGHT_VISION, 600, 0, true, true, true, 201);
+                assert player.getLastHurtByMob() != null;
+                addOrResetEffect(player.getLastHurtByMob(), MobEffects.BLINDNESS, 600, 0, true, true, true, 201);
             }
             return flag;
         }
