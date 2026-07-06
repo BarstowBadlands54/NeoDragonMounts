@@ -152,7 +152,7 @@
   "subtitles.item.neodragonmounts.variation_orb.activate": "L'Orbe de Variation s'active",
   "tooltip.armor_effect.neodragonmounts.aether": "Quand le porteur court, applique l'effet Rapidité II pendant5s",
   "tooltip.armor_effect.neodragonmounts.dark": "Applique l'effet Grâce du Dragon Sombre I pendant 30s",
-  "tooltip.armor_effect.neodragonmounts.light": "Confère les effets Lumière et Vision nocturne",
+  "tooltip.armor_effect.neodragonmounts.light": "Quand le porteur est attaqué, aveugle l'attaquant",
   "tooltip.armor_effect.neodragonmounts.enchanted": "La cible tuée par le porteur rapporte 120% d'EXP suplémentaire",
   "tooltip.armor_effect.neodragonmounts.ender": "Quand la vie du porteur est en dessous de 5, applique l'effet Résistance III pendant 30s et l'éffet Force II pendant 15s",
   "tooltip.armor_effect.neodragonmounts.fire": "Quand le pôrteur est en feu, applique l'effet Résistance au feu I pendant 30s",

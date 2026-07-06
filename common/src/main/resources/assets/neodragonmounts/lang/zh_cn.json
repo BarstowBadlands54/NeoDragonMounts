@@ -241,7 +241,7 @@
   "tooltip.armor_effect.neodragonmounts.fire": "当装备者着火时，给予其持续30秒的抗火 I效果",
   "tooltip.armor_effect.neodragonmounts.forest": "当装备者的生命值小于10时，给予其持续10秒的生命恢复 II效果",
   "tooltip.armor_effect.neodragonmounts.ice": "当装备者受伤时，对周围5格内的目标造成附带持续10秒缓慢 II效果的1点冰冻伤害并击退",
-  "tooltip.armor_effect.neodragonmounts.light": "赋予发光和夜视效果",
+  "tooltip.armor_effect.neodragonmounts.light": "当装备者被攻击时，使攻击者失明",
   "tooltip.armor_effect.neodragonmounts.moonlight": "给予装备者持续30秒的夜视 I效果",
   "tooltip.armor_effect.neodragonmounts.nether": "当装备者受伤时，使周围5格内的目标陷入持续10秒的着火状态并击退",
   "tooltip.armor_effect.neodragonmounts.sculk": "装备者受到的音爆伤害减少",

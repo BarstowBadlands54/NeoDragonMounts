@@ -87,9 +87,8 @@ public class DMArmorEffects {
 
         @Override
         public boolean activate(ArmorEffectManager manager, Player player, int level) {
-            boolean flag = level > 3;
+            boolean flag = player.getLastHurtByMob() != null;
             if (flag && !player.level().isClientSide) {
-                assert player.getLastHurtByMob() != null;
                 addOrResetEffect(player.getLastHurtByMob(), MobEffects.BLINDNESS, 600, 0, true, true, true, 201);
             }
             return flag;
