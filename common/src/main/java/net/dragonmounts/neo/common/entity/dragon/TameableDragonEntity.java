@@ -872,7 +872,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                         return state.setAndContinue(HOVER);
                     }
 
-                    if (this.isInWater())
+                    if (this.isUnderWater())
                         return state.setAndContinue(SWIM);
 
                     if (this.isInSittingPose())
