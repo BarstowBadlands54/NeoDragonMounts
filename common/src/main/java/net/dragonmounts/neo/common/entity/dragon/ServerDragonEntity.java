@@ -617,7 +617,13 @@ public class ServerDragonEntity extends TameableDragonEntity {
             this.setOrderedToSit(false);
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
-            player.startRiding(this);
+            if(isOwnedBy(player)) {
+                player.startRiding(this);
+            } else {
+                if(getControllingPassenger() == getOwner() && canAddPassenger(player)) {
+                    player.startRiding(this);
+                }
+            }
 
         } else {
             this.openCustomInventoryScreen(player);
