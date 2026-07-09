@@ -380,40 +380,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     /**
-     * A tamed dragon will carry its owner briefly without a saddle (e.g. right after
-     * being broken in), but flying bareback for too long makes it refuse and land.
-     */
-    private void tickNoSaddleFlight() {
-        if (this.level().isClientSide) return;
-
-        Player rider = this.getControllingPassenger();
-        // Only relevant for a TAMED, ridden, flying dragon that has no saddle.
-        if (!this.isTame() || rider == null || !this.isFlying() || this.isSaddled()) {
-            this.noSaddleFlightTicks = 0;
-            this.noSaddleWarned = false;
-            return;
-        }
-
-        ++this.noSaddleFlightTicks;
-
-        if (!this.noSaddleWarned && this.noSaddleFlightTicks >= NO_SADDLE_WARN_TICKS) {
-            this.noSaddleWarned = true;
-            rider.displayClientMessage(
-                    net.minecraft.network.chat.Component.translatable("message.neodragonmounts.requires_saddle"),
-                    true   // action bar
-            );
-        }
-
-        if (this.noSaddleFlightTicks >= NO_SADDLE_LAND_TICKS) {
-            // Done humouring you — descend and set the rider down.
-            this.setFlying(false);
-            this.ejectPassengers();
-            this.noSaddleFlightTicks = 0;
-            this.noSaddleWarned = false;
-        }
-    }
-
-    /**
      * Bronco-style taming tick. While an unbroken dragon carries a rider:
      * - it forces itself airborne and flies erratically,
      * - after a randomized delay it BUCKS the rider off (mid-air = a real fall),
@@ -453,7 +419,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Target: high above, sweeping in WIDE arcs anchored to where the ride began
         // (anchoring to the start — not the live position — makes it cover a large area
         // instead of chasing its own tail in tight circles).
-        double climbTarget = this.breakInStartY + BRONCO_CLIMB_HEIGHT;
+        double climbHeight = onGround() ? BRONCO_CLIMB_HEIGHT : 0;
+        double climbTarget = this.breakInStartY + climbHeight;
         double t = this.tickCount * 0.12;                 // slower phase = broader, sweeping arcs
         double sweepX = Math.sin(t) * BRONCO_SWEEP_RADIUS;
         double sweepZ = Math.cos(t * 0.6) * BRONCO_SWEEP_RADIUS;  // different freq -> figure-8 / wandering path
@@ -521,7 +488,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
     @Override
     public void aiStep() {
         this.tickBronco();
-        this.tickNoSaddleFlight();
         if (this.isDeadOrDying()) {
             this.nearestCrystal = null;
         } else {
