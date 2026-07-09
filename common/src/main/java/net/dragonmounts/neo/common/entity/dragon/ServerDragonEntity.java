@@ -612,7 +612,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
 
-        } else if (this.isSaddled) {
+        } else if (this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
+                && !this.isBaby()) {
             this.setOrderedToSit(false);
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
