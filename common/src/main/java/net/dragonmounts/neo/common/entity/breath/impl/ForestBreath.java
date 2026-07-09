@@ -101,16 +101,6 @@ public class ForestBreath extends DragonBreath {
             return true;
         }
 
-        // Players
-        if (entity instanceof Player) {
-            return true;
-        }
-
-        // cows pigs etc
-        if (entity instanceof Animal) {
-            return false;
-        }
-
         // fish
         if (entity instanceof WaterAnimal) {
             return false;
