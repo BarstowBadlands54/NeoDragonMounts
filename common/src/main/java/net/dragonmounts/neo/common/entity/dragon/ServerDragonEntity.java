@@ -113,6 +113,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
     private double breakInStartX = 0.0;
     private double breakInStartY = 0.0;
     private double breakInStartZ = 0.0;
+    private int ticksClimbY = 0;
     /**
      * The player currently attempting to break in this dragon (server-side).
      */
@@ -403,6 +404,16 @@ public class ServerDragonEntity extends TameableDragonEntity {
             return;
         }
 
+        // try to limit how the dragon flies too high
+        if (ticksClimbY < 120) {
+            ticksClimbY++;
+        }
+
+        // reset it to 0 so it starts flying high again when on ground;
+        if (onGround() && ticksClimbY > 0) {
+            ticksClimbY = 0;
+        }
+
         // Drive the dragon's own flight controller to climb HIGH and weave around,
         // exactly like DragonFollowPlayerFlying does — but toward a wild point far
         // above the start, so the player is carried dangerously high.
@@ -419,7 +430,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Target: high above, sweeping in WIDE arcs anchored to where the ride began
         // (anchoring to the start — not the live position — makes it cover a large area
         // instead of chasing its own tail in tight circles).
-        double climbHeight = onGround() ? BRONCO_CLIMB_HEIGHT : 0;
+        double climbHeight = ticksClimbY < 120 ? BRONCO_CLIMB_HEIGHT : 0;
         double climbTarget = this.breakInStartY + climbHeight;
         double t = this.tickCount * 0.12;                 // slower phase = broader, sweeping arcs
         double sweepX = Math.sin(t) * BRONCO_SWEEP_RADIUS;
@@ -584,7 +595,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
 
         // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
-        if (this.isTame() && !this.isBreakInTrusted() && stack.isEmpty()
+        if (this.isTame() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.setOrderedToSit(false);
@@ -597,7 +608,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (!isOwner) return InteractionResult.PASS;
+        if (isTrustingAnyPlayer()) {
+            return InteractionResult.SUCCESS;
+        } else if(!isOwner) {
+            return InteractionResult.PASS;
+        }
 
         if (this.inventory.onInteract(stack)) return InteractionResult.SUCCESS;
 
@@ -617,14 +632,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
             this.setOrderedToSit(false);
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
-            if(isOwnedBy(player)) {
-                player.startRiding(this);
-            } else {
-                if(getControllingPassenger() == getOwner() && canAddPassenger(player)) {
-                    player.startRiding(this);
-                }
-            }
-
+            player.startRiding(this);
         } else {
             this.openCustomInventoryScreen(player);
         }
