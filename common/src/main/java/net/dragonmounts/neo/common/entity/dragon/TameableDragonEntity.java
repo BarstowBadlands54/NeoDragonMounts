@@ -258,6 +258,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_SLEEPING, sleeping);
     }
 
+    public boolean isMovementDisabled() {
+        return super.isInSittingPose() || isSleeping();
+    }
+
     protected abstract void checkCrystals();
 
     protected @Nullable EndCrystal findCrystal() {
@@ -466,7 +470,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        if (this.isInWater() || this.isFlying() || this.isInSittingPose()) return;
+        if (this.isInWater() || this.isFlying() || this.isMovementDisabled()) return;
         if (this.isBaby()) {
             super.playStepSound(this.getPrimaryStepSoundBlockPos(pos), state);
         } else {
@@ -888,12 +892,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
                     if (this.isUnderWater())
                         return state.setAndContinue(SWIM);
-
+                    if (this.isSleeping())
+                        return state.setAndContinue(REST);
                     if (this.isInSittingPose())
                         return state.setAndContinue(SIT);
-
-                    if(isSleeping())
-                        return state.setAndContinue(REST);
 
                     return state.setAndContinue(state.isMoving() ? WALK : IDLE);
                 })

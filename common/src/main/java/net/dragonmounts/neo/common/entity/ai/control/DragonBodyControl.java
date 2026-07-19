@@ -19,7 +19,7 @@ public class DragonBodyControl extends BodyRotationControl {
     @Override
     public void clientTick() {
         TameableDragonEntity dragon = this.dragon;
-        if (dragon.isBreathing() || dragon.isFlying() || dragon.isInSittingPose() || EntityUtil.isMoving(dragon)) {
+        if (dragon.isBreathing() || dragon.isFlying() || dragon.isMovementDisabled() || EntityUtil.isMoving(dragon)) {
             dragon.yBodyRot = dragon.getYRot();
             dragon.yHeadRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
             this.lastStableYHeadRot = dragon.yHeadRot;

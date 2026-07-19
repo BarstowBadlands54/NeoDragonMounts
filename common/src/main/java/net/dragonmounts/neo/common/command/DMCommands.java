@@ -18,12 +18,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.EntityHitResult;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import java.util.Comparator;
 import java.util.List;
@@ -42,6 +39,7 @@ public class DMCommands {
                 .then(SaveCommand.register(context, hasPermissionLevel2))
                 .then(StageCommand.register(hasPermissionLevel2))
                 .then(TameCommand.register(hasPermissionLevel2))
+                .then(SleepCommand.register(hasPermissionLevel2))
                 .then(TrustCommand.register(hasPermissionLevel2))
                 .then(TypeCommand.register(context, hasPermissionLevel2))
                 .then(VariantCommand.register(hasPermissionLevel2))
