@@ -129,6 +129,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final EntityDataAccessor<Boolean> DATA_AGE_LOCKED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_HOVER_DISABLED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_BREATHING = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_SLEEPING = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SHEARED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_TRUST_OTHER = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     /**
@@ -146,6 +147,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public static final String FLYING_DATA_PARAMETER_KEY = "Flying";
     public static final String SADDLE_DATA_PARAMETER_KEY = "Saddle";
     public static final String SHEARED_DATA_PARAMETER_KEY = "ShearCooldown";
+    public static final String SLEEPING_DATA_PARAMETER_KEY = "Sleeping";
+    public static final String BREAK_IN_TRUSTED_PARAMETER_KEY = "BreakInTrust";
+    public static final String FLIGHT_RANK_PARAMETER_KEY = "FlightRank";
     protected DragonType lastType;
     protected EndCrystal nearestCrystal;
     protected DragonLifeStage stage;
@@ -246,6 +250,14 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_BREATHING, breathing && this.getLifeStage().isOldEnough(DragonLifeStage.FLEDGLING) && this.breathHelper.canBreathe());
     }
 
+    public final boolean isSleeping() {
+        return this.entityData.get(DATA_SLEEPING);
+    }
+
+    public final void setSleeping(boolean sleeping) {
+        this.entityData.set(DATA_SLEEPING, sleeping);
+    }
+
     protected abstract void checkCrystals();
 
     protected @Nullable EndCrystal findCrystal() {
@@ -264,7 +276,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     protected abstract void applyType(DragonType type);
 
     //----------Entity----------
-
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
@@ -273,6 +284,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         builder.define(DATA_AGE_LOCKED, false);
         builder.define(DATA_HOVER_DISABLED, false);
         builder.define(DATA_BREATHING, false);
+        builder.define(DATA_SLEEPING, false);
         builder.define(DATA_TRUST_OTHER, false);
         builder.define(DATA_BREAK_IN_TRUST, false);
         builder.define(DATA_FLIGHT_RANK, 0);
@@ -847,7 +859,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.walking");
     private static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.swimming");
     private static final RawAnimation SIT = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.sit");
+    private static final RawAnimation REST = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.rest");
     private static final RawAnimation HOVER = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.hover");
+    private static final RawAnimation HOVER_CARRY = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.hover_carry");
     private static final RawAnimation FLAP = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.flying");
     private static final RawAnimation DIVE = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.dive");
     private static final RawAnimation BREATH = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.breath");
@@ -866,10 +880,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                         double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
 
                         if (v.y < -0.35) return state.setAndContinue(DIVE);
-                        if (horizontal > 0.08 || getPassengers().size() > 1)
+                        if (horizontal > 0.08)
                             return state.setAndContinue(FLAP);
 
-                        return state.setAndContinue(HOVER);
+                        return getPassengers().size() > 1 ? state.setAndContinue(HOVER_CARRY) : state.setAndContinue(HOVER);
                     }
 
                     if (this.isUnderWater())
@@ -878,13 +892,16 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                     if (this.isInSittingPose())
                         return state.setAndContinue(SIT);
 
+                    if(isSleeping())
+                        return state.setAndContinue(REST);
+
                     return state.setAndContinue(state.isMoving() ? WALK : IDLE);
                 })
                         .setSoundKeyframeHandler(event -> {
                             String sound = event.getKeyframeData().getSound();
 
                             SoundEvent soundEvent = switch (sound) {
-                                case "entity.dragon.flap" -> DMSounds.DRAGON_FLAP;
+                                case "wings_flap" -> DMSounds.DRAGON_FLAP;
                                 default -> null;
                             };
 
@@ -926,7 +943,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // Bank whenever the dragon is flying — under a rider OR flying itself (e.g. a
         // bronco break-in ride, or following its owner). Pitch comes from vertical
         // velocity, roll from how fast the heading is turning.
-        if (this.isFlying()) {
+        if (this.isFlying() && getPassengers().size() == 1) {
             Vec3 v = this.getDeltaMovement();
             double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
 

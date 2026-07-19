@@ -171,8 +171,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
             tag.putString(DragonLifeStage.DATA_PARAMETER_KEY, this.stage.getSerializedName());
         }
         tag.putBoolean(AGE_LOCKED_DATA_PARAMETER_KEY, this.isAgeLocked());
-        tag.putBoolean("BreakInTrust", this.isBreakInTrusted());
-        tag.putInt("FlightRank", this.getFlightRank());
+        tag.putBoolean(BREAK_IN_TRUSTED_PARAMETER_KEY, this.isBreakInTrusted());
+        tag.putInt(FLIGHT_RANK_PARAMETER_KEY, this.getFlightRank());
         tag.putInt(SHEARED_DATA_PARAMETER_KEY, this.isSheared() ? this.shearCooldown : 0);
         var items = this.inventory.saveItems(this.registryAccess());
         if (!items.isEmpty()) {
@@ -196,11 +196,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
         super.readAdditionalSaveData(tag);
         this.setInSittingPose(this.isOrderedToSit() && this.onGround());
-        if (tag.contains("BreakInTrust")) {
-            this.setBreakInTrusted(tag.getBoolean("BreakInTrust"));
+        if (tag.contains(BREAK_IN_TRUSTED_PARAMETER_KEY)) {
+            this.setBreakInTrusted(tag.getBoolean(BREAK_IN_TRUSTED_PARAMETER_KEY));
         }
-        if (tag.contains("FlightRank")) {
-            this.setFlightRank(tag.getInt("FlightRank"));
+        if (tag.contains(FLIGHT_RANK_PARAMETER_KEY)) {
+            this.setFlightRank(tag.getInt(FLIGHT_RANK_PARAMETER_KEY));
         }
         if (!this.firstTick && (this.age != age || stage != this.stage)) {
             ServerNetworkHandler.sendTracking(this, new SyncDragonAgePayload(this.getId(), this.age, this.stage));
@@ -210,6 +210,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
         if (tag.contains(SHEARED_DATA_PARAMETER_KEY)) {
             this.setSheared(tag.getInt(SHEARED_DATA_PARAMETER_KEY));
+        }
+        if (tag.contains(SLEEPING_DATA_PARAMETER_KEY)) {
+            this.setSleeping(tag.getBoolean(SLEEPING_DATA_PARAMETER_KEY));
         }
         if (tag.contains(AGE_LOCKED_DATA_PARAMETER_KEY)) {
             this.setAgeLocked(tag.getBoolean(AGE_LOCKED_DATA_PARAMETER_KEY));
