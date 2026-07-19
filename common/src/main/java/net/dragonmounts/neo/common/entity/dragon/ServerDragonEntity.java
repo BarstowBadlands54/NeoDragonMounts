@@ -598,7 +598,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
 
         // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
-        if (this.isTame() && stack.isEmpty()
+        if (!this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.setOrderedToSit(false);
@@ -613,7 +613,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
         if (isTrustingAnyPlayer()) {
             return InteractionResult.SUCCESS;
-        } else if(!isOwner) {
+        } else if (!isOwner) {
             return InteractionResult.PASS;
         }
 
