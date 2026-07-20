@@ -7,6 +7,7 @@ import static net.dragonmounts.neo.compat.registry.RegistryHandler.registerActiv
 public class DMActivities {
     public static final Activity CONTROLLED = registerActivity("controlled");
     public static final Activity SITTING = registerActivity("sitting");
+    public static final Activity SLEEPING = registerActivity("sleeping");
 
     public static void init() {}
 }

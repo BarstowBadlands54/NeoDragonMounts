@@ -55,7 +55,8 @@ public class DragonAi {
             DMMemories.IS_ORDERED_TO_SIT,
             DMMemories.IS_CONTROLLED,
             DMMemories.FOLLOWABLE_OWNER,
-            DMMemories.DISABLED_FOLLOWING_OWNER
+            DMMemories.DISABLED_FOLLOWING_OWNER,
+            DMMemories.IS_SLEEPING
     );
     protected static final ImmutableList<Activity> ORDERED_ACTIVITIES = ImmutableList.of(
             DMActivities.CONTROLLED,
@@ -65,6 +66,7 @@ public class DragonAi {
             DMActivities.CONTROLLED,
             DMActivities.SITTING,
             Activity.FIGHT,
+            DMActivities.SLEEPING,
             Activity.IDLE
     );
 
@@ -140,6 +142,18 @@ public class DragonAi {
         ))), ImmutableSet.of(Pair.of(DMMemories.IS_ORDERED_TO_SIT, MemoryStatus.VALUE_PRESENT)), ImmutableSet.of());
     }
 
+    static void initSleepingActivity(Brain<ServerDragonEntity> brain) {
+        brain.addActivityAndRemoveMemoriesWhenStopped(DMActivities.SLEEPING, ImmutableList.of(Pair.of(0, BrainUtil.dispatch(
+                new DragonSleep(),
+                new TryFindGround<>(32, 48, 0.75F, dragon -> {
+                    if (dragon.isSleeping()) return false;              // was: dragon.isOrderedToSit()
+                    dragon.getBrain().eraseMemory(DMMemories.IS_SLEEPING);
+                    return true;
+                }),
+                (level, dragon) -> dragon.onGround()
+        ))), ImmutableSet.of(Pair.of(DMMemories.IS_SLEEPING, MemoryStatus.VALUE_PRESENT)), ImmutableSet.of());
+    }
+
     public static Brain.Provider<ServerDragonEntity> brainProvider() {
         return Brain.provider(MEMORY_TYPES, SENSOR_TYPES);
     }
@@ -150,6 +164,7 @@ public class DragonAi {
         initFightActivity(brain);
         initControlledActivity(brain);
         initSittingActivity(brain);
+        initSleepingActivity(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.useDefaultActivity();

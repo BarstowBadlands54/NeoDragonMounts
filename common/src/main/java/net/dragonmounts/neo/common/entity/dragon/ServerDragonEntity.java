@@ -600,6 +600,10 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
         if (!this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
+            if (this.isSleeping()) {
+                this.setSleeping(false); // wake it up first; player has to click again to mount
+                return InteractionResult.SUCCESS;
+            }
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.setOrderedToSit(false);
             this.breakingInPlayer = player.getUUID();
@@ -632,10 +636,14 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
         } else if (this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby()) {
-            this.setOrderedToSit(false);
-            player.setYRot(this.getYRot());
-            player.setXRot(this.getXRot());
-            player.startRiding(this);
+            if (this.isSleeping()) {
+                this.setSleeping(false); // wake it up instead of riding immediately
+            } else {
+                this.setOrderedToSit(false);
+                player.setYRot(this.getYRot());
+                player.setXRot(this.getXRot());
+                player.startRiding(this);
+            }
         } else {
             this.openCustomInventoryScreen(player);
         }

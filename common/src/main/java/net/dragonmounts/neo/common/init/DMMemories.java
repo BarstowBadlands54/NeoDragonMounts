@@ -10,6 +10,7 @@ import static net.dragonmounts.neo.compat.registry.RegistryHandler.registerSenso
 public class DMMemories {
     public static final MemoryModuleType<Unit> IS_CONTROLLED = registerSensoryMemory("is_controlled");
     public static final MemoryModuleType<Unit> IS_ORDERED_TO_SIT = registerSensoryMemory("is_ordered_to_sit");
+    public static final MemoryModuleType<Unit> IS_SLEEPING = registerSensoryMemory("is_sleeping");
     public static final MemoryModuleType<Unit> DISABLED_FOLLOWING_OWNER = registerMemory("disabled_following_owner");
     public static final MemoryModuleType<Player> FOLLOWABLE_OWNER = registerSensoryMemory("followable_owner");
 

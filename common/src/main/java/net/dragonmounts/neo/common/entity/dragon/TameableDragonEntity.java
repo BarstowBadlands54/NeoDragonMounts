@@ -400,7 +400,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // Untamed dragons are never controlled by their rider: during a break-in
         // attempt the dragon flies ITSELF (via its move control) while the player
         // merely clings on. Only a tamed dragon yields control to the rider.
-        if (!this.isTame()) return null;
+        if (!this.isTame() || this.isSleeping()) return null;   // add the sleeping check
         return !this.isNoAi() && isBreakInTrusted() && this.getFirstPassenger() instanceof Player player ? player : null;
     }
 
