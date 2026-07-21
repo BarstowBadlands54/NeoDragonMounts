@@ -49,7 +49,7 @@ public class DragonVariants {
     public static final DragonVariant WARM;
     public static final DragonVariant ALPINE;
     public static final DragonVariant ICEBERG;
-    public static final DragonVariant SNOW;
+    public static final DragonVariant FROST;
     public static final DragonVariant STARLIGHT;
     public static final DragonVariant CONSTELLATION;
     public static final DragonVariant ECLIPSE;
@@ -161,9 +161,9 @@ public class DragonVariants {
         variants.add(JUNGLE = make(supplier, DragonTypes.FOREST, "jungle", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(NATURE = make(supplier, DragonTypes.FOREST, "nature", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WARM = make(supplier, DragonTypes.FOREST, "warm", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(ALPINE = make(supplier, DragonTypes.ICE, "alpine", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(ICEBERG = make(supplier, DragonTypes.ICE, "iceberg", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(SNOW = make(supplier, DragonTypes.ICE, "snow", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(ALPINE = make(supplier, DragonTypes.ICE, "alpine", DragonProjectiles.ICE_BALL));
+        variants.add(ICEBERG = make(supplier, DragonTypes.ICE, "iceberg", DragonProjectiles.ICE_BALL));
+        variants.add(FROST = make(supplier, DragonTypes.ICE, "frost", DragonProjectiles.ICE_BALL));
         variants.add(STARLIGHT = make(supplier, DragonTypes.MOONLIGHT, "starlight", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ECLIPSE = make(supplier, DragonTypes.MOONLIGHT, "eclipse", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(CONSTELLATION = make(supplier, DragonTypes.MOONLIGHT, "constellation", DragonProjectiles.DRAGON_FIREBALL));
@@ -185,9 +185,9 @@ public class DragonVariants {
         variants.add(TERRA_VALLEY = make(supplier, DragonTypes.TERRA, "valley", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(TERRA_MESA = make(supplier, DragonTypes.TERRA, "mesa", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(TERRA_CRYSTALLINE = make(supplier, DragonTypes.TERRA, "crystalline", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(WATER_POND = make(supplier, DragonTypes.WATER, "pond", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(WATER_TIDAL = make(supplier, DragonTypes.WATER, "tidal", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(WATER_BRINE = make(supplier, DragonTypes.WATER, "brine", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(WATER_POND = make(supplier, DragonTypes.WATER, "pond", DragonProjectiles.WATER_BALL));
+        variants.add(WATER_TIDAL = make(supplier, DragonTypes.WATER, "tidal", DragonProjectiles.WATER_BALL));
+        variants.add(WATER_BRINE = make(supplier, DragonTypes.WATER, "brine", DragonProjectiles.WATER_BALL));
         variants.add(WITHER = make(supplier, DragonTypes.WITHER, "wither", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ZOMBIE_DROWNED = make(supplier, DragonTypes.ZOMBIE, "drowned", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ZOMBIE_HUSK = make(supplier, DragonTypes.ZOMBIE, "husk", DragonProjectiles.DRAGON_FIREBALL));

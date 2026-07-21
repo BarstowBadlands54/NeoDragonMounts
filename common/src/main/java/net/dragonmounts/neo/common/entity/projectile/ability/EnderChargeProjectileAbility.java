@@ -1,7 +1,7 @@
 package net.dragonmounts.neo.common.entity.projectile.ability;
 
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.entity.projectile.DragonChargeEntity;
+import net.dragonmounts.neo.common.entity.projectile.entity.DragonChargeEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

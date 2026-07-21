@@ -8,6 +8,10 @@ public final class DragonProjectiles {
             new FireballProjectileAbility(/*hold*/ 20, /*cooldown*/ 30, /*explosionPower*/ 5);
     public static final DragonProjectileAbility DRAGON_FIREBALL =
             new FireballProjectileAbility(/*hold*/ 20, /*cooldown*/ 30, /*explosionPower*/ 3);
+    public static final DragonProjectileAbility ICE_BALL =
+            new IceballProjectileAbility(/*hold*/ 20, /*cooldown*/ 30, /*explosionPower*/ 3);
+    public static final DragonProjectileAbility WATER_BALL =
+            new WaterballProjectileAbility(/*hold*/ 20, /*cooldown*/ 30, /*explosionPower*/ 3);
     public static final DragonProjectileAbility ENDER_CHARGE =
             new EnderChargeProjectileAbility(/*hold*/ 15, /*cooldown*/ 30);
 

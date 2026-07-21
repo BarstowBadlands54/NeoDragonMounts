@@ -823,7 +823,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public boolean canJump() {
-        return this.onGround() && this.isSaddled();
+        return this.onGround();
     }
 
     @Override

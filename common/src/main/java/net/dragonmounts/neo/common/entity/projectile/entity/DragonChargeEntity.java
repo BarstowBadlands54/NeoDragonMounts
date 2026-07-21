@@ -1,4 +1,4 @@
-package net.dragonmounts.neo.common.entity.projectile;
+package net.dragonmounts.neo.common.entity.projectile.entity;
 
 import net.dragonmounts.neo.common.init.DMEntities;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +16,7 @@ public class DragonChargeEntity extends DragonFireball {
     }
 
     public DragonChargeEntity(Level level, LivingEntity owner, Vec3 movement) {
-        super(DMEntities.DRAGON_CHARGE.cast(), level);   // OUR entity type, so onHit runs
+        super(DMEntities.DRAGON_END_CHARGE.cast(), level);   // OUR entity type, so onHit runs
         this.setOwner(owner);
         this.setRot(owner.getYRot(), owner.getXRot());
         this.setPos(owner.getX(), owner.getEyeY(), owner.getZ());

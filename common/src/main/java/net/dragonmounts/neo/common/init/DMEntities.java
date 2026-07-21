@@ -3,9 +3,10 @@ package net.dragonmounts.neo.common.init;
 import net.dragonmounts.neo.common.entity.breath.BreathNodeEntity;
 import net.dragonmounts.neo.common.entity.dragon.HatchableDragonEggEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.entity.projectile.DragonChargeEntity;
+import net.dragonmounts.neo.common.entity.projectile.entity.DragonChargeEntity;
+import net.dragonmounts.neo.common.entity.projectile.entity.DragonIceballEntity;
+import net.dragonmounts.neo.common.entity.projectile.entity.DragonWaterballEntity;
 import net.dragonmounts.neo.compat.registry.EntityHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 
 import static net.dragonmounts.neo.compat.registry.EntityHolder.registerEntity;
@@ -32,10 +33,22 @@ public class DMEntities {
             null,
             builder -> builder.sized(3.0F, 2.5F).fireImmune()
     );
-    public static final EntityHolder<DragonChargeEntity> DRAGON_CHARGE = registerEntity(
-            "dragon_charge",
+    public static final EntityHolder<DragonChargeEntity> DRAGON_END_CHARGE = registerEntity(
+            "dragon_end_charge",
             MobCategory.MISC,
             DragonChargeEntity::new,
+            builder -> builder.sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
+    );
+    public static final EntityHolder<DragonIceballEntity> DRAGON_ICE_CHARGE = registerEntity(
+            "dragon_ice_charge",
+            MobCategory.MISC,
+            DragonIceballEntity::new,
+            builder -> builder.sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
+    );
+    public static final EntityHolder<DragonWaterballEntity> DRAGON_WATER_CHARGE = registerEntity(
+            "dragon_water_charge",
+            MobCategory.MISC,
+            DragonWaterballEntity::new,
             builder -> builder.sized(0.3125F, 0.3125F).clientTrackingRange(4).updateInterval(10)
     );
 

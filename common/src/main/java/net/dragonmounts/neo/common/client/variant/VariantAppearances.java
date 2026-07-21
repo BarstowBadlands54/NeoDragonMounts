@@ -49,7 +49,7 @@ public class VariantAppearances {
     public static final VariantAppearance FOREST_NATURE;
     public static final VariantAppearance FOREST_WARM;
     public static final VariantAppearance ICE_ALPINE;
-    public static final VariantAppearance ICE_SNOW;
+    public static final VariantAppearance ICE_FROST;
     public static final VariantAppearance ICE_ICEBERG;
     public static final VariantAppearance MOONLIGHT_STARLIGHT;
     public static final VariantAppearance MOONLIGHT_CONSTELLATION;
@@ -147,7 +147,7 @@ public class VariantAppearances {
         var builder = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY);
         ICE_ALPINE = builder.build(makeId("ice/alpine"));
-        ICE_SNOW = builder.build(makeId("ice/snow"));
+        ICE_FROST = builder.build(makeId("ice/snow"));
         ICE_ICEBERG = builder.build(makeId("ice/iceberg"));
     }
 
@@ -257,7 +257,7 @@ public class VariantAppearances {
             case "warm" -> FOREST_WARM;
             case "alpine" -> ICE_ALPINE;
             case "iceberg" -> ICE_ICEBERG;
-            case "snow" -> ICE_SNOW;
+            case "frost" -> ICE_FROST;
             case "starlight" -> MOONLIGHT_STARLIGHT;
             case "constellation" -> MOONLIGHT_CONSTELLATION;
             case "eclipse" -> MOONLIGHT_ECLIPSE;

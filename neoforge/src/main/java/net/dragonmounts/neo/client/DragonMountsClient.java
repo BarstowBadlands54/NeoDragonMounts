@@ -11,6 +11,9 @@ import net.dragonmounts.neo.common.client.renderer.block.DragonCoreRenderer;
 import net.dragonmounts.neo.common.client.renderer.block.DragonHeadRenderer;
 import net.dragonmounts.neo.common.client.renderer.dragon.DragonRenderer;
 import net.dragonmounts.neo.common.client.renderer.egg.DragonEggRenderer;
+import net.dragonmounts.neo.common.client.renderer.projectile.DragonSnowballRenderer;
+import net.dragonmounts.neo.common.client.renderer.projectile.DragonWaterConduitRenderer;
+import net.dragonmounts.neo.common.entity.projectile.entity.DragonIceballEntity;
 import net.dragonmounts.neo.common.init.*;
 import net.dragonmounts.neo.common.item.DragonHeadItem;
 import net.dragonmounts.neo.common.item.DragonScaleBowItem;
@@ -141,7 +144,9 @@ public class DragonMountsClient {
         event.registerBlockEntityRenderer(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
         event.registerEntityRenderer(DMEntities.HATCHABLE_DRAGON_EGG.get(), DragonEggRenderer::new);
         event.registerEntityRenderer(DMEntities.TAMEABLE_DRAGON.get(), DragonRenderer::new);
-        event.registerEntityRenderer(DMEntities.DRAGON_CHARGE.get(), DragonFireballRenderer::new);
+        event.registerEntityRenderer(DMEntities.DRAGON_END_CHARGE.get(), DragonFireballRenderer::new);
+        event.registerEntityRenderer(DMEntities.DRAGON_WATER_CHARGE.get(), DragonWaterConduitRenderer::new);
+        event.registerEntityRenderer(DMEntities.DRAGON_ICE_CHARGE.get(), DragonSnowballRenderer::new);
     }
 
     static void registerShaders(RegisterShadersEvent event) {
