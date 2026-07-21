@@ -391,10 +391,18 @@ public class ServerDragonEntity extends TameableDragonEntity {
      * - enough successful rides -> tamed.
      */
     private void tickBronco() {
+        System.out.println("tickBronco");
+
         if (this.level().isClientSide) return;
 
         // The player clinging on during a break-in (untamed dragon).
         Player rider = this.getBreakInRider();
+        System.out.println(
+                "rider=" + rider +
+                        " tame=" + isTame() +
+                        " broken=" + isBreakInTrusted() +
+                        " rideTicks=" + rideTicks
+        );
         if (rider == null || (this.isBreakInTrusted() && isTame())) {
             this.rideTicks = 0;
             return;
@@ -598,7 +606,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
 
         // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
-        if (!this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
+        if (this.isTame() && !this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
             if (this.isSleeping()) {
                 this.setSleeping(false); // wake it up first; player has to click again to mount
@@ -615,9 +623,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
             return InteractionResult.SUCCESS;
         }
 
-        if (isTrustingAnyPlayer()) {
-            return InteractionResult.SUCCESS;
-        } else if (!isOwner) {
+        boolean hasAccess = isOwner || this.isTrustingAnyPlayer();
+
+        if (!hasAccess) {
             return InteractionResult.PASS;
         }
 

@@ -409,7 +409,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
      */
     @Nullable
     public Player getBreakInRider() {
-        return this.getControllingPassenger() instanceof Player p ? p : null;
+        return this.getFirstPassenger() instanceof Player p ? p : null;
     }
 
     @Override
