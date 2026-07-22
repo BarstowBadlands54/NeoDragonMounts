@@ -6,8 +6,8 @@
   "description": "${description}",
   "authors": [],
   "contact": {
-    "sources": "https://github.com/DragonMounts-Team/NeoDragonMounts",
-    "issues": "https://github.com/DragonMounts-Team/NeoDragonMounts/issues"
+    "sources": "https://github.com/BarstowBadlands54/NeoDragonMounts",
+    "issues": "https://github.com/BarstowBadlands54/NeoDragonMounts/issues"
   },
   "license": "GNU GPLv3",
   "accessWidener": "neodragonmounts.accesswidener",
@@ -41,7 +41,7 @@
     "modmenu": {
       "links": {
         "modmenu.discord": "https://discord.gg/Ewm8aTTJ3K",
-        "modmenu.github_releases": "https://github.com/DragonMounts-Team/NeoDragonMounts/releases"
+        "modmenu.github_releases": "https://github.com/BarstowBadlands54/NeoDragonMounts/releases"
       },
       "update_checker": false
     }

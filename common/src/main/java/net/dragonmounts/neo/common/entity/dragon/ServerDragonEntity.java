@@ -190,7 +190,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (tag.contains(DragonVariant.DATA_PARAMETER_KEY)) {
             this.setVariant(DragonVariant.REGISTRY.get(tryParse(tag.getString(DragonVariant.DATA_PARAMETER_KEY))));
         } else if (tag.contains(DragonType.DATA_PARAMETER_KEY)) {
-            this.setVariant(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_FEMALE, true));
+            this.setVariant(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_JEAN, true));
         } else {
             this.applyType(this.getDragonType());
         }
@@ -391,18 +391,10 @@ public class ServerDragonEntity extends TameableDragonEntity {
      * - enough successful rides -> tamed.
      */
     private void tickBronco() {
-        System.out.println("tickBronco");
-
         if (this.level().isClientSide) return;
 
         // The player clinging on during a break-in (untamed dragon).
         Player rider = this.getBreakInRider();
-        System.out.println(
-                "rider=" + rider +
-                        " tame=" + isTame() +
-                        " broken=" + isBreakInTrusted() +
-                        " rideTicks=" + rideTicks
-        );
         if (rider == null || (this.isBreakInTrusted() && isTame())) {
             this.rideTicks = 0;
             return;

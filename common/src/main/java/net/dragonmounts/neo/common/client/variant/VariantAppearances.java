@@ -38,9 +38,9 @@ public class VariantAppearances {
     public static final VariantAppearance ENCHANTED_ENCHANTING;
     public static final VariantAppearance ENCHANTED_SHIMMER;
     public static final VariantAppearance ENCHANTED_SPARKLING;
-    public static final VariantAppearance ENDER_FEMALE;
-    public static final VariantAppearance ENDER_MALE;
-    public static final VariantAppearance ENDER_RARE;
+    public static final VariantAppearance ENDER_JEAN;
+    public static final VariantAppearance ENDER_JOHN;
+    public static final VariantAppearance ENDER_SHADOW;
     public static final VariantAppearance FIRE_BLAZE;
     public static final VariantAppearance FIRE_FIRE;
     public static final VariantAppearance FIRE_BLUE_FIRE;
@@ -73,12 +73,12 @@ public class VariantAppearances {
     public static final VariantAppearance WATER_POND;
     public static final VariantAppearance WATER_TIDAL;
     public static final VariantAppearance WITHER;
-    public static final VariantAppearance ZOMBIE_NORMAL;
+    public static final VariantAppearance ZOMBIE_ZOMBIE;
     public static final VariantAppearance ZOMBIE_DROWNED;
     public static final VariantAppearance ZOMBIE_HUSK;
-    public static final VariantAppearance SCULK_WILD;
-    public static final VariantAppearance SCULK_WMUTANT;
-    public static final VariantAppearance SCULK_HOLLOWED;
+    public static final VariantAppearance SCULK_AMETHYST;
+    public static final VariantAppearance SCULK_BETA;
+    public static final VariantAppearance SCULK_WARDEN;
     public static final VariantAppearance LIGHT_FALLEN;
     public static final VariantAppearance LIGHT_PRISM;
     public static final VariantAppearance LIGHT_RADIANT;
@@ -122,9 +122,9 @@ public class VariantAppearances {
     static {
         var builder = builder()
                 .withBreath(DMParticleSprites.ENDER_BREATH, EnderBreathParticle.FACTORY);
-        ENDER_FEMALE = builder.build(makeId("ender/female"));
-        ENDER_MALE = builder.build(makeId("ender/male"));
-        ENDER_RARE = builder.build(makeId("ender/rare"));
+        ENDER_JEAN = builder.build(makeId("ender/jean"));
+        ENDER_JOHN = builder.build(makeId("ender/john"));
+        ENDER_SHADOW = builder.build(makeId("ender/shadow"));
     }
 
     static {
@@ -147,7 +147,7 @@ public class VariantAppearances {
         var builder = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY);
         ICE_ALPINE = builder.build(makeId("ice/alpine"));
-        ICE_FROST = builder.build(makeId("ice/snow"));
+        ICE_FROST = builder.build(makeId("ice/frost"));
         ICE_ICEBERG = builder.build(makeId("ice/iceberg"));
     }
 
@@ -205,11 +205,11 @@ public class VariantAppearances {
     static {
         WITHER = builder()
                 .withBreath(DMParticleSprites.WITHER_BREATH)
-                .build(makeId("wither"));
+                .build(makeId("wither/wither"));
     }
 
     static {
-        ZOMBIE_NORMAL = builder()
+        ZOMBIE_ZOMBIE = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
                 .build(makeId("zombie/zombie"));
         ZOMBIE_DROWNED = builder()
@@ -222,9 +222,9 @@ public class VariantAppearances {
 
     static {
         var builder = builder().setArmorCategory("sculk");
-        SCULK_WILD = builder.build(makeId("sculk/wild_type"));
-        SCULK_WMUTANT = builder.build(makeId("sculk/mutant"));
-        SCULK_HOLLOWED = builder.build(makeId("sculk/hollowed"));
+        SCULK_AMETHYST = builder.build(makeId("sculk/amethyst"));
+        SCULK_BETA = builder.build(makeId("sculk/beta"));
+        SCULK_WARDEN = builder.build(makeId("sculk/warden"));
     }
 
     static {
@@ -245,9 +245,9 @@ public class VariantAppearances {
             case "enchanting" -> ENCHANTED_ENCHANTING;
             case "shimmer" -> ENCHANTED_SHIMMER;
             case "sparkling" -> ENCHANTED_SPARKLING;
-            case "ender_female" -> ENDER_FEMALE;
-            case "ender_male" -> ENDER_MALE;
-            case "ender_rare" -> ENDER_RARE;
+            case "ender_jean" -> ENDER_JEAN;
+            case "ender_john" -> ENDER_JOHN;
+            case "ender_shadow" -> ENDER_SHADOW;
             case "blaze" -> FIRE_BLAZE;
             case "fire" -> FIRE_FIRE;
             case "blue_fire" -> FIRE_BLUE_FIRE;
@@ -264,9 +264,9 @@ public class VariantAppearances {
             case "magma" -> NETHER_MAGMA;
             case "volcanic" -> NETHER_VOLCANIC;
             case "soul_fire" -> NETHER_SOUL_FIRE;
-            case "wild_sculk" -> SCULK_WILD;
-            case "mutant_sculk" -> SCULK_WMUTANT;
-            case "hollowed" -> SCULK_HOLLOWED;
+            case "amethyst" -> SCULK_AMETHYST;
+            case "beta" -> SCULK_BETA;
+            case "warden" -> SCULK_WARDEN;
             case "skeleton" -> SKELETON_SKELETON;
             case "stray" -> SKELETON_STRAY;
             case "bogged" -> SKELETON_BOGGED;
@@ -282,7 +282,7 @@ public class VariantAppearances {
             case "tidal" -> WATER_TIDAL;
             case "pond" -> WATER_POND;
             case "brine" -> WATER_BRINE;
-            case "zombie" -> ZOMBIE_NORMAL;
+            case "zombie" -> ZOMBIE_ZOMBIE;
             case "drowned" -> ZOMBIE_DROWNED;
             case "husk" -> ZOMBIE_HUSK;
             case "wither" -> WITHER;

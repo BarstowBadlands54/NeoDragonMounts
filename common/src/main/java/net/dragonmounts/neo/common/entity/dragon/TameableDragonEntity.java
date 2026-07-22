@@ -294,7 +294,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         builder.define(DATA_FLIGHT_RANK, 0);
         builder.define(DATA_SADDLE_ITEM, ItemStack.EMPTY);
         builder.define(DATA_CHEST_ITEM, ItemStack.EMPTY);
-        builder.define(DATA_DRAGON_VARIANT, DragonVariants.ENDER_FEMALE);
+        builder.define(DATA_DRAGON_VARIANT, DragonVariants.ENDER_JEAN);
     }
 
     @Override

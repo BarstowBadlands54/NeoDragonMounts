@@ -14,7 +14,7 @@ public class DragonHeadBlockGeoModel extends GeoModel<DragonHeadBlockEntity> {
     private static final ResourceLocation ANIMATIONS = makeId("animations/entity/dragon/dragonmounts2.dragon.animation.json");
 
     private static DragonVariant variantOf(DragonHeadBlockEntity be) {
-        return be.getBlockState().getBlock() instanceof DragonHeadBlock head ? head.variant : DragonVariants.ENDER_FEMALE;
+        return be.getBlockState().getBlock() instanceof DragonHeadBlock head ? head.variant : DragonVariants.ENDER_JEAN;
     }
 
     @Override

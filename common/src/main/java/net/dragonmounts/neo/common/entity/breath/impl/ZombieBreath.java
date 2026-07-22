@@ -36,7 +36,7 @@ public class ZombieBreath extends DragonBreath {
 
     @Override
     public SoundEvent getLoopSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_LOOP_ICE;
+        return null;
     }
 
     @Override

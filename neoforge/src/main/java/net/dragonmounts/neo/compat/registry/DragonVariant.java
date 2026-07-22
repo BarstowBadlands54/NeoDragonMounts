@@ -37,14 +37,14 @@ public class DragonVariant implements DragonTypified {
     public static final EntityDataSerializer<DragonVariant> SERIALIZER;
 
     public static DragonVariant draw(DragonType type, RandomSource random) {
-        return type.variants.draw(random, DragonVariants.ENDER_FEMALE, true);
+        return type.variants.draw(random, DragonVariants.ENDER_JEAN, true);
     }
 
     public static DragonVariant draw(DragonType type, RandomSource random, String current) {
-        if (current.isEmpty()) return type.variants.draw(random, DragonVariants.ENDER_FEMALE, true);
+        if (current.isEmpty()) return type.variants.draw(random, DragonVariants.ENDER_JEAN, true);
         var variant = DragonVariant.REGISTRY.getOptional(ResourceLocation.tryParse(current)).orElse(null);
         return variant == null
-                ? type.variants.draw(random, DragonVariants.ENDER_FEMALE, true)
+                ? type.variants.draw(random, DragonVariants.ENDER_JEAN, true)
                 : type.variants.draw(random, variant, false);
     }
 

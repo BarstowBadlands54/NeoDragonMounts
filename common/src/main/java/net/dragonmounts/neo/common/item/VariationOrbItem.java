@@ -57,10 +57,10 @@ public class VariationOrbItem extends Item {
         BlockState neo;
         if (block == Blocks.DRAGON_HEAD) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
-            neo = draw(level.random, DragonVariants.ENDER_FEMALE).head.standing.defaultBlockState().setValue(ROTATION_16, old.getValue(ROTATION_16));
+            neo = draw(level.random, DragonVariants.ENDER_JEAN).head.standing.defaultBlockState().setValue(ROTATION_16, old.getValue(ROTATION_16));
         } else if (block == Blocks.DRAGON_WALL_HEAD) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
-            neo = draw(level.random, DragonVariants.ENDER_FEMALE).head.wall.defaultBlockState().setValue(HORIZONTAL_FACING, old.getValue(HORIZONTAL_FACING));
+            neo = draw(level.random, DragonVariants.ENDER_JEAN).head.wall.defaultBlockState().setValue(HORIZONTAL_FACING, old.getValue(HORIZONTAL_FACING));
         } else if (block instanceof DragonHeadBlock head) {
             if (level.isClientSide) return InteractionResult.SUCCESS;
             neo = head.isOnWall
