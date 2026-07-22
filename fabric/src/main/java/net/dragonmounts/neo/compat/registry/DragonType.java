@@ -33,6 +33,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -82,6 +83,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
+    private final Set<Holder<MobEffect>> effectImmunities;
     private final Set<Block> blocks;
     private final Set<ResourceKey<Biome>> biomes;
     private ResourceKey<LootTable> lootTable;
@@ -93,6 +95,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.style = Style.EMPTY.withColor(TextColor.fromRgb(this.color));
         this.attributes = builder.attributes.build();
         this.immunities = builder.immunities.build();
+        this.effectImmunities = builder.effectImmunities.build();
         this.blocks = builder.blocks.build();
         this.biomes = builder.biomes.build();
         this.sneezeParticle = builder.sneezeParticle;
@@ -245,6 +248,10 @@ public class DragonType implements TooltipProvider, DragonTypified {
     @Override
     public final DragonType getDragonType() {
         return this;
+    }
+
+    public boolean isImmuneTo(Holder<MobEffect> effect) {
+        return this.effectImmunities.contains(effect);
     }
 
     public static <T extends LivingEntity & Mutable> void convertByLightning(T entity, DragonType type) {

@@ -50,7 +50,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -82,7 +81,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
-    private final Set<Holder<MobEffect>> effectImmunities = new HashSet<>();
+    private final Set<Holder<MobEffect>> effectImmunities;
     private final Set<Block> blocks;
     private final Set<ResourceKey<Biome>> biomes;
     private ResourceKey<LootTable> lootTable;
@@ -97,6 +96,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.style = Style.EMPTY.withColor(TextColor.fromRgb(this.color));
         this.attributes = builder.attributes.build();
         this.immunities = builder.immunities.build();
+        this.effectImmunities = builder.effectImmunities.build();
         this.blocks = builder.blocks.build();
         this.biomes = builder.biomes.build();
         this.sneezeParticle = builder.sneezeParticle;
