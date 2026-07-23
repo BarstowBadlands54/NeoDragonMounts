@@ -30,11 +30,11 @@ public class DragonTackLayer extends GeoRenderLayer<TameableDragonEntity> {
         if (dragon.isInvisible() || dragon.deathTime > 0) return;
 
         if (dragon.isSaddled()) {
-            renderBoneWithTexture(bakedModel, "body.saddle", SADDLE_TEX,
+            renderBoneWithTexture(bakedModel, "saddle", SADDLE_TEX,
                     poseStack, dragon, bufferSource, partialTick, packedLight);
         }
         if (dragon.hasChest()) {
-            renderBoneWithTexture(bakedModel, "body.chest", CHEST_TEX,
+            renderBoneWithTexture(bakedModel, "chest", CHEST_TEX,
                     poseStack, dragon, bufferSource, partialTick, packedLight);
         }
     }

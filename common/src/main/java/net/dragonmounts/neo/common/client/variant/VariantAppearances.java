@@ -42,7 +42,7 @@ public class VariantAppearances {
     public static final VariantAppearance ENDER_JOHN;
     public static final VariantAppearance ENDER_SHADOW;
     public static final VariantAppearance FIRE_BLAZE;
-    public static final VariantAppearance FIRE_FIRE;
+    public static final VariantAppearance FIRE_FLAME;
     public static final VariantAppearance FIRE_BLUE_FIRE;
     public static final VariantAppearance FOREST_COLD;
     public static final VariantAppearance FOREST_JUNGLE;
@@ -130,7 +130,7 @@ public class VariantAppearances {
     static {
         var builder = builder();
         FIRE_BLAZE = builder.build(makeId("fire/blaze"));
-        FIRE_FIRE = builder.build(makeId("fire/fire"));
+        FIRE_FLAME = builder.build(makeId("fire/fire"));
         FIRE_BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue_fire"));
     }
 
@@ -235,7 +235,7 @@ public class VariantAppearances {
 
     public static Function<String, VariantAppearance> getBuiltinSupplier() {
         return key -> switch (key) {
-            case "aether" -> AETHER_AETHER;
+            case "aethra" -> AETHER_AETHER;
             case "wind" -> AETHER_WIND;
             case "breeze" -> AETHER_BREEZE;
             case "bloodmoon" -> DARK_BLOODMOON;
@@ -249,7 +249,7 @@ public class VariantAppearances {
             case "ender_john" -> ENDER_JOHN;
             case "ender_shadow" -> ENDER_SHADOW;
             case "blaze" -> FIRE_BLAZE;
-            case "fire" -> FIRE_FIRE;
+            case "flame" -> FIRE_FLAME;
             case "blue_fire" -> FIRE_BLUE_FIRE;
             case "cold" -> FOREST_COLD;
             case "jungle" -> FOREST_JUNGLE;
@@ -264,9 +264,9 @@ public class VariantAppearances {
             case "magma" -> NETHER_MAGMA;
             case "volcanic" -> NETHER_VOLCANIC;
             case "soul_fire" -> NETHER_SOUL_FIRE;
-            case "amethyst" -> SCULK_AMETHYST;
-            case "beta" -> SCULK_BETA;
-            case "warden" -> SCULK_WARDEN;
+            case "sculk_amethyst" -> SCULK_AMETHYST;
+            case "sculk_beta" -> SCULK_BETA;
+            case "sculk_warden" -> SCULK_WARDEN;
             case "skeleton" -> SKELETON_SKELETON;
             case "stray" -> SKELETON_STRAY;
             case "bogged" -> SKELETON_BOGGED;

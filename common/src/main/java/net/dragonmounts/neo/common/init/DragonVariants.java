@@ -23,7 +23,7 @@ import static net.dragonmounts.neo.compat.registry.BlockHolder.registerBlock;
 
 public class DragonVariants {
     public static final ImmutableList<DragonVariant> BUILTIN_VALUES;
-    public static final DragonVariant AETHER;
+    public static final DragonVariant AETHRA;
     public static final DragonVariant WIND;
     public static final DragonVariant BREEZE;
     public static final DragonVariant BLOODMOON;
@@ -41,7 +41,7 @@ public class DragonVariants {
     public static final DragonVariant ENDER_JOHN;
     public static final DragonVariant ENDER_SHADOW;
     public static final DragonVariant BLAZE;
-    public static final DragonVariant FIRE;
+    public static final DragonVariant FLAME;
     public static final DragonVariant BLUE_FIRE;
     public static final DragonVariant NATURE;
     public static final DragonVariant COLD;
@@ -137,7 +137,7 @@ public class DragonVariants {
                 ? VariantAppearances.getBuiltinSupplier()
                 : ignored -> null;
         var variants = ImmutableList.<DragonVariant>builderWithExpectedSize(54);
-        variants.add(AETHER = make(supplier, DragonTypes.AETHER, "aether", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(AETHRA = make(supplier, DragonTypes.AETHER, "aethra", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WIND = make(supplier, DragonTypes.AETHER, "wind", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BREEZE = make(supplier, DragonTypes.AETHER, "breeze", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BLOODMOON = make(supplier, DragonTypes.DARK, "bloodmoon", DragonProjectiles.DRAGON_FIREBALL));
@@ -155,7 +155,7 @@ public class DragonVariants {
         variants.add(ENDER_JOHN = make(supplier, DragonTypes.ENDER, "ender_john", DragonProjectiles.ENDER_CHARGE));
         variants.add(ENDER_SHADOW = make(supplier, DragonTypes.ENDER, "ender_shadow", DragonProjectiles.ENDER_CHARGE));
         variants.add(BLAZE = make(supplier, DragonTypes.FIRE, "blaze", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(FIRE = make(supplier, DragonTypes.FIRE, "fire", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(FLAME = make(supplier, DragonTypes.FIRE, "flame", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BLUE_FIRE = make(supplier, DragonTypes.FIRE, "blue_fire", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(COLD = make(supplier, DragonTypes.FOREST, "cold", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(JUNGLE = make(supplier, DragonTypes.FOREST, "jungle", DragonProjectiles.DRAGON_FIREBALL));
@@ -170,9 +170,9 @@ public class DragonVariants {
         variants.add(MAGMA = make(supplier, DragonTypes.NETHER, "magma", DragonProjectiles.NETHER_FIREBALL));
         variants.add(VOLCANIC = make(supplier, DragonTypes.NETHER, "volcanic", DragonProjectiles.NETHER_FIREBALL));
         variants.add(SOUL_FIRE = make(supplier, DragonTypes.NETHER, "soul_fire", DragonProjectiles.NETHER_FIREBALL));
-        variants.add(AMETHYST_SCULK = make(supplier, DragonTypes.SCULK, "amethyst", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(BETA_SCULK = make(supplier, DragonTypes.SCULK, "beta", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(WARDEN_SCULK = make(supplier, DragonTypes.SCULK, "warden", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(AMETHYST_SCULK = make(supplier, DragonTypes.SCULK, "sculk_amethyst", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(BETA_SCULK = make(supplier, DragonTypes.SCULK, "sculk_beta", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(WARDEN_SCULK = make(supplier, DragonTypes.SCULK, "sculk_warden", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(SKELETON = make(supplier, DragonTypes.SKELETON, "skeleton", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(STRAY = make(supplier, DragonTypes.SKELETON, "stray", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BOGGED = make(supplier, DragonTypes.SKELETON, "bogged", DragonProjectiles.DRAGON_FIREBALL));
