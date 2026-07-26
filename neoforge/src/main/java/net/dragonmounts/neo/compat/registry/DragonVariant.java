@@ -30,7 +30,7 @@ import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class DragonVariant implements DragonTypified {
     public static final String DATA_PARAMETER_KEY = "Variant";
-    public static final ResourceLocation DEFAULT_KEY = makeId("ender_female");
+    public static final ResourceLocation DEFAULT_KEY = makeId("ender_jean");
     public static final DefaultedMappedRegistry<DragonVariant> REGISTRY;
     public static final Codec<DragonVariant> CODEC;
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonVariant> STREAM_CODEC;
