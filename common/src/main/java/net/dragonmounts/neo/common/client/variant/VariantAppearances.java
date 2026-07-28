@@ -130,7 +130,7 @@ public class VariantAppearances {
     static {
         var builder = builder();
         FIRE_BLAZE = builder.build(makeId("fire/blaze"));
-        FIRE_FLAME = builder.build(makeId("fire/fire"));
+        FIRE_FLAME = builder.build(makeId("fire/flame"));
         FIRE_BLUE_FIRE = builder.withBreath(DMParticleSprites.BLUE_FLAME_BREATH).build(makeId("fire/blue_fire"));
     }
 

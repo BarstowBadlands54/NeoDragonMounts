@@ -3,11 +3,7 @@
 	"animations": {
 		"animation.dragonmounts2.dragon.death": {
 			"loop": true,
-			"bones": {
-				"world": {
-					"rotation": [0, 0, "Math.min(Math.sqrt(Math.max(0,q.anim_time*20-0.5)/20*1.6),1)*-90"]
-				}
-			}
+			"animation_length": 1.0833
 		},
 		"animation.dragonmounts2.dragon.idle": {
 			"loop": true,
