@@ -23,7 +23,14 @@ import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class DragonVariant implements DragonTypified {
     public static final String DATA_PARAMETER_KEY = "Variant";
-    public static final ResourceLocation DEFAULT_KEY = makeId("ender_female");
+    /**
+     * Must name a variant that is actually registered: a DefaultedMappedRegistry only captures its
+     * default when that exact key is registered, so a dangling key leaves the fallback null and
+     * REGISTRY.get() returns null for unknown ids instead of degrading gracefully. "ender_female"
+     * was renamed to "ender_jean" and no longer exists, which also left this out of step with the
+     * DATA_DRAGON_VARIANT default in TameableDragonEntity.
+     */
+    public static final ResourceLocation DEFAULT_KEY = makeId("ender_jean");
     public static final DefaultedMappedRegistry<DragonVariant> REGISTRY = Dummy.get();
     public static final Codec<DragonVariant> CODEC = REGISTRY.byNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonVariant> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_VARIANT);

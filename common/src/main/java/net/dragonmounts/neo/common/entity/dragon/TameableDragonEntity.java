@@ -26,6 +26,7 @@ import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -150,6 +151,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public static final String SLEEPING_DATA_PARAMETER_KEY = "Sleeping";
     public static final String BREAK_IN_TRUSTED_PARAMETER_KEY = "BreakInTrust";
     public static final String FLIGHT_RANK_PARAMETER_KEY = "FlightRank";
+    public static final String HOME_PARAMETER_KEY = "Home";
+    /**
+     * Where this dragon calls home, or null if it was never given one. Server-authoritative and
+     * saved with the entity; the flute keeps its own cached copy purely so the button can be
+     * labelled correctly while the dragon is too far away to be tracked by the client.
+     */
+    protected @Nullable GlobalPos home;
     protected DragonType lastType;
     protected EndCrystal nearestCrystal;
     protected DragonLifeStage stage;
@@ -308,6 +316,27 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         } else {
             super.onSyncedDataUpdated(accessor);
         }
+    }
+
+    @Override
+    public void tick() {
+        // DATA_DRAGON_VARIANT defaults to ENDER_JEAN, so a dragon that genuinely *is* ender_jean
+        // never fires a change event for it -- and applyType(), the only thing that installs the
+        // breath weapon and the type's attribute modifiers, hangs off that event.
+        //
+        // Server side: setVariant(ENDER_JEAN) equals the current value, so SynchedEntityData
+        // discards it as a no-op and onSyncedDataUpdated is never called. setDragonType() skips
+        // the call entirely anyway, since ENDER_JEAN's type already matches.
+        // Client side: getNonDefaultValues() omits anything still at its default, so the variant
+        // is left out of the spawn packet and the hook has nothing to fire on.
+        //
+        // Result on both sides: breath stays null, canBreathe() is false, and setBreathing() can
+        // never latch. applyType() is idempotent -- it returns immediately once lastType matches
+        // -- so initialising here costs one reference comparison per tick thereafter.
+        if (this.lastType == null) {
+            this.applyType(this.getDragonType());
+        }
+        super.tick();
     }
 
     @Deprecated
@@ -736,30 +765,116 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         super.setYRot(yRot);
     }
 
+    /**
+     * Heading the rider is asking for, in degrees, derived from the camera yaw plus the
+     * WASD input vector. Forward = camera yaw, left = -90, right = +90, back = 180.
+     * <p>
+     * In Minecraft yaw increases clockwise (viewed from above) and {@code xxa} is +1 for
+     * strafe-LEFT, so the strafe component is negated to map left input to a left turn.
+     *
+     * @return the desired world heading, or the camera yaw when no key is held.
+     */
+    public static float getInputHeading(Player player) {
+        if (player.xxa == 0.0F && player.zza == 0.0F) return player.getYRot();
+        return player.getYRot() + (float) Math.toDegrees(Math.atan2(-player.xxa, player.zza));
+    }
+
+    /**
+     * True while the dragon's body is pinned to the rider's crosshair instead of to its
+     * direction of travel. Movement keys then strafe rather than steer, which is what lets
+     * a rider circle a target while keeping the breath on it.
+     */
+    public boolean isAimLocked() {
+        return this.isBreathing() && this.getControllingPassenger() != null;
+    }
+
+    /**
+     * The direction the breath weapon (and any aimed projectile) should travel.
+     * <p>
+     * This deliberately does <em>not</em> go through {@link #getLookAngle()}: the dragon's own
+     * rotation is smoothed and damped so the body turns believably, which would drop the beam
+     * behind a fast-moving crosshair. Taking the rider's view vector directly means the stream
+     * lands exactly where the player is pointing, and the body catches up over the next few
+     * ticks. Falls back to the dragon's own look when nobody is steering (wild dragons,
+     * bronco rides, AI-driven breath attacks).
+     */
+    public Vec3 getAimVector() {
+        Player driver = this.getControllingPassenger();
+        return driver == null ? this.getLookAngle() : driver.getViewVector(1.0F);
+    }
+
+    /** How fast the body swings onto the rider's crosshair while breathing. */
+    private static final float AIM_TURN_RATE = 0.45F;
+    /** How fast the body swings onto the travel heading while flying. */
+    private static final float AIR_TURN_RATE = 0.20F;
+    /** How fast the body swings onto the travel heading on the ground. */
+    private static final float GROUND_TURN_RATE = 0.15F;
+
+    /**
+     * The body yaw {@link #tickRidden} is about to settle on this tick while aim-locked.
+     * <p>
+     * {@code travelRidden} calls {@link #getRiddenInput} <em>before</em> {@code tickRidden}, but
+     * {@code travel} then rotates that vector by the already-updated yaw. Both sides go through
+     * here so the strafe vector is resolved against the same heading the movement will use,
+     * instead of lagging a tick behind whenever the rider swings the camera hard.
+     */
+    private float nextAimYaw(Player player) {
+        float rotY = this.getYRot();
+        return rotY + Mth.wrapDegrees(player.getYRot() - rotY) * AIM_TURN_RATE;
+    }
+
     @Override
     protected void tickRidden(Player player, Vec3 input) {
         super.tickRidden(player, input);
 
-        var rot = EntityUtil.getRiddenRotation(player);
-        float lookYaw = rot.y;
-
-        // Desired heading = where the player is actually trying to GO, not just where the
-        // camera points. Combine strafe (xxa) + forward/back (zza) into a direction relative
-        // to the look yaw, so pressing A/D/S banks and turns the dragon to face that way
-        // instead of crab-walking sideways/backwards.
-        float targetYaw = lookYaw;
-        if (this.isFlying() && (player.xxa != 0.0F || player.zza != 0.0F)) {
-            // Angle of the input vector relative to "forward". In Minecraft yaw increases
-            // clockwise (viewed from above), and xxa is +1 for strafe-LEFT, so we negate xxa
-            // to map left input -> left (negative) turn. forward=0, left=-90, right=+90, back=180.
-            float inputAngle = (float) Math.toDegrees(Math.atan2(-player.xxa, player.zza));
-            targetYaw = lookYaw + inputAngle;
+        // ---- AIM LOCK ----------------------------------------------------------------
+        // While breathing, the body tracks the crosshair rather than the direction of
+        // travel, so the dragon visibly points along its own beam. Pitch is taken at full
+        // strength (not the damped ride pitch) so the head lines up with the stream.
+        if (this.isAimLocked()) {
+            float rotY = this.nextAimYaw(player);
+            float rotX = this.getXRot();
+            rotX += Mth.wrapDegrees(player.getXRot() - rotX) * AIM_TURN_RATE;
+            this.setRot(rotY, rotX);
+            this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
+            return;
         }
 
+        // ---- STEERING ----------------------------------------------------------------
+        // Desired heading = where the player is actually trying to GO, not just where the
+        // camera points, so pressing A/D/S turns the dragon to face that way instead of
+        // crab-walking sideways/backwards. Applies on the ground as well as in the air.
+        var rot = EntityUtil.getRiddenRotation(player);
+        float targetYaw = getInputHeading(player);
         float rotY = this.getYRot();
-        rotY += Mth.wrapDegrees(targetYaw - rotY) * 0.20F;   // smooth turn toward the heading
+        rotY += Mth.wrapDegrees(targetYaw - rotY) * (this.isFlying() ? AIR_TURN_RATE : GROUND_TURN_RATE);
         this.setRot(rotY, rot.x * 1.5F);
         this.yRotO = this.yBodyRot = this.yHeadRot = rotY;
+    }
+
+    //----------Home----------
+
+    public @Nullable GlobalPos getHomePos() {
+        return this.home;
+    }
+
+    public void setHomePos(@Nullable GlobalPos home) {
+        this.home = home;
+    }
+
+    public boolean hasHomePos() {
+        return this.home != null;
+    }
+
+    /**
+     * True when this dragon has a home it could actually be sent to right now — i.e. one that
+     * exists and sits in the level the dragon is currently standing in. Cross-dimension recall
+     * is deliberately not supported: dragging an entity between levels needs a full
+     * {@code teleportTo(ServerLevel, ...)} and would let a flute pull a dragon out of the
+     * Nether from the Overworld.
+     */
+    public boolean canReturnHome() {
+        return this.home != null && this.level().dimension().equals(this.home.dimension());
     }
 
     public @Nullable DragonProjectileAbility getProjectile() {
@@ -767,34 +882,57 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return p != null ? p : this.getVariant().getDragonType().getProjectile();
     }
 
+    /** Speed multiplier applied while strafing under aim lock, relative to a normal run. */
+    private static final float AIM_STRAFE_SCALE = 0.7F;
+
     @Override
     protected Vec3 getRiddenInput(Player player, Vec3 motion) {
-        if (this.onGround()) {
-            float forward = player.zza;
-            return new Vec3(
-                    player.xxa * 0.5F,
-                    0.0,
-                    forward < 0.0F ? forward * 0.25F : forward
-            );
+        float strafe = player.xxa;
+        float forward = player.zza;
+        boolean moving = strafe != 0.0F || forward != 0.0F;
+        boolean grounded = this.onGround();
+
+        // ---- AIM LOCK ----------------------------------------------------------------
+        // The body is pinned to the crosshair, so WASD can no longer be expressed as pure
+        // forward thrust. Convert the requested world heading into the dragon's local frame
+        // and hand back a real strafe vector: the dragon slides sideways while the mouth
+        // stays on target.
+        if (this.isAimLocked()) {
+            double localX = 0.0;
+            double localZ = 0.0;
+            if (moving) {
+                // moveRelative() rotates this vector by the dragon's yaw, so the local
+                // direction for world heading H is (-sin d, cos d) with d = H - bodyYaw.
+                float delta = Mth.wrapDegrees(getInputHeading(player) - this.nextAimYaw(player)) * MathUtil.TO_RAD_FACTOR;
+                localX = -Mth.sin(delta) * AIM_STRAFE_SCALE;
+                localZ = Mth.cos(delta) * AIM_STRAFE_SCALE;
+            }
+            // Climb/dive is deliberately cut loose from the look pitch here: aiming the
+            // breath at the floor should not fly the dragon into it. Jump/descend still work.
+            double upward = grounded ? 0.0 : player.jumping ? 0.5 : this.isDescending() ? -0.5 : 0.0;
+            return new Vec3(localX, upward, localZ);
         }
-        // Flying: any movement key (W/A/S/D) means "go" — the dragon has already been turned
-        // to face that direction in tickRidden, so we just push FORWARD. No sideways strafe.
+
+        // ---- STEERING ----------------------------------------------------------------
+        // Any movement key means "go": tickRidden has already turned the dragon onto that
+        // heading, so all that is left is forward thrust. Holding only A or D still gives
+        // full speed, which is why the magnitude is the larger of the two axes rather than
+        // the forward axis alone.
+        float thrust = moving ? Math.max(Math.abs(strafe), Math.abs(forward)) : 0.0F;
+        if (grounded) {
+            return new Vec3(0.0, 0.0, thrust);
+        }
         float upward = 0.0F;
-        float forward = 0.0F;
-        boolean moving = player.zza != 0.0F || player.xxa != 0.0F;
         if (moving) {
             // climb/dive component from where the player is looking (pitch)
             float facing = player.getXRot() * MathUtil.TO_RAD_FACTOR;
-            float i = Mth.cos(facing);   // horizontal factor
-            float j = -Mth.sin(facing);  // vertical factor (look up -> climb)
-            // Only apply the pitch-dive when actively moving forward-ish; full magnitude.
-            upward = j;
-            forward = i;
+            upward = -Mth.sin(facing);          // look up -> climb
+            thrust *= Mth.cos(facing);          // horizontal factor
         }
         return new Vec3(
                 0.0,   // no lateral strafe — turning is handled by facing the movement direction
                 player.jumping ? upward + 0.5F : this.isDescending() ? upward - 0.5F : upward,
-                forward
+                thrust
         );
     }
 

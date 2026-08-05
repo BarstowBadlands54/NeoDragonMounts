@@ -19,7 +19,13 @@ public class DragonHeadBlockGeoModel extends GeoModel<DragonHeadBlockEntity> {
 
     @Override
     public ResourceLocation getModelResource(DragonHeadBlockEntity be) {
-        return variantOf(be).type.headGeoModel();
+        var variant = variantOf(be);
+        var appearance = variant.appearance;
+        if (appearance != null) {
+            var override = appearance.getHeadGeoModel();
+            if (override != null) return override;
+        }
+        return variant.type.headGeoModel();
     }
 
     @Override

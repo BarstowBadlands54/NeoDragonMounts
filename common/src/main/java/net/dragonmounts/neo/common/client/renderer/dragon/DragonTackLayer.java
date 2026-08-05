@@ -30,7 +30,11 @@ public class DragonTackLayer extends GeoRenderLayer<TameableDragonEntity> {
         if (dragon.isInvisible() || dragon.deathTime > 0) return;
 
         if (dragon.isSaddled()) {
-            renderBoneWithTexture(bakedModel, "saddle", SADDLE_TEX,
+            // Legacy variants ship their own saddle next to body.png; every other appearance
+            // falls through to the shared one via VariantAppearance's default.
+            var appearance = dragon.getVariant().appearance;
+            renderBoneWithTexture(bakedModel, "saddle",
+                    appearance == null ? SADDLE_TEX : appearance.getSaddleTexture(),
                     poseStack, dragon, bufferSource, partialTick, packedLight);
         }
         if (dragon.hasChest()) {

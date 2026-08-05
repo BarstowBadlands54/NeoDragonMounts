@@ -11,6 +11,11 @@ public class DragonHeadItemGeoModel extends GeoModel<DragonHeadItem> {
 
     @Override
     public ResourceLocation getModelResource(DragonHeadItem item) {
+        var appearance = item.variant.appearance;
+        if (appearance != null) {
+            var override = appearance.getHeadGeoModel();
+            if (override != null) return override;
+        }
         return item.variant.type.headGeoModel();
     }
 

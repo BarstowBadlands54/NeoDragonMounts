@@ -5,6 +5,7 @@ import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.component.FluteSound;
 import net.dragonmounts.neo.common.component.ScoreboardInfo;
 import net.dragonmounts.neo.compat.registry.DragonType;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -33,6 +34,15 @@ public class DMDataComponents {
     public static final DataComponentType<ScoreboardInfo> SCORES = registerComponent(
             "scores",
             builder -> builder.persistent(ScoreboardInfo.CODEC)
+    );
+    /**
+     * The flute's cached copy of its bound dragon's home. The dragon owns the real value; this
+     * exists so {@code FluteScreen} can label its button without the dragon being loaded, which
+     * is exactly the case that matters when the dragon has wandered off.
+     */
+    public static final DataComponentType<GlobalPos> DRAGON_HOME = registerComponent(
+            "dragon_home",
+            builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC)
     );
     public static final DataComponentType<FluteSound> FLUTE_SOUND = registerComponent(
             "flute_sound",

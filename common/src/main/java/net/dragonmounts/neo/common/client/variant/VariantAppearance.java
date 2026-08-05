@@ -20,6 +20,28 @@ public interface VariantAppearance {
     ResourceLocation DEFAULT_SADDLE = makeId(TEXTURES_ROOT + "saddle.png");
     ResourceLocation DEFAULT_DISSOLVE = makeId(TEXTURES_ROOT + "dissolve.png");
 
+    /**
+     * Body geo this specific variant renders with, or null to inherit the breed's.
+     * <p>
+     * Geo used to be resolved purely from {@link net.dragonmounts.neo.compat.registry.DragonType},
+     * which forces every variant of a breed onto the same silhouette. That holds for the modern
+     * variants but not the legacy ones: legacy forest, for instance, shares the forest breed's
+     * type and breath while using the plain body rather than the antlered one.
+     */
+    default @Nullable ResourceLocation getGeoModel() {
+        return null;
+    }
+
+    /** Head-block geo for this variant, or null to inherit the breed's. */
+    default @Nullable ResourceLocation getHeadGeoModel() {
+        return null;
+    }
+
+    /** Saddle overlay texture, so a variant can ship tack that matches its own palette. */
+    default ResourceLocation getSaddleTexture() {
+        return DEFAULT_SADDLE;
+    }
+
     void onReload(EntityModelSet models);
 
     DragonGeoModel getModel();

@@ -51,6 +51,13 @@ public record FluteSound(
                 Optional.of(dragon.getLifeStage())
         ));
         stack.set(DMDataComponents.PLAYER_NAME, player.getName());
+        // Seed the flute's home cache so a freshly bound flute already shows the right button.
+        var home = dragon.getHomePos();
+        if (home == null) {
+            stack.remove(DMDataComponents.DRAGON_HOME);
+        } else {
+            stack.set(DMDataComponents.DRAGON_HOME, home);
+        }
         stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dragon.getDragonType().color, false));
     }
 }

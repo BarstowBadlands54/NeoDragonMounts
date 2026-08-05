@@ -38,10 +38,19 @@ public class BreathNodeEntity extends Entity implements BreathNodeHost {
     }
 
     public BreathNodeEntity(ServerDragonEntity dragon, Vec3 pos) {
+        this(dragon, pos, dragon.getAimVector());
+    }
+
+    /**
+     * @param direction the direction the node should travel. Passed in explicitly rather than
+     *                  read from the dragon's rotation so a ridden dragon can fire along its
+     *                  rider's crosshair while its body is still swinging into line.
+     */
+    public BreathNodeEntity(ServerDragonEntity dragon, Vec3 pos, Vec3 direction) {
         super(DMEntities.DRAGON_BREATH.get(), dragon.level());
         // don't randomise the other properties (size, age) on the server.
         this.node = new BreathNode(dragon.getLifeStage().power, null);
-        this.setDeltaMovement(this.node.getRandomisedStartingMotion(dragon.getLookAngle(), this.random));
+        this.setDeltaMovement(this.node.getRandomisedStartingMotion(direction, this.random));
         this.setPos(pos);
     }
 

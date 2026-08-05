@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
+import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
+
 public class DefaultAppearance implements VariantAppearance {
     private static final Object2ObjectOpenHashMap<ResourceLocation, ResourceLocation> DEFAULT_ARMOR_TEXTURES = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<String, Map<ResourceLocation, ResourceLocation>> ARMOR_TEXTURES = new Object2ObjectOpenHashMap<>();
@@ -42,6 +44,9 @@ public class DefaultAppearance implements VariantAppearance {
     public final RenderType chest;
     public final RenderType saddle;
     public final Map<ResourceLocation, ResourceLocation> armors;
+    public final @Nullable ResourceLocation geoModel;
+    public final @Nullable ResourceLocation headGeoModel;
+    public final ResourceLocation saddleTexture;
     private DragonGeoModel model;
 
     public DefaultAppearance(
@@ -51,16 +56,47 @@ public class DefaultAppearance implements VariantAppearance {
             Map<ResourceLocation, ResourceLocation> armors,
             BreathParticleFactory factory
     ) {
+        this(body, glow, breath, armors, factory, null, null, DEFAULT_SADDLE);
+    }
+
+    public DefaultAppearance(
+            ResourceLocation body,
+            ResourceLocation glow,
+            ResourceLocation breath,
+            Map<ResourceLocation, ResourceLocation> armors,
+            BreathParticleFactory factory,
+            @Nullable ResourceLocation geoModel,
+            @Nullable ResourceLocation headGeoModel,
+            ResourceLocation saddleTexture
+    ) {
         this.factory = factory;
         this.breath = breath;
         this.armors = armors;
         this.body = body;
+        this.geoModel = geoModel;
+        this.headGeoModel = headGeoModel;
+        this.saddleTexture = saddleTexture;
         this.base = RenderType.entityCutoutNoCull(body);
         this.decal = RenderStateAccessor.entityCutoutDecal(body, DEFAULT_DISSOLVE);
         this.glow = RenderType.entityTranslucentEmissive(glow);
         this.glowDecal = RenderStateAccessor.entityTranslucentEmissiveDecal(glow, DEFAULT_DISSOLVE);
         this.chest = RenderType.entityCutoutNoCull(DEFAULT_CHEST);
-        this.saddle = RenderType.entityCutoutNoCull(DEFAULT_SADDLE);
+        this.saddle = RenderType.entityCutoutNoCull(saddleTexture);
+    }
+
+    @Override
+    public @Nullable ResourceLocation getGeoModel() {
+        return this.geoModel;
+    }
+
+    @Override
+    public @Nullable ResourceLocation getHeadGeoModel() {
+        return this.headGeoModel;
+    }
+
+    @Override
+    public ResourceLocation getSaddleTexture() {
+        return this.saddleTexture;
     }
 
     @Override
@@ -123,8 +159,28 @@ public class DefaultAppearance implements VariantAppearance {
         public BreathParticleFactory factory = FlameBreathParticle.FACTORY;
         public ResourceLocation breath = DMParticleSprites.FLAME_BREATH;
         public Map<ResourceLocation, ResourceLocation> armors = Collections.emptyMap();
+        public @Nullable ResourceLocation geoModel = null;
+        public @Nullable ResourceLocation headGeoModel = null;
+        public ResourceLocation saddleTexture = DEFAULT_SADDLE;
 
         public Builder() {
+        }
+
+        /// Mirrors {@link net.dragonmounts.neo.compat.registry.DragonTypeBuilder#model} so a
+        /// variant can pin its own silhouette instead of inheriting the breed's.
+        public Builder withModel(String bodyShape) {
+            this.geoModel = makeId("geo/model/dragonmounts2.dragon." + bodyShape + ".geo.json");
+            return this;
+        }
+
+        public Builder withModel(String bodyShape, String headShape) {
+            this.headGeoModel = makeId("geo/head/dragonmounts2.head_block." + headShape + ".geo.json");
+            return this.withModel(bodyShape);
+        }
+
+        public Builder withSaddle(ResourceLocation saddle) {
+            this.saddleTexture = saddle;
+            return this;
         }
 
         public Builder setArmorCategory(@Nullable String category) {
@@ -150,8 +206,18 @@ public class DefaultAppearance implements VariantAppearance {
             );
         }
 
+        /// Like {@link #build(ResourceLocation)} but also takes the saddle from the same folder,
+        /// for variants that ship their own tack alongside body.png and glow.png.
+        public DefaultAppearance buildWithOwnSaddle(ResourceLocation folder) {
+            String path = folder.getPath();
+            return this.withSaddle(folder.withPath(TEXTURES_ROOT + path + "/saddle.png")).build(folder);
+        }
+
         public DefaultAppearance build(ResourceLocation body, ResourceLocation glow) {
-            return new DefaultAppearance(body, glow, this.breath, this.armors, this.factory);
+            return new DefaultAppearance(
+                    body, glow, this.breath, this.armors, this.factory,
+                    this.geoModel, this.headGeoModel, this.saddleTexture
+            );
         }
     }
 

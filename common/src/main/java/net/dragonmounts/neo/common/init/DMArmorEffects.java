@@ -168,12 +168,12 @@ public class DMArmorEffects {
                 Vec3 pos = player.position();
                 world.addParticle(
                         ParticleTypes.PORTAL,
-                        pos.x + random.nextFloat() - 0.3,
-                        pos.y + random.nextFloat() - 0.3,
-                        pos.z + random.nextFloat() - 0.3,
-                        random.nextFloat() * 2 - 0.15,
-                        random.nextFloat() * 2 - 0.15,
-                        random.nextFloat() * 2 - 0.15
+                        pos.x + random.nextFloat() - 0.5,
+                        pos.y + random.nextFloat() - 0.5,
+                        pos.z + random.nextFloat() - 0.5,
+                        (random.nextFloat() - 0.5) * 0.5,
+                        (random.nextFloat() - 0.5) * 0.5,
+                        (random.nextFloat() - 0.5) * 0.5
                 );
                 return level > 3;
             }

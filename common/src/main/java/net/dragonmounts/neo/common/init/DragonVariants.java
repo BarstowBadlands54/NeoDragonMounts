@@ -78,6 +78,14 @@ public class DragonVariants {
     public static final DragonVariant ZOMBIE_DROWNED;
     public static final DragonVariant ZOMBIE_HUSK;
     public static final DragonVariant ZOMBIE_NORMAL;
+    public static final DragonVariant LEGACY_AETHER;
+    public static final DragonVariant LEGACY_ENDER;
+    public static final DragonVariant LEGACY_FIRE;
+    public static final DragonVariant LEGACY_FOREST;
+    public static final DragonVariant LEGACY_ICE;
+    public static final DragonVariant LEGACY_NETHER;
+    public static final DragonVariant LEGACY_SKELETON;
+    public static final DragonVariant LEGACY_WATER;
 
     static BlockHolder<DragonHeadStandingBlock> registerStandingHead(DragonHead head, String name) {
         return registerBlock(name, props ->
@@ -136,7 +144,7 @@ public class DragonVariants {
         Function<String, VariantAppearance> supplier = PlatformCompat.isClientSide()
                 ? VariantAppearances.getBuiltinSupplier()
                 : ignored -> null;
-        var variants = ImmutableList.<DragonVariant>builderWithExpectedSize(54);
+        var variants = ImmutableList.<DragonVariant>builderWithExpectedSize(63);
         variants.add(AETHRA = make(supplier, DragonTypes.AETHER, "aethra", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(WIND = make(supplier, DragonTypes.AETHER, "wind", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(BREEZE = make(supplier, DragonTypes.AETHER, "breeze", DragonProjectiles.DRAGON_FIREBALL));
@@ -192,6 +200,20 @@ public class DragonVariants {
         variants.add(ZOMBIE_DROWNED = make(supplier, DragonTypes.ZOMBIE, "drowned", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ZOMBIE_HUSK = make(supplier, DragonTypes.ZOMBIE, "husk", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(ZOMBIE_NORMAL = make(supplier, DragonTypes.ZOMBIE, "zombie", DragonProjectiles.DRAGON_FIREBALL));
+
+        // ---- Dragon Mounts 2 legacy breeds -------------------------------------------------
+        // Same breed (type) as their modern counterparts, so they share breath, armour and
+        // habitat; only the appearance differs, and it pins the plain body geo rather than the
+        // breed's. Types with no legacy art (dark, enchanted, light, moonlight, sculk, storm,
+        // sunlight, terra, wither, zombie) simply have no legacy variant.
+        variants.add(LEGACY_AETHER = make(supplier, DragonTypes.AETHER, "legacy_aether", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(LEGACY_ENDER = make(supplier, DragonTypes.ENDER, "legacy_ender", DragonProjectiles.ENDER_CHARGE));
+        variants.add(LEGACY_FIRE = make(supplier, DragonTypes.FIRE, "legacy_fire", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(LEGACY_FOREST = make(supplier, DragonTypes.FOREST, "legacy_forest", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(LEGACY_ICE = make(supplier, DragonTypes.ICE, "legacy_ice", DragonProjectiles.ICE_BALL));
+        variants.add(LEGACY_NETHER = make(supplier, DragonTypes.NETHER, "legacy_nether", DragonProjectiles.NETHER_FIREBALL));
+        variants.add(LEGACY_SKELETON = make(supplier, DragonTypes.SKELETON, "legacy_skeleton", DragonProjectiles.DRAGON_FIREBALL));
+        variants.add(LEGACY_WATER = make(supplier, DragonTypes.WATER, "legacy_water", DragonProjectiles.WATER_BALL));
         BUILTIN_VALUES = variants.build();
     }
 }

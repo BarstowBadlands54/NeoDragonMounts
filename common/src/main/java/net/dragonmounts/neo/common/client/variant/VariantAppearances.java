@@ -83,6 +83,14 @@ public class VariantAppearances {
     public static final VariantAppearance LIGHT_PRISM;
     public static final VariantAppearance LIGHT_RADIANT;
     public static final VariantAppearance LIGHT_SUNSET;
+    public static final VariantAppearance LEGACY_AETHER;
+    public static final VariantAppearance LEGACY_ENDER;
+    public static final VariantAppearance LEGACY_FIRE;
+    public static final VariantAppearance LEGACY_FOREST;
+    public static final VariantAppearance LEGACY_ICE;
+    public static final VariantAppearance LEGACY_NETHER;
+    public static final VariantAppearance LEGACY_SKELETON;
+    public static final VariantAppearance LEGACY_WATER;
 
     static {
         var builder = builder()
@@ -227,6 +235,53 @@ public class VariantAppearances {
         SCULK_WARDEN = builder.build(makeId("sculk/warden"));
     }
 
+
+    /**
+     * Dragon Mounts 2's original breeds. They keep their modern breed's breath and armour, but
+     * pin the plain body geo: the legacy art predates the per-breed silhouettes, so inheriting
+     * the breed's model would stretch these textures over horns and spines they were never
+     * drawn with. Each also ships its own saddle.
+     * <p>
+     * Every entry gets its own builder rather than sharing one, because Builder is mutable and
+     * the blocks above rely on that to carry settings between build() calls.
+     */
+    static final String LEGACY_SHAPE = "normal";
+
+    static {
+        LEGACY_AETHER = builder()
+                .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/aether"));
+        LEGACY_ENDER = builder()
+                .withBreath(DMParticleSprites.ENDER_BREATH, EnderBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/ender"));
+        LEGACY_FIRE = builder()
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/fire"));
+        LEGACY_FOREST = builder()
+                .withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/forest"));
+        LEGACY_ICE = builder()
+                .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/ice"));
+        LEGACY_NETHER = builder()
+                .withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/nether"));
+        LEGACY_SKELETON = builder()
+                .setArmorCategory("skeleton")
+                .withBreath(DMParticleSprites.SOUL_BREATH)
+                .withModel(LEGACY_SHAPE, "skeleton")
+                .buildWithOwnSaddle(makeId("legacy/skeleton"));
+        LEGACY_WATER = builder()
+                .withBreath(DMParticleSprites.WATER_BREATH, WaterBreathParticle.FACTORY)
+                .withModel(LEGACY_SHAPE)
+                .buildWithOwnSaddle(makeId("legacy/water"));
+    }
+
     static {
         registerArmorTextures(null, makeId("textures/entity/equipment/normal_dragon_body"));
         registerArmorTextures("sculk", makeId("textures/entity/equipment/sculk_dragon_body"));
@@ -290,6 +345,14 @@ public class VariantAppearances {
             case "prism" -> LIGHT_PRISM;
             case "radiant" -> LIGHT_RADIANT;
             case "light_sunset" -> LIGHT_SUNSET;
+            case "legacy_aether" -> LEGACY_AETHER;
+            case "legacy_ender" -> LEGACY_ENDER;
+            case "legacy_fire" -> LEGACY_FIRE;
+            case "legacy_forest" -> LEGACY_FOREST;
+            case "legacy_ice" -> LEGACY_ICE;
+            case "legacy_nether" -> LEGACY_NETHER;
+            case "legacy_skeleton" -> LEGACY_SKELETON;
+            case "legacy_water" -> LEGACY_WATER;
             default -> throw new NoSuchElementException(
                     "There is no built-in variant appearance named \"" + key + "\". Please create a custom supplier."
             );

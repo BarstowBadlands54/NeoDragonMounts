@@ -42,6 +42,15 @@ public abstract class DragonBreath {
         return this.dragon.getHeadRelativeOffset(0.0F, -10.0F, 24.0F);
     }
 
+    /**
+     * Direction the stream travels. Defaults to the dragon's aim, which is the rider's
+     * crosshair while ridden and the dragon's own look angle otherwise. Override to give a
+     * breed a spread, an arc, or a fixed muzzle direction.
+     */
+    public Vec3 getAimVector() {
+        return this.dragon.getAimVector();
+    }
+
     public void collide(
             ServerDragonEntity dragon,
             boolean breathing,
@@ -50,7 +59,7 @@ public abstract class DragonBreath {
             Map<LivingEntity, BreathAffectedEntity> affectedEntities
     ) {
         if (breathing) {
-            nodes.add(new BreathNodeEntity(dragon, this.getSpawnPosition()));
+            nodes.add(new BreathNodeEntity(dragon, this.getSpawnPosition(), this.getAimVector()));
         }
         if (nodes.isEmpty()) return;
         var level = (ServerLevel) dragon.level();

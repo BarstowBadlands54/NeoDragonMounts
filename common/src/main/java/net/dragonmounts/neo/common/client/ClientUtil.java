@@ -4,8 +4,10 @@ import net.dragonmounts.neo.common.client.gui.FluteScreen;
 import net.dragonmounts.neo.common.entity.dragon.DragonModelContracts;
 import net.dragonmounts.neo.common.util.Segment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.UUID;
@@ -26,8 +28,8 @@ public class ClientUtil {
         return Minecraft.getInstance().level;
     }
 
-    public static void openFluteScreen(UUID uuid) {
-        Minecraft.getInstance().setScreen(new FluteScreen(uuid));
+    public static void openFluteScreen(UUID uuid, @Nullable GlobalPos home) {
+        Minecraft.getInstance().setScreen(new FluteScreen(uuid, home));
     }
 
     /**

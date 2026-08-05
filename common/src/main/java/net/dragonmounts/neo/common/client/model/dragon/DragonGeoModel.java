@@ -14,9 +14,19 @@ public class DragonGeoModel extends GeoModel<TameableDragonEntity> {
     private static final ResourceLocation ANIMATIONS =
             makeId("animations/entity/dragon/dragonmounts2.dragon.animation.json");
 
+    /**
+     * Variant first, breed second. The breed's geo stays the default so every existing variant
+     * renders exactly as before; only a variant that explicitly pins a model diverges.
+     */
     @Override
     public ResourceLocation getModelResource(TameableDragonEntity dragon) {
-        return dragon.getVariant().getDragonType().geoModel();
+        var variant = dragon.getVariant();
+        var appearance = variant.appearance;
+        if (appearance != null) {
+            var override = appearance.getGeoModel();
+            if (override != null) return override;
+        }
+        return variant.getDragonType().geoModel();
     }
 
     @Override

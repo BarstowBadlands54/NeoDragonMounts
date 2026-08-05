@@ -22,7 +22,9 @@ import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.DragonVariant;
 import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -174,6 +176,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
         tag.putBoolean(BREAK_IN_TRUSTED_PARAMETER_KEY, this.isBreakInTrusted());
         tag.putInt(FLIGHT_RANK_PARAMETER_KEY, this.getFlightRank());
         tag.putInt(SHEARED_DATA_PARAMETER_KEY, this.isSheared() ? this.shearCooldown : 0);
+        if (this.home != null) {
+            GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, this.home)
+                    .resultOrPartial(LOGGER::warn)
+                    .ifPresent(encoded -> tag.put(HOME_PARAMETER_KEY, encoded));
+        }
         var items = this.inventory.saveItems(this.registryAccess());
         if (!items.isEmpty()) {
             tag.put(DragonInventory.DATA_PARAMETER_KEY, items);
@@ -191,9 +198,13 @@ public class ServerDragonEntity extends TameableDragonEntity {
             this.setVariant(DragonVariant.REGISTRY.get(tryParse(tag.getString(DragonVariant.DATA_PARAMETER_KEY))));
         } else if (tag.contains(DragonType.DATA_PARAMETER_KEY)) {
             this.setVariant(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_JEAN, true));
-        } else {
-            this.applyType(this.getDragonType());
         }
+        // Unconditional, and deliberately before super restores Health: setVariant() only reaches
+        // applyType() via a sync change event, which never fires when the saved variant already
+        // equals the synched default (ender_jean). Running it here keeps the health rescale in
+        // applyType() operating on a full-health entity, exactly as it did for every other
+        // variant, instead of proportionally re-scaling the saved value on the first tick.
+        this.applyType(this.getDragonType());
         super.readAdditionalSaveData(tag);
         this.setInSittingPose(this.isOrderedToSit() && this.onGround());
         if (tag.contains(BREAK_IN_TRUSTED_PARAMETER_KEY)) {
@@ -201,6 +212,11 @@ public class ServerDragonEntity extends TameableDragonEntity {
         }
         if (tag.contains(FLIGHT_RANK_PARAMETER_KEY)) {
             this.setFlightRank(tag.getInt(FLIGHT_RANK_PARAMETER_KEY));
+        }
+        if (tag.contains(HOME_PARAMETER_KEY)) {
+            this.home = GlobalPos.CODEC.parse(NbtOps.INSTANCE, tag.get(HOME_PARAMETER_KEY))
+                    .resultOrPartial(LOGGER::warn)
+                    .orElse(null);
         }
         if (!this.firstTick && (this.age != age || stage != this.stage)) {
             ServerNetworkHandler.sendTracking(this, new SyncDragonAgePayload(this.getId(), this.age, this.stage));

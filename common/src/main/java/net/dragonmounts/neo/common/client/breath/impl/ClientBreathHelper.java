@@ -45,7 +45,7 @@ public class ClientBreathHelper extends DragonBreathHelper<ClientDragonEntity> {
              * the beam stopped for a while (tickCount skipped one or more tick)
              */
             var level = dragon.level();
-            var look = dragon.getLookAngle();
+            var look = breath.getAimVector();   // matches the server's node direction
             var motion = dragon.getDeltaMovement();
             double throatX = throat.x, throatY = throat.y, throatZ = throat.z,
                     lookX = look.x, lookY = look.y, lookZ = look.z,
