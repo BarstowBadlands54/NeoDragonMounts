@@ -296,4 +296,9 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.WITHER)
                 .register(WitherType::new, makeId("wither"));
     }
+
+    /// Loading this class is what performs the registration; the body is intentionally empty.
+    /// Called explicitly from each loader's entrypoint so the order is declared rather than
+    /// inherited from whichever other init class happens to touch it first.
+    public static void init() {}
 }

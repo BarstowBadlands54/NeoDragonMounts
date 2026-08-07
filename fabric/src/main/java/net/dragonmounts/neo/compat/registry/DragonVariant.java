@@ -63,7 +63,13 @@ public class DragonVariant implements DragonTypified {
         this.appearance = appearance;
         this.head = factory.apply(this);
         this.projectile = projectile;
-        type.variants.add(this);
+        // Registry.register, not just Manager.add: adding only filed the variant in the type's
+        // local array, so DragonVariant.REGISTRY stayed empty even though the registry itself was
+        // created and handed to the root registry. BuiltInRegistries.bootStrap() then walks every
+        // DefaultedRegistry and resolves its default key, found nothing behind ender_jean, and
+        // dereferenced a null defaultValue. Manager.register does both halves, and mirrors how
+        // DragonType's constructor has always registered itself.
+        type.variants.register(this);
     }
 
     public DragonVariant(DragonType type, ResourceLocation identifier, VariantAppearance appearance,

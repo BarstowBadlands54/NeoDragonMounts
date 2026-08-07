@@ -44,6 +44,8 @@ public class DragonMounts implements ModInitializer, ServerPlayConnectionEvents.
         DMEntities.init();
         DMItems.init();
         DMBlocks.init();
+        DragonTypes.init();      // already pulled in by DMItems; explicit so the order is declared
+        DragonVariants.init();   // was only ever loaded as a side effect of DMBlockEntities
         DMBlockEntities.init();
         DMScreenHandlers.init();
         DMItemGroups.register(RegistryHandler::registerItemCategory);

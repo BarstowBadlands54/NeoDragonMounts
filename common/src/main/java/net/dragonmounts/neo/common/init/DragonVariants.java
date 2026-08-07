@@ -216,4 +216,9 @@ public class DragonVariants {
         variants.add(LEGACY_WATER = make(supplier, DragonTypes.WATER, "legacy_water", DragonProjectiles.WATER_BALL));
         BUILTIN_VALUES = variants.build();
     }
+
+    /// Loading this class is what performs the registration; the body is intentionally empty.
+    /// Called explicitly from each loader's entrypoint so the order is declared rather than
+    /// inherited from whichever other init class happens to touch it first.
+    public static void init() {}
 }
