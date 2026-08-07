@@ -96,7 +96,7 @@ public class VariantAppearances {
         var builder = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY);
         AETHER_WIND = builder.build(makeId("aether/wind"));
-        AETHER_AETHER = builder.build(makeId("aether/aether"));
+        AETHER_AETHER = builder.build(makeId("aether/aethra"));   // folder is aether/aethra, matching the variant name
         AETHER_BREEZE = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
                 .build(makeId("aether/breeze"));
