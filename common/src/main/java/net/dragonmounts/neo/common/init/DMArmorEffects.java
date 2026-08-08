@@ -380,6 +380,58 @@ public class DMArmorEffects {
         }
     });
 
+    public static final DescribedArmorEffect SKELETON = registerArmorEffect(makeId("skeleton"), new DescribedArmorEffect() {
+        private ArmorEffectTooltip tooltip;
+
+        @Override
+        public boolean activate(ArmorEffectManager manager, Player player, int level) {
+            boolean flag = level > 3;
+            if (flag && !player.level().isClientSide) {
+                addOrResetEffect(player, MobEffects.MOVEMENT_SPEED, 600, 0, true, true, true, 201);
+            }
+            return flag;
+        }
+
+        @Override
+        public ArmorEffectTooltip getClientTooltip() {
+            if (this.tooltip == null) {
+                this.tooltip = new ArmorEffectTooltip(DragonTypes.SKELETON.getName(), new ArmorEffectDescriptor(
+                        Component.translatable("tooltip.armor_effect.neodragonmounts.skeleton"),
+                        null,
+                        TRIGGER_PIECE_4,
+                        this::isLocalActive
+                ));
+            }
+            return this.tooltip;
+        }
+    });
+
+    public static final DescribedArmorEffect WITHER = registerArmorEffect(makeId("wither"), new DescribedArmorEffect() {
+        private ArmorEffectTooltip tooltip;
+
+        @Override
+        public boolean activate(ArmorEffectManager manager, Player player, int level) {
+            boolean flag = level > 3;
+            if (flag && !player.level().isClientSide) {
+                addOrResetEffect(player, MobEffects.DAMAGE_RESISTANCE, 600, 0, true, true, true, 201);
+            }
+            return flag;
+        }
+
+        @Override
+        public ArmorEffectTooltip getClientTooltip() {
+            if (this.tooltip == null) {
+                this.tooltip = new ArmorEffectTooltip(DragonTypes.WITHER.getName(), new ArmorEffectDescriptor(
+                        Component.translatable("tooltip.armor_effect.neodragonmounts.wither"),
+                        null,
+                        TRIGGER_PIECE_4,
+                        this::isLocalActive
+                ));
+            }
+            return this.tooltip;
+        }
+    });
+
     public static final DescribedArmorEffect WATER = registerArmorEffect(makeId("water"), new DescribedArmorEffect() {
         private ArmorEffectTooltip tooltip;
 

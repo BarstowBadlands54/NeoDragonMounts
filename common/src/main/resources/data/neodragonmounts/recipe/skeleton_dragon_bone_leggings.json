@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_bone_leggings",
+  "key": {
+    "X": {
+      "tag": "neodragonmounts:dragon_bones/skeleton"
+    }
+  },
+  "pattern": [
+    "XXX",
+    "X X",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:skeleton_dragon_bone_leggings"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "neodragonmounts:item/equipment/wither/wither_dragon_bone_boots",
+    "layer1": "minecraft:trims/items/boots_trim_iron"
+  }
+}

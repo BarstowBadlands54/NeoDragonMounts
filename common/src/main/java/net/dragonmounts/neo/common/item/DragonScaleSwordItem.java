@@ -16,12 +16,17 @@ public class DragonScaleSwordItem extends SwordItem implements DragonTypified {
     public final DragonType type;
     public final TranslatableContents name;
 
+    /// Defaults to this family's own translation key.
     public DragonScaleSwordItem(DragonType type, int damage, float speed, Properties props) {
+        this(type, TRANSLATION_KEY, damage, speed, props);
+    }
+
+    public DragonScaleSwordItem(DragonType type, String translationKey, int damage, float speed, Properties props) {
         super(type.tier, props
                 .component(DMDataComponents.DRAGON_TYPE, type)
                 .attributes(SwordItem.createAttributes(type.tier, damage, speed)));
         this.type = type;
-        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+        this.name = new TranslatableContents(translationKey + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
 
 

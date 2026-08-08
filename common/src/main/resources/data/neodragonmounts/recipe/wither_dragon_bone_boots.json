@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_bone_boots",
+  "key": {
+    "X": {
+      "tag": "neodragonmounts:dragon_bones/wither"
+    }
+  },
+  "pattern": [
+    "X X",
+    "X X"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:wither_dragon_bone_boots"
+  }
+}

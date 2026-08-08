@@ -20,14 +20,19 @@ public class DragonScaleArmorItem extends ArmorItem implements DragonTypified {
     public final DescribedArmorEffect effect;
     public final TranslatableContents name;
 
-    public DragonScaleArmorItem(DragonType type, DescribedArmorEffect effect, ArmorItem.Type slot, Properties props) {
+    /// Defaults to the "dragon_scale_" family prefix.
+    public DragonScaleArmorItem(DragonType type, DescribedArmorEffect effect, Type slot, Properties props) {
+        this(type, effect, "dragon_scale_", slot, props);
+    }
+
+    public DragonScaleArmorItem(DragonType type, DescribedArmorEffect effect, String keyPrefix, Type slot, Properties props) {
         super(Holder.direct(type.material),
                 slot,
                 props.durability(slot.getDurability(DURABILITY_FACTOR))   // ← durability + implicit stacksTo(1)
                         .component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
         this.effect = effect;
-        this.name = new TranslatableContents(ITEM_TRANSLATION_KEY_PREFIX + "dragon_scale_" + slot.getName() + ".name", null, new Object[]{MutableComponent.create(type.name)});
+        this.name = new TranslatableContents(ITEM_TRANSLATION_KEY_PREFIX + keyPrefix + slot.getName() + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
 
     private static final int DURABILITY_FACTOR = 33;   // diamond-tier; tune per balance

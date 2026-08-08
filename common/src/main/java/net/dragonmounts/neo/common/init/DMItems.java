@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.DispenserBlock;
 
 import java.util.function.Function;
 
+import static net.dragonmounts.neo.common.DragonMountsShared.ITEM_TRANSLATION_KEY_PREFIX;
 import static net.dragonmounts.neo.common.init.DMItemGroups.*;
 import static net.dragonmounts.neo.compat.registry.DragonScaleArmorSuit.makeSuit;
 import static net.dragonmounts.neo.compat.registry.ItemHolder.registerItem;
@@ -138,6 +139,8 @@ public class DMItems {
     public static final ItemHolder<DragonScalesItem> TERRA_DRAGON_SCALES = MISC_TAB.register("terra_dragon_scales", props -> makeDragonScales(DragonTypes.TERRA, props));
     public static final ItemHolder<DragonScalesItem> WATER_DRAGON_SCALES = MISC_TAB.register("water_dragon_scales", props -> makeDragonScales(DragonTypes.WATER, props));
     public static final ItemHolder<DragonScalesItem> ZOMBIE_DRAGON_SCALES = MISC_TAB.register("zombie_dragon_scales", props -> makeDragonScales(DragonTypes.ZOMBIE, props));
+    public static final ItemHolder<DragonScalesItem> SKELETON_DRAGON_BONES = MISC_TAB.register("skeleton_dragon_bones", props -> makeDragonBones(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScalesItem> WITHER_DRAGON_BONES = MISC_TAB.register("wither_dragon_bones", props -> makeDragonBones(DragonTypes.WITHER, props.fireResistant()));
     public static final ItemHolder<DragonScalesItem> DARK_DRAGON_SCALES = MISC_TAB.register("dark_dragon_scales", props -> makeDragonScales(DragonTypes.DARK, props));
     public static final ItemHolder<DragonScalesItem> LIGHT_DRAGON_SCALES = MISC_TAB.register("light_dragon_scales", props -> makeDragonScales(DragonTypes.LIGHT, props));
     // Shears
@@ -320,6 +323,20 @@ public class DMItems {
     public static final ItemHolder<DragonScaleShieldItem> WATER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("water_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.WATER, props));
     public static final ItemHolder<DragonScaleShieldItem> ICE_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("ice_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.ICE, props));
     public static final ItemHolder<DragonScaleShieldItem> FIRE_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("fire_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.FIRE, props));
+    public static final ItemHolder<DragonScaleSwordItem> SKELETON_DRAGON_BONE_SWORD = COMBAT_TAB.register("skeleton_dragon_bone_sword", props -> makeDragonBoneSword(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleShovelItem> SKELETON_DRAGON_BONE_SHOVEL = TOOL_TAB.register("skeleton_dragon_bone_shovel", props -> makeDragonBoneShovel(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScalePickaxeItem> SKELETON_DRAGON_BONE_PICKAXE = TOOL_TAB.register("skeleton_dragon_bone_pickaxe", props -> makeDragonBonePickaxe(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleAxeItem> SKELETON_DRAGON_BONE_AXE = registerAxe("skeleton_dragon_bone_axe", props -> makeDragonBoneAxe(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleHoeItem> SKELETON_DRAGON_BONE_HOE = TOOL_TAB.register("skeleton_dragon_bone_hoe", props -> makeDragonBoneHoe(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleBowItem> SKELETON_DRAGON_BONE_BOW = COMBAT_TAB.register("skeleton_dragon_bone_bow", props -> makeDragonBoneBow(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleShieldItem> SKELETON_DRAGON_BONE_SHIELD = COMBAT_TAB.register("skeleton_dragon_bone_shield", props -> makeDragonBoneShield(DragonTypes.SKELETON, props));
+    public static final ItemHolder<DragonScaleSwordItem> WITHER_DRAGON_BONE_SWORD = COMBAT_TAB.register("wither_dragon_bone_sword", props -> makeDragonBoneSword(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScaleShovelItem> WITHER_DRAGON_BONE_SHOVEL = TOOL_TAB.register("wither_dragon_bone_shovel", props -> makeDragonBoneShovel(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScalePickaxeItem> WITHER_DRAGON_BONE_PICKAXE = TOOL_TAB.register("wither_dragon_bone_pickaxe", props -> makeDragonBonePickaxe(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScaleAxeItem> WITHER_DRAGON_BONE_AXE = registerAxe("wither_dragon_bone_axe", props -> makeDragonBoneAxe(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScaleHoeItem> WITHER_DRAGON_BONE_HOE = TOOL_TAB.register("wither_dragon_bone_hoe", props -> makeDragonBoneHoe(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScaleBowItem> WITHER_DRAGON_BONE_BOW = COMBAT_TAB.register("wither_dragon_bone_bow", props -> makeDragonBoneBow(DragonTypes.WITHER, props));
+    public static final ItemHolder<DragonScaleShieldItem> WITHER_DRAGON_BONE_SHIELD = COMBAT_TAB.register("wither_dragon_bone_shield", props -> makeDragonBoneShield(DragonTypes.WITHER, props));
     public static final ItemHolder<DragonScaleShieldItem> FOREST_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("forest_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.FOREST, props));
     public static final ItemHolder<DragonScaleShieldItem> NETHER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("nether_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.NETHER, props));
     public static final ItemHolder<DragonScaleShieldItem> ENDER_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("ender_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.ENDER, props));
@@ -335,6 +352,26 @@ public class DMItems {
     public static final ItemHolder<DragonScaleShieldItem> DARK_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("dark_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.DARK, props));
     public static final ItemHolder<DragonScaleShieldItem> LIGHT_DRAGON_SCALE_SHIELD = COMBAT_TAB.register("light_dragon_scale_shield", props -> makeDragonScaleShield(DragonTypes.LIGHT, props));
     // Dragon Scale Armors
+    public static final DragonScaleArmorSuit SKELETON_DRAGON_BONE_ARMORS = makeSuit(
+            DragonTypes.SKELETON,
+            DMArmorEffects.SKELETON,
+            COMBAT_TAB,
+            "skeleton_dragon_bone_helmet",
+            "skeleton_dragon_bone_chestplate",
+            "skeleton_dragon_bone_leggings",
+            "skeleton_dragon_bone_boots",
+            DMItems::makeDragonBoneArmor
+    );
+    public static final DragonScaleArmorSuit WITHER_DRAGON_BONE_ARMORS = makeSuit(
+            DragonTypes.WITHER,
+            DMArmorEffects.WITHER,
+            COMBAT_TAB,
+            "wither_dragon_bone_helmet",
+            "wither_dragon_bone_chestplate",
+            "wither_dragon_bone_leggings",
+            "wither_dragon_bone_boots",
+            DMItems::makeDragonBoneArmor
+    );
     public static final DragonScaleArmorSuit AETHER_DRAGON_SCALE_ARMORS = makeSuit(
             DragonTypes.AETHER,
             DMArmorEffects.AETHER,
@@ -613,6 +650,62 @@ public class DMItems {
             props.component(DMDataComponents.ARMOR_EFFECT_SOURCE, suit);
         }
         return new DragonScaleArmorItem(suit.type, suit.effect, slot, props);
+    }
+
+    /// Skeleton and wither gear is bone, not scale, so it reads from its own translation
+    /// family. The item classes are unchanged -- only the key differs -- which keeps these
+    /// two types on the same tiers, armour effects and bindInstance lookups as everything else.
+    private static final String BONE = ITEM_TRANSLATION_KEY_PREFIX + "dragon_bone_";
+
+    static DragonScalesItem makeDragonBones(DragonType type, Properties props) {
+        var item = new DragonScalesItem(type, ITEM_TRANSLATION_KEY_PREFIX + "dragon_bones", props);
+        type.bindInstance(DragonScalesItem.class, item);
+        return item;
+    }
+    static DragonScaleSwordItem makeDragonBoneSword(DragonType type, Properties props) {
+        var item = new DragonScaleSwordItem(type, BONE + "sword", 5, -2.0F, props);
+        type.bindInstance(DragonScaleSwordItem.class, item);
+        return item;
+    }
+    static DragonScaleShovelItem makeDragonBoneShovel(DragonType type, Properties props) {
+        var item = new DragonScaleShovelItem(type, BONE + "shovel", 1.5F, -3.0F, props);
+        type.bindInstance(DragonScaleShovelItem.class, item);
+        return item;
+    }
+    static DragonScalePickaxeItem makeDragonBonePickaxe(DragonType type, Properties props) {
+        var item = new DragonScalePickaxeItem(type, BONE + "pickaxe", 1.0F, -2.8F, props);
+        type.bindInstance(DragonScalePickaxeItem.class, item);
+        return item;
+    }
+    static DragonScaleAxeItem makeDragonBoneAxe(DragonType type, Properties props) {
+        var item = new DragonScaleAxeItem(type, BONE + "axe", 8.0F, -2.8F, props);
+        type.bindInstance(DragonScaleAxeItem.class, item);
+        return item;
+    }
+    static DragonScaleHoeItem makeDragonBoneHoe(DragonType type, Properties props) {
+        float damage = type.tier.getAttackDamageBonus();
+        var item = new DragonScaleHoeItem(type, BONE + "hoe", -damage, damage - 3.0F, props);
+        type.bindInstance(DragonScaleHoeItem.class, item);
+        return item;
+    }
+    static DragonScaleBowItem makeDragonBoneBow(DragonType type, Properties props) {
+        var item = new DragonScaleBowItem(type, BONE + "bow", props);
+        type.bindInstance(DragonScaleBowItem.class, item);
+        return item;
+    }
+    static DragonScaleShieldItem makeDragonBoneShield(DragonType type, Properties props) {
+        var item = new DragonScaleShieldItem(type, BONE + "shield", props);
+        type.bindInstance(DragonScaleShieldItem.class, item);
+        return item;
+    }
+    /// Mirrors makeDragonScaleArmor exactly, differing only in the translation-key prefix.
+    /// Signature must match ArmorSuitInfo.Factory, which hands over the suit rather than
+    /// the type and effect separately.
+    static DragonScaleArmorItem makeDragonBoneArmor(DragonScaleArmorSuit suit, ArmorItem.Type slot, Properties props) {
+        if (suit.effect != null) {
+            props.component(DMDataComponents.ARMOR_EFFECT_SOURCE, suit);
+        }
+        return new DragonScaleArmorItem(suit.type, suit.effect, "dragon_bone_", slot, props);
     }
 
     static DragonScalesItem makeDragonScales(DragonType type, Properties props) {

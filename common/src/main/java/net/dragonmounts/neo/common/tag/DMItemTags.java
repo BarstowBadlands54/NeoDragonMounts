@@ -36,6 +36,12 @@ public interface DMItemTags {
     TagKey<Item> TERRA_DRAGON_SCALES = create("dragon_scales/terra");
     TagKey<Item> WATER_DRAGON_SCALES = create("dragon_scales/water");
     TagKey<Item> ZOMBIE_DRAGON_SCALES = create("dragon_scales/zombie");
+    /// Skeleton and wither dragons shed bone rather than scale, so their crafting and repair
+    /// material lives under its own path. Everything that consumes a type's material goes
+    /// through DragonTypeBuilder#setMaterial, so nothing else needs to know the difference.
+    TagKey<Item> SKELETON_DRAGON_BONES = create("dragon_bones/skeleton");
+    TagKey<Item> WITHER_DRAGON_BONES = create("dragon_bones/wither");
+    TagKey<Item> DRAGON_BONES = create("dragon_bones");
 
     private static TagKey<Item> create(String name) {
         return TagKey.create(Registries.ITEM, makeId(name));

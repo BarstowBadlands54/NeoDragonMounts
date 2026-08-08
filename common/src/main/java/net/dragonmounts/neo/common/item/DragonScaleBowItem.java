@@ -19,12 +19,17 @@ public class DragonScaleBowItem extends BowItem implements DragonTypified {
     public final DragonType type;
     public final TranslatableContents name;
 
+    /// Defaults to this family's own translation key.
     public DragonScaleBowItem(DragonType type, Properties props) {
+        this(type, TRANSLATION_KEY, props);
+    }
+
+    public DragonScaleBowItem(DragonType type, String translationKey, Properties props) {
         super(props.component(DMDataComponents.DRAGON_TYPE, type)
                 .durability(type.tier.getUses() >> 1)
         );
         this.type = type;
-        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+        this.name = new TranslatableContents(translationKey + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
 
     @Override

@@ -275,7 +275,19 @@ public class DragonTypes {
                 .setEggParticle(ParticleTypes.DRIPPING_LAVA)
                 .register(NetherType::new, makeId("nether"));
         //no scale items
-        SKELETON = new DragonTypeBuilder(0xFFFFFF, null, null)
+        // Bone is lighter and less protective than scale: slightly lower defence and a
+        // shorter-lived tier than the scale types, but it keeps a high enchantment value.
+        var boneMaterial = new ArmorMaterialBuilder(50)
+                .setDefense(HELMET, 2)
+                .setDefense(CHESTPLATE, 7)
+                .setDefense(LEGGINGS, 5)
+                .setDefense(BOOTS, 2)
+                .setEnchantmentValue(13)
+                .setToughness(4.0F);
+        var boneTier = new ItemTierBuilder(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 2100, 8.0F, 4.0F)
+                .setEnchantmentValue(13);
+        SKELETON = new DragonTypeBuilder(0xFFFFFF, boneMaterial, boneTier)
+                .setMaterial(DMItemTags.SKELETON_DRAGON_BONES)
                 .model("skeleton", "skeleton")
                 .texture(makeId("textures/entity/dragon/skeleton/normal/body.png"))
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, -15.0D, AttributeModifier.Operation.ADD_VALUE)
@@ -284,7 +296,16 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.WITHER)
                 .addHabitat(Blocks.BONE_BLOCK)
                 .register(SkeletonType::new, makeId("skeleton"));
-        WITHER = new DragonTypeBuilder(0x50260A, null, null)
+        WITHER = new DragonTypeBuilder(0x50260A,
+                new ArmorMaterialBuilder(50)
+                        .setDefense(HELMET, 3)
+                        .setDefense(CHESTPLATE, 8)
+                        .setDefense(LEGGINGS, 6)
+                        .setDefense(BOOTS, 3)
+                        .setEnchantmentValue(13)
+                        .setToughness(5.0F),
+                new ItemTierBuilder(netherite, 2400, 8.0F, 5.0F).setEnchantmentValue(13))
+                .setMaterial(DMItemTags.WITHER_DRAGON_BONES)
                 .model("spiked_horned", "spiked_horned")   // TODO confirm body shape (old WITHER)
                 .texture(makeId("textures/entity/dragon/wither/body.png"))
                 .notConvertible()

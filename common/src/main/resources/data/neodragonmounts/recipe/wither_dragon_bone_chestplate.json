@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_bone_chestplate",
+  "key": {
+    "X": {
+      "tag": "neodragonmounts:dragon_bones/wither"
+    }
+  },
+  "pattern": [
+    "X X",
+    "XXX",
+    "XXX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:wither_dragon_bone_chestplate"
+  }
+}

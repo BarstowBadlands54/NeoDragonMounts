@@ -16,10 +16,15 @@ public class DragonScalesItem extends Item implements DragonTypified {
     public final DragonType type;
     public final TranslatableContents name;
 
+    /// Defaults to this family's own translation key.
     public DragonScalesItem(DragonType type, Properties props) {
+        this(type, TRANSLATION_KEY, props);
+    }
+
+    public DragonScalesItem(DragonType type, String translationKey, Properties props) {
         super(props.component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
-        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+        this.name = new TranslatableContents(translationKey + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
 
 

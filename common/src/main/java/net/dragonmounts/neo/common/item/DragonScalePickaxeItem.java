@@ -17,11 +17,16 @@ public class DragonScalePickaxeItem extends PickaxeItem implements DragonTypifie
     public final DragonType type;
     public final TranslatableContents name;
 
+    /// Defaults to this family's own translation key.
     public DragonScalePickaxeItem(DragonType type, float damage, float speed, Properties props) {
+        this(type, TRANSLATION_KEY, damage, speed, props);
+    }
+
+    public DragonScalePickaxeItem(DragonType type, String translationKey, float damage, float speed, Properties props) {
         super(type.tier, props.component(DMDataComponents.DRAGON_TYPE, type)
                 .attributes(DiggerItem.createAttributes(type.tier, damage, speed)));
         this.type = type;
-        this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
+        this.name = new TranslatableContents(translationKey + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
 
 
