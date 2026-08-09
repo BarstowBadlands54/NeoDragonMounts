@@ -2,5 +2,13 @@
   "parent": "neodragonmounts:item/template_shield",
   "textures": {
     "layer0": "neodragonmounts:item/equipment/sculk/sculk_dragon_scale_shield"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "blocking": 1
+      },
+      "model": "neodragonmounts:item/sculk_dragon_scale_shield_blocking"
+    }
+  ]
 }

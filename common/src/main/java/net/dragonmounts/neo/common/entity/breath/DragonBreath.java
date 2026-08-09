@@ -6,11 +6,17 @@ import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LEVEL;
 
 import java.util.List;
 import java.util.Map;
@@ -78,6 +84,39 @@ public abstract class DragonBreath {
      * @return the updated block hit density
      */
     public abstract BreathAffectedBlock affectBlock(ServerLevel level, long location, BreathAffectedBlock hit);
+
+    /**
+     * Lay down short-lived FLOWING water (level 1) on an empty spot at or near {@code hitPos},
+     * then schedule a fluid tick so vanilla's flowing-fluid logic spreads it and lets it drain.
+     * <p>
+     * Only ever flowing water, never a source: with nothing feeding it the puddle recedes on its
+     * own, so it can't leave a permanent pool behind. This lived in WaterBreath; it is here so
+     * fire breath can melt ice and snow into exactly the same temporary layers.
+     *
+     * @return true if water was placed
+     */
+    protected boolean spreadTemporaryWater(ServerLevel level, BlockPos hitPos) {
+        BlockPos place = findWaterSpot(level, hitPos);
+        if (place == null) return false;
+        level.setBlock(place, Blocks.WATER.defaultBlockState().setValue(LEVEL, 1), 3);
+        // tick it so it starts spreading and draining instead of sitting static
+        level.scheduleTick(place, Fluids.WATER, 5);
+        return true;
+    }
+
+    /// A nearby empty, water-holding position (the hit, the block above, or below), or null.
+    protected @Nullable BlockPos findWaterSpot(ServerLevel level, BlockPos hitPos) {
+        for (BlockPos candidate : new BlockPos[]{hitPos.above(), hitPos, hitPos.below()}) {
+            var state = level.getBlockState(candidate);
+            if (!level.getFluidState(candidate).isEmpty()) continue;
+            if (!state.isAir() && !state.canBeReplaced()) continue;
+            // needs something to rest on, or the puddle just falls forever
+            var below = level.getBlockState(candidate.below());
+            if (below.isFaceSturdy(level, candidate.below(), Direction.UP)
+                    || !below.getFluidState().isEmpty()) return candidate;
+        }
+        return null;
+    }
 
     public boolean canAffect(LivingEntity entity) {
         return !this.dragon.isPassengerOfSameVehicle(entity);

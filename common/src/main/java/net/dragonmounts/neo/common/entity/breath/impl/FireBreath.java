@@ -25,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LAYERS;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT;
 
 public class FireBreath extends DragonBreath {
@@ -43,6 +44,7 @@ public class FireBreath extends DragonBreath {
         var pos = BlockPos.of(location);
         var state = level.getBlockState(pos);
         if (this.litBlock(level, pos, state)) return new BreathAffectedBlock();
+        if (this.meltBlock(level, pos, state, hit)) return new BreathAffectedBlock();
         boolean consume = false;
         boolean disableIgniting = !ServerConfig.INSTANCE.ignitingBreath.get();
         boolean enableSmelting = ServerConfig.INSTANCE.smeltingBreath.get();
@@ -98,6 +100,43 @@ public class FireBreath extends DragonBreath {
             }
         }
         return false;
+    }
+
+    /// Hit density needed before ice or snow gives way. Roughly a second of sustained breath.
+    protected static final float MELT_THRESHOLD = 0.4F;
+
+    /**
+     * Melt ice and snow into the same temporary flowing water the water breath lays down.
+     * <p>
+     * Snow layers thaw one layer at a time so a deep drift takes a moment; everything else goes
+     * in one hit. The water placed is never a source, so the melt leaves puddles that drain
+     * rather than permanently flooding the terrain.
+     *
+     * @return true if something melted, in which case the caller resets the hit density
+     */
+    protected boolean meltBlock(ServerLevel level, BlockPos pos, BlockState state, BreathAffectedBlock hit) {
+        if (!isMeltable(state)) return false;
+        // Reuses the existing fire-breath block switches rather than adding a config entry that
+        // would need mirroring into both loader modules. A server that has turned off both
+        // igniting and smelting has asked for fire breath to leave terrain alone.
+        var config = ServerConfig.INSTANCE;
+        if (!config.ignitingBreath.get() && !config.smeltingBreath.get()) return false;
+        if (hit.getMaxHitDensity() < MELT_THRESHOLD) return false;
+
+        if (state.is(Blocks.SNOW) && state.hasProperty(LAYERS) && state.getValue(LAYERS) > 1) {
+            level.setBlock(pos, state.setValue(LAYERS, state.getValue(LAYERS) - 1), 3);
+        } else {
+            level.removeBlock(pos, false);
+        }
+        // 1501 is the lava-fizz event: hiss plus a puff of steam, which reads as melting
+        level.levelEvent(null, 1501, pos, 0);
+        this.spreadTemporaryWater(level, pos);
+        return true;
+    }
+
+    /// Ice (incl. packed, blue, frosted), snow blocks, snow layers and powder snow.
+    protected static boolean isMeltable(BlockState state) {
+        return state.is(BlockTags.ICE) || state.is(BlockTags.SNOW) || state.is(Blocks.POWDER_SNOW);
     }
 
     protected void smeltBlock(ServerLevel level, BlockPos pos, BlockState state) {

@@ -22,7 +22,8 @@
   "client": [
     "DebugRendererMixin",
     "GuiGraphicsMixin",
-    "LocalPlayerMixin"
+    "LocalPlayerMixin",
+    "ItemPropertiesMixin"
   ],
   "injectors": {
     "defaultRequire": 1
