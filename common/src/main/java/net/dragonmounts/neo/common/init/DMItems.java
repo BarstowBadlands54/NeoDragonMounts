@@ -175,6 +175,7 @@ public class DMItems {
     public static final ItemHolder<DragonAmuletItem> SKELETON_DRAGON_AMULET = registerItem("skeleton_dragon_amulet", props -> makeDragonAmulet(DragonTypes.SKELETON, props));
     public static final ItemHolder<DragonAmuletItem> WITHER_DRAGON_AMULET = registerItem("wither_dragon_amulet", props -> makeDragonAmulet(DragonTypes.WITHER, props));
     public static final ItemHolder<DragonAmuletItem> DARK_DRAGON_AMULET = registerItem("dark_dragon_amulet", props -> makeDragonAmulet(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonAmuletItem> LIGHT_DRAGON_AMULET = registerItem("light_dragon_amulet", props -> makeDragonAmulet(DragonTypes.LIGHT, props));
     // Dragon Essences
     public static final ItemHolder<DragonEssenceItem> FOREST_DRAGON_ESSENCE = registerItem("forest_dragon_essence", props -> makeDragonEssence(DragonTypes.FOREST, props));
     public static final ItemHolder<DragonEssenceItem> FIRE_DRAGON_ESSENCE = registerItem("fire_dragon_essence", props -> makeDragonEssence(DragonTypes.FIRE, props));
@@ -193,6 +194,7 @@ public class DMItems {
     public static final ItemHolder<DragonEssenceItem> SKELETON_DRAGON_ESSENCE = registerItem("skeleton_dragon_essence", props -> makeDragonEssence(DragonTypes.SKELETON, props));
     public static final ItemHolder<DragonEssenceItem> WITHER_DRAGON_ESSENCE = registerItem("wither_dragon_essence", props -> makeDragonEssence(DragonTypes.WITHER, props));
     public static final ItemHolder<DragonEssenceItem> DARK_DRAGON_ESSENCE = registerItem("dark_dragon_essence", props -> makeDragonEssence(DragonTypes.DARK, props));
+    public static final ItemHolder<DragonEssenceItem> LIGHT_DRAGON_ESSENCE = registerItem("light_dragon_essence", props -> makeDragonEssence(DragonTypes.LIGHT, props));
     // Misc
     public static final ItemHolder<VariationOrbItem> VARIATION_ORB = TOOL_TAB.register("variation_orb", props ->
             new VariationOrbItem(props.stacksTo(16))

@@ -331,7 +331,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
     }
 
     @Override
-    protected void positionRider(Entity passenger, Entity.MoveFunction callback) {
+    protected void positionRider(Entity passenger, MoveFunction callback) {
         super.positionRider(passenger, callback);
         if (passenger instanceof Player player && player == this.getControllingPassenger()
                 && this.isFlying() && this.getPassengers().size() == 1) {
@@ -647,11 +647,16 @@ public class ServerDragonEntity extends TameableDragonEntity {
         InteractionResult result = stack.interactLivingEntity(player, this, hand);
         if (result.consumesAction()) return result;
 
+        // Sneak opens the inventory; a plain right-click rides. The old form had a trailing
+        // `else { openCustomInventoryScreen(player); }`, so any case that failed the ride test --
+        // a baby, an untrusted dragon, or simply holding an item -- popped the inventory open
+        // without the player ever sneaking.
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
+            return InteractionResult.SUCCESS;
+        }
 
-        } else if (this.isTame() && this.isBreakInTrusted() && stack.isEmpty()
-                && !this.isBaby()) {
+        if (this.isTame() && this.isBreakInTrusted() && !this.isBaby()) {
             if (this.isSleeping()) {
                 this.setSleeping(false); // wake it up instead of riding immediately
             } else {
@@ -660,11 +665,12 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 player.setXRot(this.getXRot());
                 player.startRiding(this);
             }
-        } else {
-            this.openCustomInventoryScreen(player);
+            return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.SUCCESS;
+        // Nothing to do -- PASS rather than SUCCESS so the held item still gets its own use()
+        // (this is what lets an amulet fire on a dragon that cannot be ridden).
+        return InteractionResult.PASS;
     }
 
     @Override
