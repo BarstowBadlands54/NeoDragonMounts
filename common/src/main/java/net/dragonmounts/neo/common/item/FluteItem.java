@@ -76,7 +76,7 @@ public class FluteItem extends Item {
         // when it arrives, which is usually what you want from something called "home".
         if (EntityUtil.teleportToAround(dragon, pos.getX(), pos.getY(), pos.getZ())) {
             player.displayClientMessage(Component.translatable(
-                    "message.neodragonmounts.flute.home_recalled", pos.getX(), pos.getY(), pos.getZ()
+                    "message.neodragonmounts.flute.home_recalled"
             ), true);
         } else {
             player.displayClientMessage(Component.translatable("message.neodragonmounts.flute.invalid_pos"), true);
