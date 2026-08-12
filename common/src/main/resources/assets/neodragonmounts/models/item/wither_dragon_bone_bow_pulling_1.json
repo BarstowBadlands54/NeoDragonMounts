@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "neodragonmounts:item/wither_dragon_bone_bow_pulling_1"
+    "layer0": "neodragonmounts:item/equipment/wither/wither_dragon_bone_bow_pulling_1"
   },
   "display": {
     "thirdperson_righthand": {

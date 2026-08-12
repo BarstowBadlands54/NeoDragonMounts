@@ -36,10 +36,14 @@ public class FluteItem extends Item {
      * only the owner may re-home a dragon — a merely trusted rider can send it home but not move
      * where home is.
      */
-    public static void setHome(ServerPlayer player, UUID uuid, BlockPos pos) {
+    public static void setHome(ServerPlayer player, UUID uuid) {
         var dragon = getOrDeny(player, uuid);
         if (dragon == null) return;
         if (Relation.denyIfNotOwner(dragon, player)) return;
+        // The block the player occupies, not the one they are looking at: you mark a nest by
+        // standing in it. Read from the player, never from the packet, so a modified client
+        // cannot home a dragon somewhere it has never been.
+        var pos = player.blockPosition();
         dragon.setHomePos(new GlobalPos(player.serverLevel().dimension(), pos));
         cacheHomeOnFlute(player, uuid, dragon);
         player.displayClientMessage(Component.translatable(

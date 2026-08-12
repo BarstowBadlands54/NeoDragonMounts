@@ -110,7 +110,7 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
     }
 
     public static class SaddleSlot extends Slot {
-        public static final ResourceLocation ICON = makeId("item/empty_saddle");
+        public static final ResourceLocation ICON = makeId("gui/sprites/slot/empty_saddle");
         public final TameableDragonEntity dragon;
 
         public SaddleSlot(DragonInventory inventory, int slot, int x, int y) {
@@ -142,7 +142,7 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
     }
 
     public static class ArmorSlot extends Slot {
-        public static final ResourceLocation ICON = makeId("item/empty_dragon_armor");
+        public static final ResourceLocation ICON = makeId("gui/sprites/slot/empty_dragon_armor");
         private final TameableDragonEntity dragon;
 
         public ArmorSlot(DragonInventory inventory, int slot, int x, int y) {
@@ -173,7 +173,7 @@ public class DragonInventoryHandler extends AbstractContainerMenu {
     }
 
     public static class ChestSlot extends Slot {
-        public static final ResourceLocation ICON = makeId("item/empty_chest");
+        public static final ResourceLocation ICON = makeId("gui/sprites/slot/empty_chest");
         private final TameableDragonEntity dragon;
 
         public ChestSlot(DragonInventory inventory, int slot, int x, int y) {

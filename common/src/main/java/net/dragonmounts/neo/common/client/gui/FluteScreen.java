@@ -1,8 +1,7 @@
 package net.dragonmounts.neo.common.client.gui;
 
 import net.dragonmounts.neo.common.init.DMSounds;
-import net.dragonmounts.neo.common.network.c2s.RecallDragonHomePayload;
-import net.dragonmounts.neo.common.network.c2s.SetDragonHomePayload;
+import net.dragonmounts.neo.common.network.c2s.DragonHomePayload;
 import net.dragonmounts.neo.common.network.c2s.TeleportDragonPayload;
 import net.dragonmounts.neo.common.network.c2s.ToggleFollowingPayload;
 import net.dragonmounts.neo.common.network.c2s.ToggleSittingByUUIDPayload;
@@ -13,12 +12,11 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -126,21 +124,13 @@ public class FluteScreen extends Screen {
      * "not looking at a block" — an unusable hit result just falls back to the player's own
      * feet, which is where you would stand to declare a nest anyway.
      */
+    /**
+     * One button, two jobs: mark home where the player is standing, or send the dragon back to
+     * it. Both go through a single payload, and neither carries a position -- the server reads
+     * the player's own block position for "set".
+     */
     public void useHome(@Nullable Button ignored) {
-        assert this.minecraft != null;
-        if (this.home != null) {
-            ClientNetworkHandler.send(new RecallDragonHomePayload(this.uuid));
-            this.onClose();
-            return;
-        }
-        BlockPos pos = this.minecraft.hitResult instanceof BlockHitResult hit ? hit.getBlockPos() : null;
-        if (pos == null) {
-            var player = this.minecraft.player;
-            if (player != null) pos = player.blockPosition();
-        }
-        if (pos != null) {
-            ClientNetworkHandler.send(new SetDragonHomePayload(this.uuid, pos));
-        }
+        ClientNetworkHandler.send(new DragonHomePayload(this.uuid, this.home != null));
         this.onClose();
     }
 }

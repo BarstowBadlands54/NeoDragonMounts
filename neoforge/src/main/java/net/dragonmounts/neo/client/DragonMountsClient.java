@@ -50,6 +50,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 
 import java.io.IOException;

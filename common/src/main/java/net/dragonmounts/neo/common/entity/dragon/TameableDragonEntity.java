@@ -1008,7 +1008,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final RawAnimation DIVE = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.dive");
     private static final RawAnimation BREATH = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.breath");
     private static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.bite");
-    private static final RawAnimation DEATH = RawAnimation.begin().thenPlayAndHold("animation.dragonmounts2.dragon.death");
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
@@ -1016,7 +1015,16 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         float volume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
         controllers.add(
                 new AnimationController<>(this, "movement", 5, state -> {
-                    if (this.isDeadOrDying()) return PlayState.STOP;
+                    if (this.isDeadOrDying()) {
+                        // Hold the pose it died in. PlayState.STOP unbinds the bones and GeckoLib
+                        // eases them back to the model's default over the controller's 5 transition
+                        // ticks -- that easing is the neck and tail appearing to shrink and the head
+                        // swinging round. Speed 0 keeps the current frame pinned while the dissolve
+                        // decal in DragonRenderer fades the body out.
+                        state.getController().setAnimationSpeed(0.0D);
+                        return PlayState.CONTINUE;
+                    }
+                    state.getController().setAnimationSpeed(1.0D);
                     if (this.isFlying() && !isInWater()) {
                         Vec3 v = this.getDeltaMovement();
                         double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
@@ -1069,9 +1077,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
                 .triggerableAnim("bite", BITE));
 
-        controllers.add(new AnimationController<>(this, "death", 0, state ->
-                this.isDeadOrDying() ? state.setAndContinue(DEATH) : PlayState.STOP
-        ));
+        // No death controller: animation.dragonmounts2.dragon.death is an empty stub
+        // ({"loop": true, "animation_length": 1.0833} with no bones), so playing it animated
+        // nothing while stopping the movement controller reset the pose. Freezing movement above
+        // reproduces the original behaviour -- hold the last pose, then dissolve.
     }
 
     public void updateRenderPitchAndRoll() {

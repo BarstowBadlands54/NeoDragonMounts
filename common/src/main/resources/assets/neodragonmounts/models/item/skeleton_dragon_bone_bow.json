@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "neodragonmounts:item/skeleton_dragon_bone_bow"
+    "layer0": "neodragonmounts:item/equipment/skeleton/skeleton_dragon_bone_bow"
   },
   "display": {
     "thirdperson_righthand": {
