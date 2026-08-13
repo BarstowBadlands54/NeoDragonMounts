@@ -36,14 +36,10 @@ public class FluteItem extends Item {
      * only the owner may re-home a dragon — a merely trusted rider can send it home but not move
      * where home is.
      */
-    public static void setHome(ServerPlayer player, UUID uuid) {
+    public static void setHome(ServerPlayer player, UUID uuid, BlockPos pos) {
         var dragon = getOrDeny(player, uuid);
         if (dragon == null) return;
         if (Relation.denyIfNotOwner(dragon, player)) return;
-        // The block the player occupies, not the one they are looking at: you mark a nest by
-        // standing in it. Read from the player, never from the packet, so a modified client
-        // cannot home a dragon somewhere it has never been.
-        var pos = player.blockPosition();
         dragon.setHomePos(new GlobalPos(player.serverLevel().dimension(), pos));
         cacheHomeOnFlute(player, uuid, dragon);
         player.displayClientMessage(Component.translatable(
@@ -76,7 +72,7 @@ public class FluteItem extends Item {
         // when it arrives, which is usually what you want from something called "home".
         if (EntityUtil.teleportToAround(dragon, pos.getX(), pos.getY(), pos.getZ())) {
             player.displayClientMessage(Component.translatable(
-                    "message.neodragonmounts.flute.home_recalled"
+                    "message.neodragonmounts.flute.home_recalled", pos.getX(), pos.getY(), pos.getZ()
             ), true);
         } else {
             player.displayClientMessage(Component.translatable("message.neodragonmounts.flute.invalid_pos"), true);
@@ -111,6 +107,13 @@ public class FluteItem extends Item {
         var stack = player.getItemInHand(hand);
         var sound = stack.get(DMDataComponents.FLUTE_SOUND);
         if (sound == null) return InteractionResultHolder.pass(stack);
+        // Nothing enforced a cooldown before, so the screen could be reopened every tick.
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+            return InteractionResultHolder.fail(stack);
+        }
+        if (stack.getItem() instanceof FluteItem flute && flute.cooldownTicks > 0) {
+            player.getCooldowns().addCooldown(stack.getItem(), flute.cooldownTicks);
+        }
         if (player.isLocalPlayer()) {
             ClientUtil.openFluteScreen(sound.dragon(), stack.get(DMDataComponents.DRAGON_HOME));
         }
@@ -118,13 +121,22 @@ public class FluteItem extends Item {
         return InteractionResultHolder.consume(stack);
     }
 
+    /// Ticks of cooldown applied after a successful toot. 20 ticks = 1 second.
+    public final int cooldownTicks;
+
+    /// Defaults to the plain dragon flute's 3 seconds.
     public FluteItem(Properties props) {
+        this(60, props);
+    }
+
+    public FluteItem(int cooldownTicks, Properties props) {
         super(props);
+        this.cooldownTicks = cooldownTicks;
     }
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return 1200;
+        return 40;   // was 1200 -- a 60 second use animation
     }
 
     @Override

@@ -42,6 +42,8 @@ public interface DMItemTags {
     TagKey<Item> SKELETON_DRAGON_BONES = create("dragon_bones/skeleton");
     TagKey<Item> WITHER_DRAGON_BONES = create("dragon_bones/wither");
     TagKey<Item> DRAGON_BONES = create("dragon_bones");
+    /// Every flute variety. Use this instead of testing for a single item.
+    TagKey<Item> FLUTES = create("flutes");
 
     private static TagKey<Item> create(String name) {
         return TagKey.create(Registries.ITEM, makeId(name));

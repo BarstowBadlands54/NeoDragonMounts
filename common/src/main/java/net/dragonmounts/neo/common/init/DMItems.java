@@ -151,9 +151,12 @@ public class DMItems {
             makeTieredShears(Tiers.NETHERITE, props.fireResistant())
     );
     // Flute
-    public static final ItemHolder<FluteItem> FLUTE = TOOL_TAB.register("flute", props ->
-            new FluteItem(props.stacksTo(1))
-    );
+    public static final ItemHolder<FluteItem> WOODEN_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_wood", props -> new FluteItem(80, props.stacksTo(1)));
+    public static final ItemHolder<FluteItem> BONE_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_bone", props -> new FluteItem(70, props.stacksTo(1)));
+    public static final ItemHolder<FluteItem> FLUTE = TOOL_TAB.register("dragon_flute", props -> new FluteItem(60, props.stacksTo(1)));
+    public static final ItemHolder<FluteItem> ORNAMENTAL_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_ornamental", props -> new FluteItem(50, props.stacksTo(1)));
+    public static final ItemHolder<FluteItem> DIAMOND_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_diamond", props -> new FluteItem(40, props.stacksTo(1)));
+    public static final ItemHolder<FluteItem> NETHERITE_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_netherite", props -> new FluteItem(20, props.stacksTo(1).fireResistant()));
     // Dragon Amulets
     public static final ItemHolder<AmuletItem<Entity>> AMULET = TOOL_TAB.register("amulet", props ->
             new AmuletItem<>(Entity.class, props)

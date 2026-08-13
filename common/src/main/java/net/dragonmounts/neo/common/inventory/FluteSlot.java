@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.dragonmounts.neo.common.capability.FluteHolder;
 import net.dragonmounts.neo.common.component.FluteSound;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.init.DMItems;
+import net.dragonmounts.neo.common.item.FluteItem;
 import net.dragonmounts.neo.compat.platform.DMAttachments;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -57,7 +57,9 @@ public class FluteSlot extends Slot {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        return !stack.isEmpty() && DMItems.FLUTE.is(stack) && !dragon.isBaby();
+        // any variety, not just the plain dragon_flute -- DMItems.FLUTE.is(stack) matched
+        // exactly one of the six and silently rejected the rest
+        return !stack.isEmpty() && stack.getItem() instanceof FluteItem && !dragon.isBaby();
     }
 
     @Override
@@ -89,7 +91,7 @@ public class FluteSlot extends Slot {
     @Override
     public void setChanged() {
         var stack = this.getItem();
-        if (!stack.isEmpty() && DMItems.FLUTE.is(stack)) {
+        if (!stack.isEmpty() && stack.getItem() instanceof FluteItem) {
             var result = stack.copy();
             FluteSound.bindFlute(result, this.inventory.dragon, this.inventory.player);
             if (this.desiredName != null && !StringUtil.isBlank(this.desiredName)) {

@@ -58,6 +58,9 @@ public record FluteSound(
         } else {
             stack.set(DMDataComponents.DRAGON_HOME, home);
         }
-        stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dragon.getDragonType().color, false));
+        // Only auto-tint an undyed flute. A player who has dyed theirs keeps that colour.
+        if (!stack.has(DataComponents.DYED_COLOR)) {
+            stack.set(DataComponents.DYED_COLOR, new DyedItemColor(dragon.getDragonType().color, false));
+        }
     }
 }

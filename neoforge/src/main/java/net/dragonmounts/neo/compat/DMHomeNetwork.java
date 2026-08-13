@@ -34,7 +34,7 @@ public final class DMHomeNetwork {
                     if (payload.recall()) {
                         FluteItem.recallHome(player, payload.dragon());
                     } else {
-                        FluteItem.setHome(player, payload.dragon());
+                        FluteItem.setHome(player, payload.dragon(), player.getOnPos());
                     }
                 });
     }
