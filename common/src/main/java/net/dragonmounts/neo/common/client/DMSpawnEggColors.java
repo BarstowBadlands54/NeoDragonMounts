@@ -1,6 +1,6 @@
 package net.dragonmounts.neo.common.client;
 
-import net.dragonmounts.neo.common.init.DMDataComponents;
+import net.dragonmounts.neo.common.item.DragonSpawnEggItem;
 import net.dragonmounts.neo.common.init.DragonTypes;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +23,12 @@ import java.util.Map;
  * lifted in value and eased off in saturation, matching how vanilla eggs read.
  */
 public final class DMSpawnEggColors {
+    /**
+     * 1.21.1 reads item tints as ARGB, not RGB: ItemRenderer pulls the alpha byte out with
+     * FastColor.ARGB32.alpha(). A plain 0xRRGGBB therefore has alpha 0 and the item renders
+     * fully transparent -- which looks exactly like a missing model. Every value here carries
+     * 0xFF in the top byte for that reason.
+     */
     private static final Map<DragonType, int[]> COLORS = new IdentityHashMap<>(24);
 
     private static void put(DragonType type, int background, int highlight) {
@@ -30,24 +36,24 @@ public final class DMSpawnEggColors {
     }
 
     static {
-        put(DragonTypes.AETHER, 0x94B7CB, 0xCBECFF);
-        put(DragonTypes.DARK, 0x585352, 0x9E9796);
-        put(DragonTypes.ENCHANTED, 0x946298, 0xF6B8FB);
-        put(DragonTypes.ENDER, 0x393939, 0x717171);
-        put(DragonTypes.FIRE, 0x865B32, 0xE1AB77);
-        put(DragonTypes.FOREST, 0x6E6C43, 0xBEBC86);
-        put(DragonTypes.ICE, 0xAFBAC5, 0xEAF4FF);
-        put(DragonTypes.LIGHT, 0x9AE5EB, 0xBDFAFF);
-        put(DragonTypes.MOONLIGHT, 0x17192A, 0x3C405B);
-        put(DragonTypes.NETHER, 0x454245, 0x837E83);
-        put(DragonTypes.SCULK, 0xBCB5B4, 0xFFF8F7);
-        put(DragonTypes.SKELETON, 0xBEB5AE, 0xFFF6EF);
-        put(DragonTypes.STORM, 0x663F2E, 0xB27F69);
-        put(DragonTypes.SUNLIGHT, 0xD4A540, 0xFFD579);
-        put(DragonTypes.TERRA, 0x7F624D, 0xD7B297);
-        put(DragonTypes.WATER, 0x6A9D9F, 0xBFFDFF);
-        put(DragonTypes.WITHER, 0x151518, 0x3B3B41);
-        put(DragonTypes.ZOMBIE, 0x6A5C43, 0xB8A685);
+        put(DragonTypes.AETHER,    0xFF4A90D9, 0xFFF5D742);   // blue / yellow
+        put(DragonTypes.DARK,      0xFF141414, 0xFFC1272D);   // black / red
+        put(DragonTypes.ENCHANTED, 0xFF8E44AD, 0xFFFFFFFF);   // purple / white
+        put(DragonTypes.ENDER,     0xFF0F0F14, 0xFFA050C8);   // black / purple
+        put(DragonTypes.FIRE,      0xFFD32F2F, 0xFFFFC107);   // red / yellow
+        put(DragonTypes.FOREST,    0xFF1F6B2E, 0xFF6ECB63);   // dark green / light green
+        put(DragonTypes.ICE,       0xFF5BC8F5, 0xFFFFFFFF);   // blue / white
+        put(DragonTypes.LIGHT,     0xFFFFE45C, 0xFFFFFFFF);   // yellow / white
+        put(DragonTypes.MOONLIGHT, 0xFF7B5CB8, 0xFFFFFFFF);   // purple / white
+        put(DragonTypes.NETHER,    0xFF8B1A1A, 0xFFE85D2A);   // crimson / ember  (not in your list -- adjust if wrong)
+        put(DragonTypes.SCULK,     0xFF0A4A5A, 0xFF8A9A9E);   // warden blue / grey
+        put(DragonTypes.SKELETON,  0xFFE8E8E8, 0xFF9A9A9A);   // white / grey
+        put(DragonTypes.STORM,     0xFF3A3F45, 0xFF4A90D9);   // dark grey / blue
+        put(DragonTypes.SUNLIGHT,  0xFFF57C00, 0xFFFFD54F);   // orange / yellow
+        put(DragonTypes.TERRA,     0xFF7B5230, 0xFF8E5BA8);   // brown / purple
+        put(DragonTypes.WATER,     0xFF2E7FD4, 0xFFFFFFFF);   // blue / white
+        put(DragonTypes.WITHER,    0xFF0D0D0D, 0xFF4A3520);   // black / brown
+        put(DragonTypes.ZOMBIE,    0xFF2E5D34, 0xFF3F7CC4);   // dark green / blue
     }
 
     /**
@@ -56,10 +62,13 @@ public final class DMSpawnEggColors {
      * @return packed RGB, or white when the stack carries no known dragon type
      */
     public static int getColor(ItemStack stack, int tintIndex) {
-        var type = stack.get(DMDataComponents.DRAGON_TYPE);
-        if (type == null) return 0xFFFFFF;
-        int[] pair = COLORS.get(type);
-        if (pair == null) return 0xFFFFFF;
+        // Read the breed off the ITEM, not the stack. Unlike the egg block item -- which gets a
+        // DRAGON_TYPE component from makeDragonEggBlock -- makeDragonSpawnEgg attaches no
+        // component at all; DragonSpawnEggItem keeps the breed in a final field. Looking at the
+        // stack's components therefore always came back null and every egg rendered white.
+        if (!(stack.getItem() instanceof DragonSpawnEggItem egg)) return 0xFFFFFFFF;
+        int[] pair = COLORS.get(egg.type);
+        if (pair == null) return 0xFFFFFFFF;
         return pair[tintIndex == 0 ? 0 : 1];
     }
 
