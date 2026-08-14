@@ -2,7 +2,6 @@ package net.dragonmounts.neo.common.type;
 
 import net.dragonmounts.neo.common.entity.breath.DragonBreath;
 import net.dragonmounts.neo.common.entity.breath.impl.ForestBreath;
-import net.dragonmounts.neo.common.entity.breath.impl.ZombieBreath;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.dragonmounts.neo.compat.registry.DragonTypeBuilder;
