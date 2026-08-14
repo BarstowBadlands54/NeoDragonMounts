@@ -2,7 +2,6 @@ package net.dragonmounts.neo.common.type;
 
 import net.dragonmounts.neo.common.api.DragonTypified;
 import net.dragonmounts.neo.common.entity.breath.DragonBreath;
-import net.dragonmounts.neo.common.entity.breath.impl.FireBreath;
 import net.dragonmounts.neo.common.entity.breath.impl.NetherBreath;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMSounds;
