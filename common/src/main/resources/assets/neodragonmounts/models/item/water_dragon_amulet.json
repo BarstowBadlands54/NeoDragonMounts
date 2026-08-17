@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "neodragonmounts:item/equipment/water/water_dragon_amulet"
+    "layer0": "neodragonmounts:item/equipment/water/water_dragon_amulet",
+    "layer1": "neodragonmounts:item/equipment/dragon_amulet_overlay"
   }
 }

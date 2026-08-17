@@ -1,10 +1,23 @@
 {
   "values": [
-    "neodragonmounts:dragon_flute_wood",
-    "neodragonmounts:dragon_flute_bone",
-    "neodragonmounts:dragon_flute",
-    "neodragonmounts:dragon_flute_ornamental",
-    "neodragonmounts:dragon_flute_diamond",
-    "neodragonmounts:dragon_flute_netherite"
+    "neodragonmounts:aether_dragon_amulet",
+    "neodragonmounts:dark_dragon_amulet",
+    "neodragonmounts:enchanted_dragon_amulet",
+    "neodragonmounts:ender_dragon_amulet",
+    "neodragonmounts:fire_dragon_amulet",
+    "neodragonmounts:forest_dragon_amulet",
+    "neodragonmounts:ice_dragon_amulet",
+    "neodragonmounts:light_dragon_amulet",
+    "neodragonmounts:moonlight_dragon_amulet",
+    "neodragonmounts:nether_dragon_amulet",
+    "neodragonmounts:sculk_dragon_amulet",
+    "neodragonmounts:skeleton_dragon_amulet",
+    "neodragonmounts:storm_dragon_amulet",
+    "neodragonmounts:sunlight_dragon_amulet",
+    "neodragonmounts:terra_dragon_amulet",
+    "neodragonmounts:water_dragon_amulet",
+    "neodragonmounts:wither_dragon_amulet",
+    "neodragonmounts:zombie_dragon_amulet",
+    "neodragonmounts:amulet"
   ]
 }

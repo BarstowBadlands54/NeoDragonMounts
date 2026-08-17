@@ -38,6 +38,10 @@ dependencies {
 //    modImplementation "com.terraformersmc:modmenu:11.0.3"
 }
 
+tasks.named('sourcesJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 //fabricApi {
 //    configureDataGeneration {
 //        client = true

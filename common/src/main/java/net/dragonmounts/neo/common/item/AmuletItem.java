@@ -12,6 +12,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -77,6 +79,22 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
         return this.contentType;
     }
 
+    /**
+     * Carries the player's own decorations from one amulet stack to the next.
+     * <p>
+     * Capturing and releasing both build a brand-new ItemStack, so anything not copied across is
+     * silently dropped -- which is why a dyed amulet reverted to its default colour the moment a
+     * dragon went in or came out. Only player-applied components are copied; the entity payload
+     * deliberately is not.
+     */
+    public static ItemStack carryOverDecoration(ItemStack from, ItemStack to) {
+        var dye = from.get(DataComponents.DYED_COLOR);
+        if (dye != null) to.set(DataComponents.DYED_COLOR, dye);
+        var name = from.get(DataComponents.CUSTOM_NAME);
+        if (name != null) to.set(DataComponents.CUSTOM_NAME, name);
+        return to;
+    }
+
     @Override
     public ItemStack saveEntity(T entity, DataComponentPatch patch) {
         var type = entity.getType();
@@ -107,7 +125,13 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
             }
             dragon.inventory.dropContents(true, 0);
             dragon.ejectPassengers();
-            consumeStack(player, hand, stack, amulet.saveEntity(dragon, DataComponentPatch.EMPTY));
+            // Capture sound. The existing playSound sits inside the `!isEmpty(stack)` branch
+            // above, so it only fired when a previous occupant was being swapped out -- a plain
+            // capture into an empty amulet was silent.
+            level.playSound(null, dragon.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            consumeStack(player, hand, stack,
+                    carryOverDecoration(stack, amulet.saveEntity(dragon, DataComponentPatch.EMPTY)));
             player.awardStat(Stats.ITEM_USED.get(this));
             dragon.discard();
             return InteractionResult.SUCCESS;
@@ -136,9 +160,13 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
             );
             if (entity != null) {
                 level.addFreshEntityWithPassengers(entity);
+                // Release-on-ground had no sound: gameEvent only feeds sculk sensors, it is not
+                // audible. Matches the liquid path in use().
+                level.playSound(null, spawnPos, SoundEvents.END_PORTAL_FRAME_FILL,
+                        SoundSource.PLAYERS, 1.0F, 1.0F);
                 level.gameEvent(player, GameEvent.ENTITY_PLACE, spawnPos);
                 if (player != null) {
-                    consumeStack(player, context.getHand(), stack, new ItemStack(DMItems.AMULET));
+                    consumeStack(player, context.getHand(), stack, carryOverDecoration(stack, new ItemStack(DMItems.AMULET)));
                 }
                 // stat will be awarded at `ItemStack#useOn`
             }
@@ -160,7 +188,9 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
             var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false);
             if (entity == null) return InteractionResultHolder.pass(stack);
             world.addFreshEntityWithPassengers(entity);
-            consumeStack(player, hand, stack, new ItemStack(DMItems.AMULET));
+            // useOn plays ENDER_EYE_DEATH on release; this liquid path had no sound at all.
+            world.playSound(null, pos, SoundEvents.END_PORTAL_FRAME_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
+            consumeStack(player, hand, stack, carryOverDecoration(stack, new ItemStack(DMItems.AMULET)));
             world.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResultHolder.success(stack);

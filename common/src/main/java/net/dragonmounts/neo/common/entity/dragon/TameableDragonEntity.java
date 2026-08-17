@@ -457,8 +457,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
             seat = s;
         }
 
+        // locatePassenger returns an ADULT-sized offset. It was only being scaled by
+        // MOJANG_MODEL_SCALE, so a juvenile -- whose model is drawn at getAdjustedSize() -- got a
+        // seat placed for a full-grown dragon and the rider floated above its back. Scaling by the
+        // same factor the model uses keeps the seat on the saddle at every life stage.
         Vec3 base = this.getDragonType().locatePassenger(seat, this.isInSittingPose())
-                .scale(MathUtil.MOJANG_MODEL_SCALE);
+                .scale(MathUtil.MOJANG_MODEL_SCALE * this.getAdjustedSize());
 
         if (this.getPassengers().size() == 1 && this.isFlying()) {
             float pitch = Mth.lerp(partialTick, this.renderPitchO, this.renderPitch);
