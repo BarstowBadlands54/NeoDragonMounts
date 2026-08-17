@@ -639,6 +639,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
         if (this.inventory.onInteract(stack)) return InteractionResult.SUCCESS;
 
+        // Baton toggles sitting. Works at any age -- a baton on a baby is one of the two ways to
+        // park it, and babies have no other use for the interaction.
         if (stack.is(DMItemTags.BATONS)) {
             this.setOrderedToSit(!this.isOrderedToSit());
             return InteractionResult.SUCCESS;
@@ -647,15 +649,24 @@ public class ServerDragonEntity extends TameableDragonEntity {
         InteractionResult result = stack.interactLivingEntity(player, this, hand);
         if (result.consumesAction()) return result;
 
-        // Sneak opens the inventory; a plain right-click rides. The old form had a trailing
-        // `else { openCustomInventoryScreen(player); }`, so any case that failed the ride test --
-        // a baby, an untrusted dragon, or simply holding an item -- popped the inventory open
-        // without the player ever sneaking.
+        // Sneak opens the inventory; a plain right-click rides.
+        //
+        // The inventory is deliberately open to babies as well: its equipment slots already
+        // refuse a baby via each slot's mayPlace, so nothing can be fitted, but the sit toggle
+        // inside remains reachable. Baton and inventory are therefore both routes to the same
+        // thing, which is what a player expects.
+        //
+        // Note the earlier form of this method ended with a trailing
+        // `else { openCustomInventoryScreen(player); }`, so ANY case that failed the ride test --
+        // including simply holding an item -- popped the inventory open without sneaking. That is
+        // why this is now an explicit sneak check with a PASS fallthrough.
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
             return InteractionResult.SUCCESS;
         }
 
+        // Riding stays adult-only. A baby is too small to carry a rider, and startRiding would
+        // otherwise seat the player inside a hatchling.
         if (this.isTame() && this.isBreakInTrusted() && !this.isBaby()) {
             if (this.isSleeping()) {
                 this.setSleeping(false); // wake it up instead of riding immediately
@@ -813,7 +824,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Inventory is only accessible on a TAMED dragon, and only by its owner.
         // An untamed dragon — even one that trusts the player and is being ridden
         // during a break-in attempt — never exposes its inventory.
-        if (!this.isTame() || !this.isOwnedBy(player) || !this.isBreakInTrusted()) return;
+        if (!this.isTame() || !this.isOwnedBy(player)) return;
         player.openMenu(this);
     }
 
