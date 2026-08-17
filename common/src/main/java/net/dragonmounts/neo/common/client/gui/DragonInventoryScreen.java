@@ -20,6 +20,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -233,7 +234,11 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         graphics.blitSprite(ARMOR_SPRITE, left, top + 32, 9, 9);
         graphics.blitSprite(HEALTH_SPRITE, left, top + 43, 9, 9);
 //        dragon.animator.renderCrystalBeams = false;
-        InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, left + 164, top + 18, left + 270, top + 70, 10, 0.25F, x, y, dragon);
+        int previewScale = (int) Mth.clamp(10.0F / Math.max(0.05F, dragon.getAdjustedSize()), 10.0F, 45.0F);
+        InventoryScreen.renderEntityInInventoryFollowsMouse(
+                graphics, left + 164, top + 18, left + 270, top + 70,
+                previewScale,
+                0.25F, x, y, dragon);
 //        dragon.animator.renderCrystalBeams = true;
     }
 }
