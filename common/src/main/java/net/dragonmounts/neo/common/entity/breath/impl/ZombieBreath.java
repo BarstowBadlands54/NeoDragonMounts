@@ -18,7 +18,7 @@ public class ZombieBreath extends DragonBreath {
 
     @Override
     public BreathAffectedBlock affectBlock(ServerLevel level, long location, BreathAffectedBlock hit) {
-        var pos = BlockPos.of(location);
+        var pos = BlockPos.of(location).above();
         if (!level.getBlockState(pos).isAir() && level.random.nextFloat() < 5F) {
             var cloud = createEffectCloud(level, pos, 1.3F, 600);
             cloud.setOwner(this.dragon);

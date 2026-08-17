@@ -93,6 +93,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.SOUL_SAND)
                 .addHabitat(Blocks.NETHER_WART_BLOCK)
                 .addHabitat(Blocks.WARPED_WART_BLOCK)
+                .addEffectImmunity(MobEffects.POISON)
                 .register(ZombieType::new, makeId("zombie"));
         DARK = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
                 .model("normal", "base")
@@ -259,6 +260,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
+                .addEffectImmunity(MobEffects.POISON)
                 .register(SculkType::new, makeId("sculk"));
         //modify builders
         NETHER = new DragonTypeBuilder(0xE5B81B, material.setDurabilityFactor(55).setToughness(8.0F), new ItemTierBuilder(netherite, 2700, 8.0F, 6.0F).setEnchantmentValue(11))
