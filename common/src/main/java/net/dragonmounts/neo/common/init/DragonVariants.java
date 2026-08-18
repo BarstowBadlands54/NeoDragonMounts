@@ -79,13 +79,13 @@ public class DragonVariants {
     public static final DragonVariant ZOMBIE_HUSK;
     public static final DragonVariant ZOMBIE_NORMAL;
     public static final DragonVariant LEGACY_AETHER;
-    public static final DragonVariant LEGACY_ENDER;
     public static final DragonVariant LEGACY_FIRE;
     public static final DragonVariant LEGACY_FOREST;
     public static final DragonVariant LEGACY_ICE;
     public static final DragonVariant LEGACY_NETHER;
     public static final DragonVariant LEGACY_SKELETON;
     public static final DragonVariant LEGACY_WATER;
+    public static final DragonVariant LEGACY_ENDER;
 
     static BlockHolder<DragonHeadStandingBlock> registerStandingHead(DragonHead head, String name) {
         return registerBlock(name, props ->
@@ -207,13 +207,13 @@ public class DragonVariants {
         // breed's. Types with no legacy art (dark, enchanted, light, moonlight, sculk, storm,
         // sunlight, terra, wither, zombie) simply have no legacy variant.
         variants.add(LEGACY_AETHER = make(supplier, DragonTypes.AETHER, "legacy_aether", DragonProjectiles.DRAGON_FIREBALL));
-        variants.add(LEGACY_ENDER = make(supplier, DragonTypes.ENDER, "legacy_ender", DragonProjectiles.ENDER_CHARGE));
         variants.add(LEGACY_FIRE = make(supplier, DragonTypes.FIRE, "legacy_fire", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(LEGACY_FOREST = make(supplier, DragonTypes.FOREST, "legacy_forest", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(LEGACY_ICE = make(supplier, DragonTypes.ICE, "legacy_ice", DragonProjectiles.ICE_BALL));
         variants.add(LEGACY_NETHER = make(supplier, DragonTypes.NETHER, "legacy_nether", DragonProjectiles.NETHER_FIREBALL));
         variants.add(LEGACY_SKELETON = make(supplier, DragonTypes.SKELETON, "legacy_skeleton", DragonProjectiles.DRAGON_FIREBALL));
         variants.add(LEGACY_WATER = make(supplier, DragonTypes.WATER, "legacy_water", DragonProjectiles.WATER_BALL));
+        variants.add(LEGACY_ENDER = make(supplier, DragonTypes.ENDER, "legacy_ender", DragonProjectiles.ENDER_CHARGE));
         BUILTIN_VALUES = variants.build();
     }
 

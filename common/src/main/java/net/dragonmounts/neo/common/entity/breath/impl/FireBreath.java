@@ -170,8 +170,42 @@ public class FireBreath extends DragonBreath {
         return Blocks.FIRE.defaultBlockState();
     }
 
+    /**
+     * Density of breath a face must take before it catches.
+     * <p>
+     * Vanilla flammability is the fast path: wood and wool light almost instantly. Everything
+     * below it exists because dragon fire is not a tinderbox -- a sustained beam scorches stone,
+     * dirt and sand too, it just takes longer than lighting a plank.
+     */
     protected float calcIgnitionThreshold(Level level, BlockPos pos, BlockState state, Direction side) {
         int flammability = FlammableBlock.getFlammability(level, pos, state, side);
-        return flammability == 0 ? Float.MAX_VALUE : 15.0F / flammability;
+        if (flammability > 0) return 15.0F / flammability;
+        // Vanilla assigns mushrooms, mycelium and nether fungi no flammability at all, so a
+        // dragon torching a mushroom island did nothing. Treated as moderately flammable.
+        if (isFungal(state)) return 15.0F / FUNGAL_FLAMMABILITY;
+        // Any other sturdy face: stone, dirt, sand, grass. A passing sweep leaves them alone;
+        // a held beam sets the surface alight. Air, fluids and non-solid faces stay unlit,
+        // which is what stops fire appearing in mid-air along the beam.
+        if (state.isFaceSturdy(level, pos, side)) return SOLID_IGNITION_THRESHOLD;
+        return Float.MAX_VALUE;
+    }
+
+    /// Roughly as easy to light as vanilla wool. Raise to make fungal blocks catch faster.
+    protected static final float FUNGAL_FLAMMABILITY = 20.0F;
+    /**
+     * Density needed to scorch an inert surface. For scale, the flammability path yields about
+     * 0.25 for wool and 3.0 for planks, so this is deliberately several times slower than wood.
+     */
+    protected static final float SOLID_IGNITION_THRESHOLD = 6.0F;
+
+    /// Mushrooms, mycelium and the nether's fungal growth, none of which vanilla treats as fuel.
+    protected static boolean isFungal(BlockState state) {
+        return state.is(Blocks.MYCELIUM)
+                || state.is(Blocks.BROWN_MUSHROOM) || state.is(Blocks.RED_MUSHROOM)
+                || state.is(Blocks.BROWN_MUSHROOM_BLOCK) || state.is(Blocks.RED_MUSHROOM_BLOCK)
+                || state.is(Blocks.MUSHROOM_STEM)
+                || state.is(Blocks.CRIMSON_FUNGUS) || state.is(Blocks.WARPED_FUNGUS)
+                || state.is(Blocks.SHROOMLIGHT)
+                || state.is(BlockTags.WART_BLOCKS);
     }
 }

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:water_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:storm_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:aether_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 470
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/shipwreck_treasure"
+}

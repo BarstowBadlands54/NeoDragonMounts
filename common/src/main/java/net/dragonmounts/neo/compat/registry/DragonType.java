@@ -61,7 +61,7 @@ import static net.dragonmounts.neo.compat.registry.RegistryHandler.makeDefaulted
 
 public class DragonType implements TooltipProvider, DragonTypified {
     public static final String DATA_PARAMETER_KEY = "DragonType";
-    public static final ResourceLocation DEFAULT_KEY = makeId("ender");
+    public static final ResourceLocation DEFAULT_KEY = makeId("legacu_ender");
     public static final DefaultedMappedRegistry<DragonType> REGISTRY = makeDefaultedRegistry(DRAGON_TYPE, DEFAULT_KEY);
     public static final Codec<DragonType> CODEC = REGISTRY.byNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, DragonType> STREAM_CODEC = ByteBufCodecs.registry(DRAGON_TYPE);

@@ -30,7 +30,7 @@ public class ForestBreath extends DragonBreath {
     @Override
     public BreathAffectedBlock affectBlock(ServerLevel level, long location, BreathAffectedBlock hit) {
         var pos = BlockPos.of(location).above();
-        if (!level.getBlockState(pos).isAir() && level.random.nextFloat() < 0.002F) {
+        if (!level.getBlockState(pos).isAir() && level.random.nextFloat() < 0.008F) {
             var cloud = createEffectCloud(level, pos, 1.3F, 600);
             cloud.setOwner(this.dragon);
             cloud.addEffect(new MobEffectInstance(MobEffects.POISON, 100));

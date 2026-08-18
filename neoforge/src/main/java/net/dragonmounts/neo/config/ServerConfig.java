@@ -32,6 +32,8 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
     public final BooleanEntry quenchingBreath;
     public final BooleanEntry frostyBreath;
     public final BooleanEntry aetherExtinguishesFire;
+    public final BooleanEntry requireSaddleToRide;
+    public final BooleanEntry spawnDragonNests;
     public final DoubleEntry baseArmor;
     public final DoubleEntry baseArmorToughness;
     public final DoubleEntry baseBodySize;
@@ -78,6 +80,12 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
         );
         EntryUtil.register(registry, this.aetherExtinguishesFire =
                 config(builder, "aetherExtinguishesFire", false, "Whether airflow-like dragon breath extinguishes fire blocks instead of spreading fire")
+        );
+        EntryUtil.register(registry, this.requireSaddleToRide =
+                config(builder, "requireSaddleToRide", false, "Whether a dragon must be saddled before it can be steered")
+        );
+        EntryUtil.register(registry, this.spawnDragonNests =
+                config(builder, "spawnDragonNests", true, "Whether dragon nest structures generate in the world; turn off for Legacy-style play where eggs come from chest loot")
         );
         EntryUtil.register(registry, this.baseArmor =
                 config(builder, "baseArmor", 8.0, 0.0, 30.0, "The base armor of a newly spawned dragon at adulthood", this::invalidateAttributes)

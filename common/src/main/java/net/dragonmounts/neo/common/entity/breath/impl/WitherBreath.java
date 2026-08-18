@@ -23,7 +23,9 @@ public class WitherBreath extends DragonBreath {
         var pos = BlockPos.of(location);
         var state = level.getBlockState(pos);
         if (!state.isAir() && level.random.nextFloat() < 0.002F) {
-            var cloud = new AreaEffectCloud(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+            // sit the cloud on top of the block that was hit, not inside it -- see
+            // DragonBreath.createEffectCloud, which this duplicates
+            var cloud = new AreaEffectCloud(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
             cloud.setOwner(this.dragon);
             cloud.setParticle(ParticleTypes.SMOKE);
             cloud.setRadius(1.4F);

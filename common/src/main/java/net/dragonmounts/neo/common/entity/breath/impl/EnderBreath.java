@@ -18,7 +18,7 @@ public class EnderBreath extends DragonBreath {
     public BreathAffectedBlock affectBlock(ServerLevel level, long location, BreathAffectedBlock hit) {
         var pos = BlockPos.of(location).above();
         var state = level.getBlockState(pos);
-        if (!state.isAir() && level.random.nextFloat() < 8F) {
+        if (!state.isAir() && level.random.nextFloat() < 0.008F) {
             var cloud = createEffectCloud(level, pos, 1.6F, 750);
             cloud.setOwner(this.dragon);
             cloud.setParticle(ParticleTypes.DRAGON_BREATH);

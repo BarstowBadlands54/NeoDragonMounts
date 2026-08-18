@@ -20,9 +20,16 @@ public class EnderType extends DragonType {
         return new EnderBreath(dragon, 0.9F);
     }
 
+    /// Ender dragons of every variant -- legacy included -- use the vanilla ender dragon voice.
+    /// Hatchlings keep the mod's purr, since ENDER_DRAGON_AMBIENT on a baby sounds absurd.
     @Override
     public SoundEvent getAmbientSound(TameableDragonEntity dragon) {
-        return dragon.isBaby() ? DMSounds.DRAGON_PURR_HATCHLING : DMSounds.DRAGON_AMBIENT;
+        return dragon.isBaby() ? DMSounds.DRAGON_PURR_HATCHLING : SoundEvents.ENDER_DRAGON_AMBIENT;
+    }
+
+    @Override
+    public SoundEvent getDeathSound(TameableDragonEntity dragon) {
+        return SoundEvents.ENDER_DRAGON_DEATH;
     }
 
     @Override

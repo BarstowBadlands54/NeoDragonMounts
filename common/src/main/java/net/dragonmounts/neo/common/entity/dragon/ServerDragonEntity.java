@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.entity.dragon;
 
+import net.minecraft.network.chat.Component;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.doubles.DoubleIterators;
 import net.dragonmounts.neo.common.api.BredDragonsTrigger;
@@ -668,6 +669,14 @@ public class ServerDragonEntity extends TameableDragonEntity {
         // Riding stays adult-only. A baby is too small to carry a rider, and startRiding would
         // otherwise seat the player inside a hatchling.
         if (this.isTame() && this.isBreakInTrusted() && !this.isBaby()) {
+            // Optional saddle requirement. Off by default, so nothing changes unless a server
+            // turns it on. Checked here as well as in getControllingPassenger so an unsaddled
+            // dragon refuses the mount rather than seating a rider who then cannot steer.
+            if (ServerConfig.INSTANCE.requireSaddleToRide.get() && !this.isSaddled()) {
+                player.displayClientMessage(
+                        Component.translatable("message.neodragonmounts.needs_saddle"), true);
+                return InteractionResult.FAIL;
+            }
             if (this.isSleeping()) {
                 this.setSleeping(false); // wake it up instead of riding immediately
             } else {

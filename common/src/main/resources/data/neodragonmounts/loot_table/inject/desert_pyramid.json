@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:sunlight_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:terra_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:fire_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 1684
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/desert_pyramid"
+}

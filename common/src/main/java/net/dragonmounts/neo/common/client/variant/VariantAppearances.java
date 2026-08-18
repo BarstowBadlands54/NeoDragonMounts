@@ -247,39 +247,48 @@ public class VariantAppearances {
      * the blocks above rely on that to carry settings between build() calls.
      */
     static final String LEGACY_SHAPE = "normal";
+    /**
+     * Head geo for every legacy variant.
+     * <p>
+     * withModel(LEGACY_SHAPE) sets only the body; the head silhouette was still inherited from
+     * the breed, so legacy forest rendered on horned_antlers and legacy skeleton on the skull.
+     * The legacy art predates those silhouettes and is drawn against the plain base UVs, which is
+     * why the horns came out garbled. Every legacy head therefore pins "base" explicitly.
+     */
+    static final String LEGACY_HEAD_SHAPE = "base";
 
     static {
         LEGACY_AETHER = builder()
                 .withBreath(DMParticleSprites.AIRFLOW_BREATH, AirflowBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/aether"));
         LEGACY_ENDER = builder()
                 .withBreath(DMParticleSprites.ENDER_BREATH, EnderBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/ender"));
         LEGACY_FIRE = builder()
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/fire"));
         LEGACY_FOREST = builder()
                 .withBreath(DMParticleSprites.FOREST_BREATH, ForestGasBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/forest"));
         LEGACY_ICE = builder()
                 .withBreath(DMParticleSprites.ICE_BREATH, IceBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/ice"));
         LEGACY_NETHER = builder()
                 .withBreath(DMParticleSprites.NETHER_BREATH, NetherBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/nether"));
         LEGACY_SKELETON = builder()
                 .setArmorCategory("skeleton")
                 .withBreath(DMParticleSprites.SOUL_BREATH)
-                .withModel(LEGACY_SHAPE, "skeleton")
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/skeleton"));
         LEGACY_WATER = builder()
                 .withBreath(DMParticleSprites.WATER_BREATH, WaterBreathParticle.FACTORY)
-                .withModel(LEGACY_SHAPE)
+                .withModel(LEGACY_SHAPE, LEGACY_HEAD_SHAPE)
                 .buildWithOwnSaddle(makeId("legacy/water"));
     }
 

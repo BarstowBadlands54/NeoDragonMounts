@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:light_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:sunlight_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 776
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/village_village_temple"
+}

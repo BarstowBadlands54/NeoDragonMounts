@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:enchanted_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:moonlight_dragon_egg",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 380
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/stronghold_library"
+}

@@ -28,8 +28,14 @@ import static net.dragonmounts.neo.common.entity.breath.impl.ServerBreathHelper.
  * Created by TGG on 5/08/2015.
  */
 public abstract class DragonBreath {
+    /**
+     * @param pos the block the breath struck. The cloud is placed on TOP of it: an AreaEffectCloud
+     *            is anchored at its feet, so spawning at pos.getY() buries it inside the block it
+     *            hit and the visible gas ends up under the surface. Callers pass the hit block, not
+     *            the space above it, so the offset belongs here rather than at every call site.
+     */
     public static AreaEffectCloud createEffectCloud(ServerLevel level, BlockPos pos, float radius, int duration) {
-        var cloud = new AreaEffectCloud(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        var cloud = new AreaEffectCloud(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
         cloud.setRadius(radius);
         cloud.setDuration(duration);
         cloud.setRadiusPerTick((1.0F - radius) / duration);

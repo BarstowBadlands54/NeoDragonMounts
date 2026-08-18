@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:nether_dragon_egg",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:wither_dragon_egg",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:skeleton_dragon_egg",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 1660
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/nether_bridge"
+}

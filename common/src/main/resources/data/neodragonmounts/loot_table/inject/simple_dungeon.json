@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:forest_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:fire_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:ice_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:water_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 1872
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/simple_dungeon"
+}

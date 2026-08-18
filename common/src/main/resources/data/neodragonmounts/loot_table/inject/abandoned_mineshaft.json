@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:terra_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:forest_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:zombie_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 10764
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/abandoned_mineshaft"
+}

@@ -430,6 +430,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // attempt the dragon flies ITSELF (via its move control) while the player
         // merely clings on. Only a tamed dragon yields control to the rider.
         if (!this.isTame() || this.isSleeping()) return null;   // add the sleeping check
+        // Steering also stops the moment the saddle comes off, so a rider cannot keep control of
+        // a dragon that no longer meets the requirement.
+        if (ServerConfig.INSTANCE.requireSaddleToRide.get() && !this.isSaddled()) return null;
         return !this.isNoAi() && isBreakInTrusted() && this.getFirstPassenger() instanceof Player player ? player : null;
     }
 
@@ -534,22 +537,22 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
 
     //----------AgeableEntity----------
-
     protected void refreshAge() {
+        // Vanilla AgeableMob uses a signed age: negative counts UP toward 0 (still a baby),
+        // positive counts DOWN toward 0 (an adult on breeding cooldown). So the two pre-adult
+        // stages start negative and JUVENILE starts positive.
         switch (this.stage.ordinal()) {
-            case 0:// NEWBORN
-            case 1:// INFANT
+            case 0: // HATCHLING
+            case 1: // FLEDGLING
                 this.age = -this.stage.duration;
                 return;
-            case 2:// JUVENILE
-            case 3:// PREJUVENILE
+            case 2: // JUVENILE
                 this.age = this.stage.duration;
                 return;
-            default:
+            default: // ADULT
                 this.age = 0;
         }
     }
-
     public void setAgeLocked(boolean locked) {
         this.entityData.set(DATA_AGE_LOCKED, locked);
     }

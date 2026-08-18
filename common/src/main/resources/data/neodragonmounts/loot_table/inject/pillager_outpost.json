@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:storm_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:skeleton_dragon_egg",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 1176
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/pillager_outpost"
+}

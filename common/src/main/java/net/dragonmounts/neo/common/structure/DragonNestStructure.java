@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import net.dragonmounts.neo.common.api.NoiseColumnExtension;
 import net.dragonmounts.neo.common.init.DMStructures;
+import net.dragonmounts.neo.config.ServerConfig;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
@@ -48,6 +49,10 @@ public class DragonNestStructure extends Structure {
 
     @Override
     public @NotNull Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        // Returning empty here suppresses the structure entirely -- no placement attempt, no
+        // partial piece. Cheaper and safer than removing it from the structure set, which would
+        // desync worlds that already have nests generated.
+        if (!ServerConfig.INSTANCE.spawnDragonNests.get()) return Optional.empty();
         var random = context.random();
         var pos = context.chunkPos().getWorldPosition();
         var config = drawConfig(this.configs, random);

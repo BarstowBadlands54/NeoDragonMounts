@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:moonlight_dragon_egg",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:dark_dragon_egg",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "neodragonmounts:enchanted_dragon_egg",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 2079
+        }
+      ]
+    }
+  ],
+  "random_sequence": "neodragonmounts:inject/woodland_mansion"
+}
