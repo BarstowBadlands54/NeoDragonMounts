@@ -20,8 +20,6 @@ public class ServerConfig extends ConfigHolder<CommandSourceStack> {
     public final BooleanEntry frostyBreath;
     public final BooleanEntry aetherExtinguishesFire;
     public final BooleanEntry requireSaddleToRide;
-    /// When false, dragon nest structures never generate. Intended for the Dragon Mounts Legacy
-    /// style of play, where eggs are found in chest loot instead of in the world.
     public final BooleanEntry spawnDragonNests;
     public final DoubleEntry baseArmor;
     public final DoubleEntry baseArmorToughness;

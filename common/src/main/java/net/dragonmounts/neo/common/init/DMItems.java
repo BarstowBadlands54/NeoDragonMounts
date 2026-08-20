@@ -159,26 +159,28 @@ public class DMItems {
     public static final ItemHolder<FluteItem> NETHERITE_DRAGON_FLUTE = TOOL_TAB.register("dragon_flute_netherite", props -> new FluteItem(20, props.stacksTo(1).fireResistant()));
     // Dragon Amulets
     public static final ItemHolder<AmuletItem<Entity>> AMULET = TOOL_TAB.register("amulet", props ->
-            new AmuletItem<>(Entity.class, props)
+            // The empty amulet registers as "amulet" but its armour art is "dragon_amulet", which
+            // is why the texture stem is a separate argument from the registry name.
+            new AmuletItem<>(Entity.class, "dragon_amulet", props)
     );
-    public static final ItemHolder<DragonAmuletItem> FOREST_DRAGON_AMULET = registerItem("forest_dragon_amulet", props -> makeDragonAmulet(DragonTypes.FOREST, props));
-    public static final ItemHolder<DragonAmuletItem> FIRE_DRAGON_AMULET = registerItem("fire_dragon_amulet", props -> makeDragonAmulet(DragonTypes.FIRE, props));
-    public static final ItemHolder<DragonAmuletItem> ICE_DRAGON_AMULET = registerItem("ice_dragon_amulet", props -> makeDragonAmulet(DragonTypes.ICE, props));
-    public static final ItemHolder<DragonAmuletItem> WATER_DRAGON_AMULET = registerItem("water_dragon_amulet", props -> makeDragonAmulet(DragonTypes.WATER, props));
-    public static final ItemHolder<DragonAmuletItem> AETHER_DRAGON_AMULET = registerItem("aether_dragon_amulet", props -> makeDragonAmulet(DragonTypes.AETHER, props));
-    public static final ItemHolder<DragonAmuletItem> NETHER_DRAGON_AMULET = registerItem("nether_dragon_amulet", props -> makeDragonAmulet(DragonTypes.NETHER, props));
-    public static final ItemHolder<DragonAmuletItem> ENDER_DRAGON_AMULET = registerItem("ender_dragon_amulet", props -> makeDragonAmulet(DragonTypes.ENDER, props));
-    public static final ItemHolder<DragonAmuletItem> SUNLIGHT_DRAGON_AMULET = registerItem("sunlight_dragon_amulet", props -> makeDragonAmulet(DragonTypes.SUNLIGHT, props));
-    public static final ItemHolder<DragonAmuletItem> ENCHANTED_DRAGON_AMULET = registerItem("enchanted_dragon_amulet", props -> makeDragonAmulet(DragonTypes.ENCHANTED, props));
-    public static final ItemHolder<DragonAmuletItem> STORM_DRAGON_AMULET = registerItem("storm_dragon_amulet", props -> makeDragonAmulet(DragonTypes.STORM, props));
-    public static final ItemHolder<DragonAmuletItem> TERRA_DRAGON_AMULET = registerItem("terra_dragon_amulet", props -> makeDragonAmulet(DragonTypes.TERRA, props));
-    public static final ItemHolder<DragonAmuletItem> ZOMBIE_DRAGON_AMULET = registerItem("zombie_dragon_amulet", props -> makeDragonAmulet(DragonTypes.ZOMBIE, props));
-    public static final ItemHolder<DragonAmuletItem> MOONLIGHT_DRAGON_AMULET = registerItem("moonlight_dragon_amulet", props -> makeDragonAmulet(DragonTypes.MOONLIGHT, props));
-    public static final ItemHolder<DragonAmuletItem> SCULK_DRAGON_AMULET = registerItem("sculk_dragon_amulet", props -> makeDragonAmulet(DragonTypes.SCULK, props.fireResistant()));
-    public static final ItemHolder<DragonAmuletItem> SKELETON_DRAGON_AMULET = registerItem("skeleton_dragon_amulet", props -> makeDragonAmulet(DragonTypes.SKELETON, props));
-    public static final ItemHolder<DragonAmuletItem> WITHER_DRAGON_AMULET = registerItem("wither_dragon_amulet", props -> makeDragonAmulet(DragonTypes.WITHER, props));
-    public static final ItemHolder<DragonAmuletItem> DARK_DRAGON_AMULET = registerItem("dark_dragon_amulet", props -> makeDragonAmulet(DragonTypes.DARK, props));
-    public static final ItemHolder<DragonAmuletItem> LIGHT_DRAGON_AMULET = registerItem("light_dragon_amulet", props -> makeDragonAmulet(DragonTypes.LIGHT, props));
+    public static final ItemHolder<DragonAmuletItem> FOREST_DRAGON_AMULET = registerDragonAmulet("forest_dragon_amulet", DragonTypes.FOREST);
+    public static final ItemHolder<DragonAmuletItem> FIRE_DRAGON_AMULET = registerDragonAmulet("fire_dragon_amulet", DragonTypes.FIRE);
+    public static final ItemHolder<DragonAmuletItem> ICE_DRAGON_AMULET = registerDragonAmulet("ice_dragon_amulet", DragonTypes.ICE);
+    public static final ItemHolder<DragonAmuletItem> WATER_DRAGON_AMULET = registerDragonAmulet("water_dragon_amulet", DragonTypes.WATER);
+    public static final ItemHolder<DragonAmuletItem> AETHER_DRAGON_AMULET = registerDragonAmulet("aether_dragon_amulet", DragonTypes.AETHER);
+    public static final ItemHolder<DragonAmuletItem> NETHER_DRAGON_AMULET = registerDragonAmulet("nether_dragon_amulet", DragonTypes.NETHER);
+    public static final ItemHolder<DragonAmuletItem> ENDER_DRAGON_AMULET = registerDragonAmulet("ender_dragon_amulet", DragonTypes.ENDER);
+    public static final ItemHolder<DragonAmuletItem> SUNLIGHT_DRAGON_AMULET = registerDragonAmulet("sunlight_dragon_amulet", DragonTypes.SUNLIGHT);
+    public static final ItemHolder<DragonAmuletItem> ENCHANTED_DRAGON_AMULET = registerDragonAmulet("enchanted_dragon_amulet", DragonTypes.ENCHANTED);
+    public static final ItemHolder<DragonAmuletItem> STORM_DRAGON_AMULET = registerDragonAmulet("storm_dragon_amulet", DragonTypes.STORM);
+    public static final ItemHolder<DragonAmuletItem> TERRA_DRAGON_AMULET = registerDragonAmulet("terra_dragon_amulet", DragonTypes.TERRA);
+    public static final ItemHolder<DragonAmuletItem> ZOMBIE_DRAGON_AMULET = registerDragonAmulet("zombie_dragon_amulet", DragonTypes.ZOMBIE);
+    public static final ItemHolder<DragonAmuletItem> MOONLIGHT_DRAGON_AMULET = registerDragonAmulet("moonlight_dragon_amulet", DragonTypes.MOONLIGHT);
+    public static final ItemHolder<DragonAmuletItem> SCULK_DRAGON_AMULET = registerItem("sculk_dragon_amulet", props -> makeDragonAmulet("sculk_dragon_amulet", DragonTypes.SCULK, props.fireResistant()));
+    public static final ItemHolder<DragonAmuletItem> SKELETON_DRAGON_AMULET = registerDragonAmulet("skeleton_dragon_amulet", DragonTypes.SKELETON);
+    public static final ItemHolder<DragonAmuletItem> WITHER_DRAGON_AMULET = registerDragonAmulet("wither_dragon_amulet", DragonTypes.WITHER);
+    public static final ItemHolder<DragonAmuletItem> DARK_DRAGON_AMULET = registerDragonAmulet("dark_dragon_amulet", DragonTypes.DARK);
+    public static final ItemHolder<DragonAmuletItem> LIGHT_DRAGON_AMULET = registerDragonAmulet("light_dragon_amulet", DragonTypes.LIGHT);
     // Dragon Essences
     public static final ItemHolder<DragonEssenceItem> FOREST_DRAGON_ESSENCE = registerItem("forest_dragon_essence", props -> makeDragonEssence(DragonTypes.FOREST, props));
     public static final ItemHolder<DragonEssenceItem> FIRE_DRAGON_ESSENCE = registerItem("fire_dragon_essence", props -> makeDragonEssence(DragonTypes.FIRE, props));
@@ -599,8 +601,15 @@ public class DMItems {
         return holder;
     }
 
-    static DragonAmuletItem makeDragonAmulet(DragonType type, Properties props) {
-        var item = new DragonAmuletItem(type, props);
+    /// The registry name doubles as the armour texture stem, so it is threaded through instead of
+    /// being derived from the DragonType id -- ENDER registers as "legacu_ender", which would
+    /// resolve to a texture that does not exist.
+    static ItemHolder<DragonAmuletItem> registerDragonAmulet(String name, DragonType type) {
+        return registerItem(name, props -> makeDragonAmulet(name, type, props));
+    }
+
+    static DragonAmuletItem makeDragonAmulet(String name, DragonType type, Properties props) {
+        var item = new DragonAmuletItem(type, name, props);
         type.bindInstance(DragonAmuletItem.class, item);
         return item;
     }

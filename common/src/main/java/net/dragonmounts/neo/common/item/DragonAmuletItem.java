@@ -38,8 +38,8 @@ public class DragonAmuletItem extends AmuletItem<TameableDragonEntity> implement
     public final DragonType type;
     public final TranslatableContents name;
 
-    public DragonAmuletItem(DragonType type, Properties props) {
-        super(TameableDragonEntity.class, props.component(DMDataComponents.DRAGON_TYPE, type));
+    public DragonAmuletItem(DragonType type, String armorTexture, Properties props) {
+        super(TameableDragonEntity.class, armorTexture, props.component(DMDataComponents.DRAGON_TYPE, type));
         this.type = type;
         this.name = new TranslatableContents(TRANSLATION_KEY + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }

@@ -2,9 +2,11 @@ package net.dragonmounts.neo.common.item;
 
 import net.dragonmounts.neo.common.api.ScoreboardAccessor;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.init.DMAmuletArmor;
 import net.dragonmounts.neo.common.init.DMDataComponents;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -44,12 +47,20 @@ import static net.dragonmounts.neo.common.util.EntityUtil.*;
 /**
  * @see net.minecraft.world.item.SpawnEggItem
  */
-public class AmuletItem<T extends Entity> extends Item implements EntityContainer<T> {
+public class AmuletItem<T extends Entity> extends ArmorItem implements EntityContainer<T> {
     public static final String TRANSLATION_KEY = ITEM_TRANSLATION_KEY_PREFIX + "dragon_amulet";
     public final Class<T> contentType;
 
-    public AmuletItem(Class<T> contentType, Properties props) {
-        super(props.stacksTo(1));
+    /**
+     * @param armorTexture texture stem under textures/models/armor/, e.g. "aether_dragon_amulet".
+     *                     It is passed explicitly rather than derived from the DragonType id
+     *                     because ENDER registers under DragonType.DEFAULT_KEY ("legacu_ender"),
+     *                     which would resolve to a texture that does not exist.
+     */
+    public AmuletItem(Class<T> contentType, String armorTexture, Properties props) {
+        super(Holder.direct(DMAmuletArmor.material(armorTexture)),
+                Type.CHESTPLATE,
+                DMAmuletArmor.withDefaultTint(props).stacksTo(1));
         this.contentType = contentType;
     }
 
@@ -177,13 +188,27 @@ public class AmuletItem<T extends Entity> extends Item implements EntityContaine
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        var result = this.releaseIntoLiquid(level, player, hand);
+        // Nothing was released -- the amulet is empty, or the player is not pointing at a fluid
+        // source -- so fall through to the vanilla armour swap and wear it, the way right-clicking
+        // a chestplate does. Pointing at a solid block is handled by useOn above, which consumes
+        // the interaction before use() is ever reached, so this cannot steal a release.
+        return result.getResult() == InteractionResult.PASS
+                ? this.swapWithEquipmentSlot(this, level, player, hand)
+                : result;
+    }
+
+    private InteractionResultHolder<ItemStack> releaseIntoLiquid(Level level, Player player, InteractionHand hand) {
         var stack = player.getItemInHand(hand);
         if (this.isEmpty(stack)) return InteractionResultHolder.pass(stack);
         var hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (hit.getType() != BlockHitResult.Type.BLOCK) return InteractionResultHolder.pass(stack);
-        if (!(level instanceof ServerLevel world)) return InteractionResultHolder.success(stack);
         var pos = hit.getBlockPos();
-        if (!(world.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.pass(stack);
+        // The liquid test has to run before the ServerLevel guard. use() now equips on PASS, so
+        // both sides must agree on whether this is a release; bailing out client-side first would
+        // have the server equip while the client only swung its arm.
+        if (!(level.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.pass(stack);
+        if (!(level instanceof ServerLevel world)) return InteractionResultHolder.success(stack);
         if (world.mayInteract(player, pos) && player.mayUseItemAt(pos, hit.getDirection(), stack)) {
             var entity = this.loadEntity(world, stack, player, pos, MobSpawnType.BUCKET, false, false);
             if (entity == null) return InteractionResultHolder.pass(stack);
