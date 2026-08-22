@@ -71,9 +71,15 @@ public class DragonAi {
     );
 
     static void initCoreActivity(Brain<ServerDragonEntity> brain) {
-        brain.addActivity(Activity.CORE, 0, ImmutableList.of(
+        // Explicitly typed so RiddenBiteAttack, which is a GoalBehavior<TameableDragonEntity>,
+        // sits alongside the vanilla Behavior<Mob> sinks without inference collapsing the list.
+        brain.addActivity(Activity.CORE, 0, ImmutableList.<BehaviorControl<? super ServerDragonEntity>>of(
                 new LookAtTargetSink(45, 90),
-                new MoveToTargetSink()
+                new MoveToTargetSink(),
+                // CORE, not FIGHT: tickBrain forces the CONTROLLED activity while a player is
+                // aboard, and CONTROLLED runs nothing but ControlledByPlayer. Anything registered
+                // under FIGHT is simply not running while the dragon is ridden.
+                new RiddenBiteAttack()
         ));
     }
 
