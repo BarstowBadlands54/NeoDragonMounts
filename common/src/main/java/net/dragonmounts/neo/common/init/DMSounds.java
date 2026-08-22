@@ -32,6 +32,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_START_AIRFLOW = create("entity.dragon.breath_start.airflow");
     public static final SoundEvent DRAGON_BREATH_START_WATER = create("entity.dragon.breath_start.water");
     public static final SoundEvent DRAGON_BREATH_START_FOREST = create("entity.dragon.breath_start.forest");
+    public static final SoundEvent DRAGON_BREATH_START_SCULK = create("entity.dragon.breath_start.sculk");
 
     public static final SoundEvent DRAGON_BREATH_LOOP_ADULT = create("entity.dragon.breath_loop.adult");
     public static final SoundEvent DRAGON_BREATH_LOOP_JUVENILE = create("entity.dragon.breath_loop.juvenile");
@@ -40,6 +41,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_LOOP_AIRFLOW = create("entity.dragon.breath_loop.airflow");
     public static final SoundEvent DRAGON_BREATH_LOOP_WATER = create("entity.dragon.breath_loop.water");
     public static final SoundEvent DRAGON_BREATH_LOOP_FOREST = create("entity.dragon.breath_loop.forest");
+    public static final SoundEvent DRAGON_BREATH_LOOP_SCULK = create("entity.dragon.breath_loop.sculk");
 
     public static final SoundEvent DRAGON_BREATH_STOP_ADULT = create("entity.dragon.breath_stop.adult");
     public static final SoundEvent DRAGON_BREATH_STOP_JUVENILE = create("entity.dragon.breath_stop.juvenile");
@@ -48,6 +50,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_STOP_AIRFLOW = create("entity.dragon.breath_stop.airflow");
     public static final SoundEvent DRAGON_BREATH_STOP_WATER = create("entity.dragon.breath_stop.water");
     public static final SoundEvent DRAGON_BREATH_STOP_FOREST = create("entity.dragon.breath_stop.forest");
+    public static final SoundEvent DRAGON_BREATH_STOP_SCULK = create("entity.dragon.breath_stop.sculk");
 
     public static final SoundEvent DRAGON_EGG_CRACK = create("entity.dragon_egg.crack");
     public static final SoundEvent DRAGON_EGG_SHATTER = create("entity.dragon_egg.shatter");

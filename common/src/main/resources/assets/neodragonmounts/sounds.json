@@ -171,6 +171,15 @@
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
+  "entity.dragon.breath_start.sculk": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_charge",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
+  },
   "entity.dragon.breath_start.forest": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_start/forest"
@@ -213,6 +222,15 @@
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
+  "entity.dragon.breath_loop.sculk": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.agitated",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
+  },
   "entity.dragon.breath_loop.forest": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_loop/forest"
@@ -252,6 +270,15 @@
   "entity.dragon.breath_stop.water": {
     "sounds": [
       "neodragonmounts:entity/dragon/breath_stop/water"
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
+  },
+  "entity.dragon.breath_stop.sculk": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event"
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },

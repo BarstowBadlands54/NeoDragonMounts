@@ -230,7 +230,7 @@ public class VariantAppearances {
 
     static {
         var builder = builder().setArmorCategory("sculk")
-                .withBreath(DMParticleSprites.POISON_BREATH);;
+                .withBreath(DMParticleSprites.SCULK_BREATH);
         SCULK_AMETHYST = builder.build(makeId("sculk/amethyst"));
         SCULK_BETA = builder.build(makeId("sculk/beta"));
         SCULK_WARDEN = builder.build(makeId("sculk/warden"));

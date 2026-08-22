@@ -52,6 +52,11 @@
     },
     {
       "type": "single",
+      "resource": "neodragonmounts:particle/breath_sculk",
+      "sprite": "neodragonmounts:breath_sculk"
+    },
+    {
+      "type": "single",
       "resource": "neodragonmounts:particle/breath_soul",
       "sprite": "neodragonmounts:breath_soul"
     },

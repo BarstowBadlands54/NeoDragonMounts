@@ -16,5 +16,6 @@ public interface DMParticleSprites {
     ResourceLocation NETHER_BREATH = makeId("breath_nether");
     ResourceLocation SOUL_BREATH = makeId("breath_soul");
     ResourceLocation POISON_BREATH = makeId("breath_poison");
+    ResourceLocation SCULK_BREATH = makeId("breath_sculk");
     ResourceLocation WITHER_BREATH = makeId("breath_wither");
 }
