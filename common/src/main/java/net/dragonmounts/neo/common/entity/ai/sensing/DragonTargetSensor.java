@@ -73,7 +73,10 @@ public class DragonTargetSensor extends NearestLivingEntitySensor<ServerDragonEn
         var selfAttacker = this.selfHurtBy.updateTarget(dragon, current);
         if (takeIfHurtBy(brain, dragon, selfAttacker, owner)) return;
         if (takeIfHurtBy(brain, dragon, this.ownerHurtBy.updateTarget(owner, current), owner)) return;
-        if (takeIfAttackable(level, brain, dragon, owner, this.ownerTarget.updateTarget(owner, current))) return;
+        // Arguments were transposed here: takeIfAttackable takes (target, owner), so passing
+        // `owner` fourth asked "should I attack my owner?" instead of "should I help my owner
+        // fight what they are fighting?".
+        if (takeIfAttackable(level, brain, dragon, this.ownerTarget.updateTarget(owner, current), owner)) return;
 
         // Otherwise look for a nearby hostile (Enemy) to attack proactively.
         var nearestEnemy = brain.getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES)

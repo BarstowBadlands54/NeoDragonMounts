@@ -1,7 +1,9 @@
 package net.dragonmounts.neo.common.entity.breath;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import net.dragonmounts.neo.common.entity.dragon.DragonModelContracts;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
+import net.dragonmounts.neo.common.util.math.MathUtil;
 import net.dragonmounts.neo.common.entity.dragon.ServerDragonEntity;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.common.init.DMSounds;
@@ -50,8 +52,25 @@ public abstract class DragonBreath {
         this.damage = damage;
     }
 
+    /**
+     * Distance from the jaw pivot to the muzzle, in model units. Matches the forward offset the
+     * head-relative version used, so the stream still starts at the same place in front of the snout.
+     */
+    public static final float MUZZLE_OFFSET = 24.0F;
+
+    /**
+     * Anchored at the jaw, then projected along the aim -- deliberately not through the head.
+     * <p>
+     * The drawn head pitch is clamped for looks (see DragonHeadLocator) while the aim is free to
+     * point straight down, so projecting the muzzle through the head would start the stream out
+     * in front of the snout and drop it wide of anything directly underneath. Taking the jaw
+     * pivot and stepping along the aim vector keeps the origin on the beam at any angle.
+     */
     public Vec3 getSpawnPosition() {
-        return this.dragon.getHeadRelativeOffset(0.0F, -10.0F, 24.0F);
+        var dragon = this.dragon;
+        float reach = MUZZLE_OFFSET * dragon.getAdjustedSize()
+                * MathUtil.MOJANG_MODEL_SCALE * DragonModelContracts.MAGICAL_HEAD_SCALE;
+        return dragon.getHeadRelativeOffset(0.0F, -10.0F, 0.0F).add(this.getAimVector().scale(reach));
     }
 
     /**

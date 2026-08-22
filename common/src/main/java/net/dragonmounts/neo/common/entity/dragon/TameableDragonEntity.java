@@ -8,6 +8,7 @@ import net.dragonmounts.neo.common.api.DynamicAttributeEntity;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
 import net.dragonmounts.neo.common.component.DragonFood;
 import net.dragonmounts.neo.common.entity.ai.control.DragonBodyControl;
+import net.dragonmounts.neo.common.entity.ai.control.DragonLookControl;
 import net.dragonmounts.neo.common.entity.ai.control.DragonMoveControl;
 import net.dragonmounts.neo.common.entity.breath.DragonBreathHelper;
 import net.dragonmounts.neo.common.entity.projectile.ability.DragonProjectileAbility;
@@ -180,6 +181,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         super(type, level);
         this.setPersistenceRequired();
         this.moveControl = new DragonMoveControl(this);
+        this.lookControl = new DragonLookControl(this);
     }
 
     @Override
@@ -727,13 +729,38 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public boolean wantsToAttack(@Nullable LivingEntity target, @Nullable LivingEntity owner) {
+        // The owner is never a target. The Player case below does not cover this: canHarmPlayer()
+        // returns true for a teamless player against themselves, so a stray hit from the owner
+        // would otherwise fall through to `default -> true`.
+        if (target == this || target == owner || target == this.getOwner()) return false;
         return switch (target) {
             case ArmorStand ignored -> false;
-            case TamableAnimal other -> !other.isTame() || other.getOwner() != owner;
+            // Any tamed animal is off-limits, not only this owner's. Breath is an area effect, so
+            // retaliation between pets is self-amplifying: one stray blast across a pen sets the
+            // whole pen fighting and every counter-attack sprays again. Untamed stays fair game,
+            // so a wild or hostile dragon that starts the fight is still fought back.
+            case TamableAnimal other -> !other.isTame();
             case AbstractHorse horse -> !horse.isTamed();
             case Player other when owner instanceof Player $owner && !$owner.canHarmPlayer(other) -> false;
             case null, default -> true;
         };
+    }
+
+    /**
+     * Body pitch the breath may reach, in degrees. 90 is straight down, which is the most
+     * atan2 can produce, so this removes the ceiling entirely rather than merely widening it.
+     * The head does not follow this far -- DragonHeadLocator clamps what is drawn.
+     */
+    public static final int BREATH_MAX_PITCH = 90;
+
+    @Override
+    public int getMaxHeadXRot() {
+        // A ceiling, not a turn rate. LookControl zeroes xRot every tick and then steps back
+        // toward the look target by at most this many degrees, so at the vanilla 40 the dragon
+        // physically cannot pitch past 40 degrees -- faceTarget's steeper aim was overwritten on
+        // the same tick it was applied, which is why an airborne dragon fired over the top of
+        // anything below it. Widened only while breathing so ordinary looking-about is unchanged.
+        return this.isBreathing() ? BREATH_MAX_PITCH : super.getMaxHeadXRot();
     }
 
     @Override
@@ -1016,10 +1043,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final RawAnimation BREATH = RawAnimation.begin().thenLoop("animation.dragonmounts2.dragon.breath");
     private static final RawAnimation BITE = RawAnimation.begin().thenPlay("animation.dragonmounts2.dragon.bite");
 
+    /** Minimum gap between wing-flap sounds, in ticks. */
+    private static final int FLAP_SOUND_COOLDOWN = 10;
+    private int lastFlapSoundTick = Integer.MIN_VALUE;
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // 1) LOCOMOTION state machine
-        float volume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
         controllers.add(
                 new AnimationController<>(this, "movement", 5, state -> {
                     if (this.isDeadOrDying()) {
@@ -1053,25 +1083,29 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                     return state.setAndContinue(state.isMoving() ? WALK : IDLE);
                 })
                         .setSoundKeyframeHandler(event -> {
-                            String sound = event.getKeyframeData().getSound();
-
-                            SoundEvent soundEvent = switch (sound) {
-                                case "wings_flap" -> DMSounds.DRAGON_FLAP;
-                                default -> null;
-                            };
-
-                            if (soundEvent != null) {
-                                this.level().playLocalSound(
-                                        this.getX(),
-                                        this.getY(),
-                                        this.getZ(),
-                                        soundEvent,
-                                        this.getSoundSource(),
-                                        volume,
-                                        1.0F,
-                                        false
-                                );
-                            }
+                            if (!"wings_flap".equals(event.getKeyframeData().getSound())) return;
+                            // The predicate above runs once per render frame and flips between
+                            // FLAP/HOVER/DIVE whenever velocity crosses a threshold. Each flip
+                            // clears GeckoLib's executed-keyframe set and re-arms this handler, so
+                            // a ridden dragon jittering around 0.08 horizontal fires it every
+                            // frame -- which drains the 247-slot static sound channel pool in
+                            // seconds and stops every other sound from being able to start.
+                            if (this.tickCount - this.lastFlapSoundTick < FLAP_SOUND_COOLDOWN) return;
+                            this.lastFlapSoundTick = this.tickCount;
+                            // Read the scale now, not at registerControllers time: on the client
+                            // the entity is built before its age data arrives, so a captured value
+                            // was frozen at the spawn-time scale.
+                            float flapVolume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
+                            this.level().playLocalSound(
+                                    this.getX(),
+                                    this.getY(),
+                                    this.getZ(),
+                                    DMSounds.DRAGON_FLAP,
+                                    this.getSoundSource(),
+                                    flapVolume,
+                                    1.0F,
+                                    false
+                            );
                         })
         );
 

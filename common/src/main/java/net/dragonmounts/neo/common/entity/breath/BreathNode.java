@@ -70,7 +70,12 @@ public class BreathNode {
     }
 
     public float getStartingSpeed() {
-        return this.power.speed * INITIAL_SPEED;
+        return getStartingSpeed(this.power);
+    }
+
+    /** Blocks per tick a freshly spawned node travels. Used by the AI to lead a moving target. */
+    public static float getStartingSpeed(BreathPower power) {
+        return power.speed * INITIAL_SPEED;
     }
 
     public float getAgeTicks() {

@@ -12,6 +12,9 @@ public class BreathSound extends AbstractTickableSoundInstance {
     public final ClientDragonEntity dragon;
     public boolean timeout;
     public BreathSound next;
+    /** Set once the sound has actually been given a channel; see BreathSoundHandler#update. */
+    public boolean acquired;
+    public int retries;
 
     public BreathSound(ClientDragonEntity dragon, SoundEvent event, boolean looping) {
         super(event, SoundSource.NEUTRAL, SoundInstance.createUnseededRandom());

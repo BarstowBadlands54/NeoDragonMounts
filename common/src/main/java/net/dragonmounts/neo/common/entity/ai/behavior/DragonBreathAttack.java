@@ -1,5 +1,6 @@
 package net.dragonmounts.neo.common.entity.ai.behavior;
 
+import net.dragonmounts.neo.common.entity.breath.BreathNode;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +23,14 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     private static final float STRONG_MAX_HEALTH = 40.0F;
     private static final float STRONG_ATTACK = 7.0F;
     private static final double MAX_BREATH_RANGE_SQR = 32.0 * 32.0;
+    /**
+     * Cut a burst short if a ground target closes inside this while we are airborne, so
+     * DragonAerialCombat can re-establish its standoff. Holding position through a burst is what
+     * let a Warden walk in underneath and melee a hovering dragon.
+     */
+    private static final double BREAK_OFF_RANGE_SQR = 10.0 * 10.0;
+    /** Ceiling on how far ahead of a target the aim will lead, in ticks. */
+    private static final double MAX_LEAD_TICKS = 12.0;
     private static final int BREATH_DURATION = 40;         // 2s
     private static final int BREATH_COOLDOWN = 40;         // 2s between bursts
 
@@ -79,15 +88,20 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         return !target.onGround() && target.fallDistance == 0.0F && !target.onClimbable();
     }
 
-    private boolean shouldBreathe(TameableDragonEntity dragon, LivingEntity target, long now) {
-        boolean armoured = target.getArmorValue() >= STRONG_ARMOR;
-        boolean tanky = target.getMaxHealth() >= STRONG_MAX_HEALTH;
-        boolean hardHitting = false;
+    /**
+     * Is this target worth spending breath on -- and, to DragonAerialCombat, worth refusing to
+     * melee at all? Shared between the two behaviours so they cannot drift apart on what counts
+     * as dangerous. A Warden clears it three times over: 500 max health, 30 attack damage.
+     */
+    public static boolean isDangerous(LivingEntity target) {
+        if (target.getArmorValue() >= STRONG_ARMOR) return true;
+        if (target.getMaxHealth() >= STRONG_MAX_HEALTH) return true;
         var attackAttr = target.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (attackAttr != null) {
-            hardHitting = attackAttr.getValue() >= STRONG_ATTACK;
-        }
-        if (armoured || tanky || hardHitting) return true;
+        return attackAttr != null && attackAttr.getValue() >= STRONG_ATTACK;
+    }
+
+    private boolean shouldBreathe(TameableDragonEntity dragon, LivingEntity target, long now) {
+        if (isDangerous(target)) return true;
 
         boolean trivial = target.getMaxHealth() <= 20.0F && target.getArmorValue() <= 0;
         boolean longFight = this.targetAcquiredAt >= 0
@@ -103,7 +117,25 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
      */
     private void faceTarget(TameableDragonEntity dragon, LivingEntity target) {
         Vec3 from = dragon.getEyePosition();
-        Vec3 to = target.position().add(0.0, target.getBbHeight() * 0.5, 0.0);
+        Vec3 centre = target.position().add(0.0, target.getBbHeight() * 0.5, 0.0);
+
+        // Lead the target. The stream is not instant -- a node covers power.speed * INITIAL_SPEED
+        // blocks a tick -- so aiming where the target stands right now puts the line behind
+        // anything running at the dragon by the time the fire arrives. The error is worst exactly
+        // where it was reported: a chaser closing on a dragon that is holding altitude moves
+        // mostly ACROSS the line of fire, not along it, so almost all of its motion is miss.
+        // Solving the intercept properly is a quadratic; two refinement passes converge close
+        // enough at these speeds and cost nothing.
+        double nodeSpeed = BreathNode.getStartingSpeed(dragon.getLifeStage().power);
+        Vec3 velocity = target.getDeltaMovement();
+        Vec3 to = centre;
+        if (nodeSpeed > 1.0E-4) {
+            for (int i = 0; i < 2; ++i) {
+                double lead = Math.min(from.distanceTo(to) / nodeSpeed, MAX_LEAD_TICKS);
+                to = centre.add(velocity.scale(lead));
+            }
+        }
+
         double dx = to.x - from.x;
         double dy = to.y - from.y;
         double dz = to.z - from.z;
@@ -116,8 +148,11 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         dragon.setYRot(newYaw);
         dragon.yBodyRot = newYaw;
         dragon.yHeadRot = newYaw;
-        // pitch tracks directly so it aims up/down at airborne targets; wider clamp for steep dives
-        dragon.setXRot(Mth.clamp(wantPitch, -85.0F, 85.0F));
+        // Pitch tracks the target exactly, with no clamp: atan2 already bounds wantPitch to
+        // +/-90, and anything narrower means the stream cannot reach something directly below.
+        // The neck does not bend this far -- DragonHeadLocator draws a clamped pose while the
+        // stream itself follows this rotation.
+        dragon.setXRot(wantPitch);
     }
 
     /** Move `current` toward `target` (degrees) by at most maxStep, wrapping correctly. */
@@ -154,7 +189,12 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         // In an aerial duel we keep the burst going as long as the target stays in range, so the
         // 2s burst limit doesn't cut the fire stream short mid-chase.
         boolean aerialDuel = dragon.isFlying() && target != null && isAirborne(target);
-        if ((expired && !aerialDuel) || targetGone || controlled) {
+        // A ground foe that has closed underneath us gets the burst cut short. The alternative is
+        // hovering in place for the full two seconds while it beats on the dragon, which is how a
+        // Warden -- knockback-immune, so it is never pushed off -- wins the exchange.
+        boolean crowded = dragon.isFlying() && target != null && !isAirborne(target)
+                && dragon.distanceToSqr(target) < BREAK_OFF_RANGE_SQR;
+        if ((expired && !aerialDuel) || targetGone || controlled || crowded) {
             this.doStop(level, dragon, time);
             return;
         }

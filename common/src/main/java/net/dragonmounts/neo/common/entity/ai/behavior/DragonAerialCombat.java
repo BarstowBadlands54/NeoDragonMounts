@@ -31,10 +31,18 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
 
     /** Engage from the air only while the target is within this horizontal-ish range. */
     private static final double ENGAGE_RANGE_SQR = 40.0 * 40.0;
-    /** Desired height to hold above the target while strafing it. */
-    private static final double STRAFE_HEIGHT = 6.0;
-    /** Ideal standoff distance from the target (kept under DragonBreathAttack's 32-block range). */
-    private static final double STANDOFF = 12.0;
+    /**
+     * Standoff and altitude against a GROUND target. Deliberately far: 16 out and 14 up puts the
+     * dragon ~21 blocks away, outside a Warden's 15-block sonic-boom sphere -- which is the only
+     * reach it has beyond melee, and which bypasses armour entirely, so distance is the only
+     * defence against it. Still comfortably inside DragonBreathAttack's 32-block range, and the
+     * shallower ~40-degree firing angle is far kinder to the neck than hovering right overhead.
+     */
+    private static final double GROUND_STANDOFF = 16.0;
+    private static final double GROUND_HEIGHT = 14.0;
+    /** Closer for an air duel: a flying foe can follow anyway, so standing off buys nothing. */
+    private static final double AIR_STANDOFF = 12.0;
+    private static final double AIR_HEIGHT = 6.0;
     /** Flight speed multiplier for the move control. */
     private static final double FLIGHT_SPEED = 1.3;
 
@@ -70,7 +78,17 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
             return true;
         }
 
-        // 2) ground target + we're hurt -> take to the air. Hysteresis so we don't flap up and
+        // 2) dangerous ground foe -> fight it from the air from the outset. Waiting for the
+        //    health trigger below meant the dragon opened every fight by walking into melee, so
+        //    against something like a Warden (500 health, 30 damage a swing, immune to knockback)
+        //    it had already lost a third of its health before it ever left the ground. Latched, so
+        //    it does not drop back down mid-fight.
+        if (DragonBreathAttack.isDangerous(target)) {
+            this.committedAir = true;
+            return true;
+        }
+
+        // 3) ground target + we're hurt -> take to the air. Hysteresis so we don't flap up and
         //    down right around the threshold: commit below HURT_FRACTION, release above RECOVER.
         float frac = dragon.getHealth() / dragon.getMaxHealth();
         if (this.committedAir) {
@@ -115,6 +133,12 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
         // keep the target as the look target so the dragon orients toward it between breaths
         dragon.getBrain().setMemory(MemoryModuleType.LOOK_TARGET,
                 new net.minecraft.world.entity.ai.behavior.EntityTracker(target, true));
+        // Erase the walk target every tick. SetWalkTargetFromAttackTargetIfTargetOutOfReach sits
+        // later in the FIGHT list and points WALK_TARGET straight at the enemy; MoveToTargetSink
+        // in CORE then feeds that to the move control and overwrites the standoff position set
+        // below. That tug-of-war is what dragged the dragon down into melee between bursts no
+        // matter how far out this behaviour tried to hold it.
+        dragon.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
 
         // While actually breathing, YIELD positioning to DragonBreathAttack: hold the current
         // spot (stay airborne, no reposition) so its faceTarget aim isn't overridden by the move
@@ -145,10 +169,16 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
             nz = dz / horiz;
         }
 
-        double wantX = target.getX() + nx * STANDOFF;
-        double wantZ = target.getZ() + nz * STANDOFF;
+        // A grounded foe cannot follow us up, so hold well outside its reach; a flying one can,
+        // so there is nothing to gain by hanging back.
+        boolean grounded = !this.isAirborne(target);
+        double standoff = grounded ? GROUND_STANDOFF : AIR_STANDOFF;
+        double height = grounded ? GROUND_HEIGHT : AIR_HEIGHT;
+
+        double wantX = target.getX() + nx * standoff;
+        double wantZ = target.getZ() + nz * standoff;
         // hold above the target so the breath rains down and ground melee can't easily reach us
-        double wantY = Math.max(target.getY() + STRAFE_HEIGHT, target.getEyeY() + STRAFE_HEIGHT);
+        double wantY = Math.max(target.getY() + height, target.getEyeY() + height);
 
         dragon.getMoveControl().setWantedPosition(wantX, wantY, wantZ, FLIGHT_SPEED);
     }
