@@ -1064,7 +1064,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     /** Minimum gap between wing-flap sounds, in ticks. */
     private static final int FLAP_SOUND_COOLDOWN = 10;
-    private int lastFlapSoundTick = Integer.MIN_VALUE;
+    private int lastFlapSoundTick = -FLAP_SOUND_COOLDOWN;
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
