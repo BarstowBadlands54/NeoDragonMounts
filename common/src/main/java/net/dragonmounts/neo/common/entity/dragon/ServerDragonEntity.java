@@ -693,9 +693,21 @@ public class ServerDragonEntity extends TameableDragonEntity {
         return InteractionResult.PASS;
     }
 
+    /**
+     * Vanilla's thunderHit deals 5 damage <em>and</em> sets the entity alight for 8 seconds.
+     * Damage immunity only covers the first half, so a lightning-immune dragon still caught
+     * flames -- harmless, since the entity type is fireImmune and every dragon type is immune
+     * to ON_FIRE, but it burnt for about two seconds and looked like the bolt had landed.
+     * <p>
+     * The type hook stays outside the branch on purpose: it is what converts a water dragon
+     * to storm and buffs a storm dragon standing in its own beam, and neither should depend
+     * on having taken damage first.
+     */
     @Override
     public void thunderHit(ServerLevel level, LightningBolt bolt) {
-        super.thunderHit(level, bolt);
+        if (!this.isInvulnerableTo(level.damageSources().lightningBolt())) {
+            super.thunderHit(level, bolt);
+        }
         this.getDragonType().onThunderHit(this, bolt);
     }
 

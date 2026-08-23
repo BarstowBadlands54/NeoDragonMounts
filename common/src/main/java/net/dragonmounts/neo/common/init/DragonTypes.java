@@ -192,6 +192,7 @@ public class DragonTypes {
                 .texture(makeId("textures/entity/dragon/storm/thunder/body.png"))
                 .setMaterial(DMItemTags.STORM_DRAGON_SCALES)
                 .setScaleColor(MapColor.WOOL)
+                .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .register(StormType::new, makeId("storm"));
         SUNLIGHT = new DragonTypeBuilder(0xFFDE00, material, tier)
                 .model("normal", "base")

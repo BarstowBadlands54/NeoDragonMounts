@@ -3,6 +3,7 @@ package net.dragonmounts.neo.common.client.renderer.dragon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.dragonmounts.neo.common.client.model.dragon.DragonGeoModel;
+import net.dragonmounts.neo.common.client.renderer.breath.LightningBeamRenderer;
 import net.dragonmounts.neo.common.client.renderer.RenderStateAccessor;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,6 +31,18 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
         addRenderLayer(new DragonGlowLayer(this));
         addRenderLayer(new DragonTackLayer(this));
         addRenderLayer(new DragonArmorLayer(this));
+    }
+
+    /**
+     * Lightning breath is drawn here rather than as particles: before super.render the pose
+     * is still at the entity's interpolated position and un-rotated, which is the only point
+     * in the pass where a world-aligned beam can be emitted without undoing the body's yaw.
+     */
+    @Override
+    public void render(TameableDragonEntity animatable, float entityYaw, float partialTick,
+                       PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+        LightningBeamRenderer.render(animatable, poseStack, bufferSource, partialTick);
+        super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
     /** Scale the model by life stage so hatchlings render small and grow to adult size. */

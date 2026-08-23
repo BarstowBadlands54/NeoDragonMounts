@@ -6,6 +6,8 @@ import net.dragonmounts.neo.common.client.breath.BreathSoundHandler;
 import net.dragonmounts.neo.common.entity.breath.BreathParticleOption;
 import net.dragonmounts.neo.common.entity.breath.BreathState;
 import net.dragonmounts.neo.common.entity.breath.DragonBreathHelper;
+import net.dragonmounts.neo.common.entity.breath.LightningBreath;
+import net.minecraft.core.particles.ParticleTypes;
 
 import static net.minecraft.util.Mth.lerp;
 
@@ -58,19 +60,36 @@ public class ClientBreathHelper extends DragonBreathHelper<ClientDragonEntity> {
                 this.lookY = lookY;
                 this.lookZ = lookZ;
             }
-            var option = new BreathParticleOption(dragon.getVariant(), stage.power);
-            final int PARTICLES_PER_TICK = 4;
-            for (int i = 0; i < PARTICLES_PER_TICK; ++i) {
-                double partialTickHeadStart = i / (double) PARTICLES_PER_TICK;
-                level.addParticle(
-                        option,
-                        lerp(partialTickHeadStart, this.throatX, throatX) + motionX,
-                        lerp(partialTickHeadStart, this.throatY, throatY) + motionY,
-                        lerp(partialTickHeadStart, this.throatZ, throatZ) + motionZ,
-                        lerp(partialTickHeadStart, this.lookX, lookX),
-                        lerp(partialTickHeadStart, this.lookY, lookY),
-                        lerp(partialTickHeadStart, this.lookZ, lookZ)
-                );
+            if (breath instanceof LightningBreath) {
+                // The arc itself is drawn by LightningBeamRenderer as real lightning
+                // geometry. Billboarded breath particles would sit on top of it and wash
+                // it out, so all that is left here is a couple of sparks off the muzzle.
+                for (int i = 0; i < 2; ++i) {
+                    level.addParticle(
+                            ParticleTypes.ELECTRIC_SPARK,
+                            throatX,
+                            throatY,
+                            throatZ,
+                            lookX * 0.35 + motionX,
+                            lookY * 0.35 + motionY,
+                            lookZ * 0.35 + motionZ
+                    );
+                }
+            } else {
+                var option = new BreathParticleOption(dragon.getVariant(), stage.power);
+                final int PARTICLES_PER_TICK = 4;
+                for (int i = 0; i < PARTICLES_PER_TICK; ++i) {
+                    double partialTickHeadStart = i / (double) PARTICLES_PER_TICK;
+                    level.addParticle(
+                            option,
+                            lerp(partialTickHeadStart, this.throatX, throatX) + motionX,
+                            lerp(partialTickHeadStart, this.throatY, throatY) + motionY,
+                            lerp(partialTickHeadStart, this.throatZ, throatZ) + motionZ,
+                            lerp(partialTickHeadStart, this.lookX, lookX),
+                            lerp(partialTickHeadStart, this.lookY, lookY),
+                            lerp(partialTickHeadStart, this.lookZ, lookZ)
+                    );
+                }
             }
             this.throatX = throatX;
             this.throatY = throatY;

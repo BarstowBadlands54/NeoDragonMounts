@@ -837,6 +837,25 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return driver == null ? this.getLookAngle() : driver.getViewVector(1.0F);
     }
 
+    /** Distance from the jaw pivot out to the muzzle, in model units. */
+    public static final float MUZZLE_OFFSET = 24.0F;
+
+    /**
+     * Where anything the dragon spits leaves it: the jaw pivot, stepped along the aim.
+     * <p>
+     * Anchored at the jaw and projected along {@link #getAimVector()} rather than through the
+     * head, deliberately. The drawn head pitch is clamped for looks (see DragonHeadLocator) while
+     * the aim is free to point anywhere, so projecting through the head would put the origin
+     * somewhere the shot is not actually going.
+     * <p>
+     * Breath and projectiles both come from here so the two cannot drift apart.
+     */
+    public Vec3 getMuzzlePosition() {
+        float reach = MUZZLE_OFFSET * this.getAdjustedSize()
+                * MathUtil.MOJANG_MODEL_SCALE * DragonModelContracts.MAGICAL_HEAD_SCALE;
+        return this.getHeadRelativeOffset(0.0F, -10.0F, 0.0F).add(this.getAimVector().scale(reach));
+    }
+
     /** How fast the body swings onto the rider's crosshair while breathing. */
     private static final float AIM_TURN_RATE = 0.45F;
     /** How fast the body swings onto the travel heading while flying. */

@@ -51,9 +51,15 @@ public class BreathSound extends AbstractTickableSoundInstance {
         if (this.timeout) {
             this.volume *= 0.5F;
         } else {
-            var player = Minecraft.getInstance().player;
-            this.volume = player == null ? 0.0F :
-                    this.dragon.getAgeScale() * (1.0F - MathUtil.clamp((float) pos.distanceTo(player.position()) / 40.0F));
+            // Measured from the camera, not from the player entity. OpenAL's listener is the
+            // camera (SoundEngine#updateSource), and F5 moves the camera without moving the
+            // player, so a curve anchored on the player was blind to the view mode: this
+            // multiplier faded on one schedule while the engine spatialised the same sound on
+            // another, and third person fell down the gap between them.
+            var camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+            this.volume = camera.isInitialized()
+                    ? this.dragon.getAgeScale() * (1.0F - MathUtil.clamp((float) pos.distanceTo(camera.getPosition()) / 40.0F))
+                    : 0.0F;
         }
     }
 

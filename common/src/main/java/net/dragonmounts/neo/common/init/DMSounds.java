@@ -33,6 +33,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_START_WATER = create("entity.dragon.breath_start.water");
     public static final SoundEvent DRAGON_BREATH_START_FOREST = create("entity.dragon.breath_start.forest");
     public static final SoundEvent DRAGON_BREATH_START_SCULK = create("entity.dragon.breath_start.sculk");
+    public static final SoundEvent DRAGON_BREATH_START_LIGHTNING = create("entity.dragon.breath_start.lightning");
 
     public static final SoundEvent DRAGON_BREATH_LOOP_ADULT = create("entity.dragon.breath_loop.adult");
     public static final SoundEvent DRAGON_BREATH_LOOP_JUVENILE = create("entity.dragon.breath_loop.juvenile");
@@ -42,6 +43,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_LOOP_WATER = create("entity.dragon.breath_loop.water");
     public static final SoundEvent DRAGON_BREATH_LOOP_FOREST = create("entity.dragon.breath_loop.forest");
     public static final SoundEvent DRAGON_BREATH_LOOP_SCULK = create("entity.dragon.breath_loop.sculk");
+    public static final SoundEvent DRAGON_BREATH_LOOP_LIGHTNING = create("entity.dragon.breath_loop.lightning");
 
     public static final SoundEvent DRAGON_BREATH_STOP_ADULT = create("entity.dragon.breath_stop.adult");
     public static final SoundEvent DRAGON_BREATH_STOP_JUVENILE = create("entity.dragon.breath_stop.juvenile");
@@ -51,6 +53,7 @@ public class DMSounds {
     public static final SoundEvent DRAGON_BREATH_STOP_WATER = create("entity.dragon.breath_stop.water");
     public static final SoundEvent DRAGON_BREATH_STOP_FOREST = create("entity.dragon.breath_stop.forest");
     public static final SoundEvent DRAGON_BREATH_STOP_SCULK = create("entity.dragon.breath_stop.sculk");
+    public static final SoundEvent DRAGON_BREATH_STOP_LIGHTNING = create("entity.dragon.breath_stop.lightning");
 
     public static final SoundEvent DRAGON_EGG_CRACK = create("entity.dragon_egg.crack");
     public static final SoundEvent DRAGON_EGG_SHATTER = create("entity.dragon_egg.shatter");

@@ -136,38 +136,68 @@
   },
   "entity.dragon.breath_start.adult": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/adult"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/adult",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_start.juvenile": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/juvenile",
-      "neodragonmounts:entity/dragon/breath_start/juvenile"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/juvenile",
+        "attenuation_distance": 40
+      },
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/juvenile",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_start.hatchling": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/hatchling"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/hatchling",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_start.ice": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/ice"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/ice",
+        "attenuation_distance": 40
+      }
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
+  },
+  "entity.dragon.breath_start.lightning": {
+    "sounds": [
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/lightning",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_start.airflow": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/airflow"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/airflow",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_start.water": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/water"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/water",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
@@ -182,43 +212,73 @@
   },
   "entity.dragon.breath_start.forest": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_start/forest"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_start/forest",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_start"
   },
   "entity.dragon.breath_loop.adult": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/adult"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/adult",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_loop.juvenile": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/juvenile"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/juvenile",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_loop.hatchling": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/hatchling"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/hatchling",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_loop.ice": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/ice"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/ice",
+        "attenuation_distance": 40
+      }
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
+  },
+  "entity.dragon.breath_loop.lightning": {
+    "sounds": [
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/lightning",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_loop.airflow": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/airflow"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/airflow",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_loop.water": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/water"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/water",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
@@ -233,43 +293,73 @@
   },
   "entity.dragon.breath_loop.forest": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_loop/forest"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_loop/forest",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_loop"
   },
   "entity.dragon.breath_stop.adult": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/adult"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/adult",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
   "entity.dragon.breath_stop.juvenile": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/juvenile"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/juvenile",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
   "entity.dragon.breath_stop.hatchling": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/hatchling"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/hatchling",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
   "entity.dragon.breath_stop.ice": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/ice"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/ice",
+        "attenuation_distance": 40
+      }
+    ],
+    "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
+  },
+  "entity.dragon.breath_stop.lightning": {
+    "sounds": [
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/lightning",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
   "entity.dragon.breath_stop.airflow": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/airflow"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/airflow",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
   "entity.dragon.breath_stop.water": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/water"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/water",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },
@@ -284,7 +374,10 @@
   },
   "entity.dragon.breath_stop.forest": {
     "sounds": [
-      "neodragonmounts:entity/dragon/breath_stop/forest"
+      {
+        "name": "neodragonmounts:entity/dragon/breath_stop/forest",
+        "attenuation_distance": 40
+      }
     ],
     "subtitle": "subtitles.entity.neodragonmounts.dragon.breath_stop"
   },

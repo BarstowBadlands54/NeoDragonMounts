@@ -2,6 +2,7 @@ package net.dragonmounts.neo.common.entity.breath;
 
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
 import net.dragonmounts.neo.compat.registry.DragonType;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by TGG on 8/07/2015.
@@ -53,6 +54,11 @@ public abstract class DragonBreathHelper<T extends TameableDragonEntity> {
 
     public boolean canBreathe() {
         return this.breath != null;
+    }
+
+    /// The live breath instance, for renderers that need to know what is being breathed.
+    public @Nullable DragonBreath getBreath() {
+        return this.breath;
     }
 
     protected void updateBreathState(boolean isBreathing) {
