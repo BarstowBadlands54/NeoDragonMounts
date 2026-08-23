@@ -11,15 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 
-/**
- * Shared body of the light family's breath: an arc that burns what it touches and leaves the
- * terrain alone.
- * <p>
- * Moonlight and sunlight differ only in colour, which is why the behaviour sits here and the
- * subclasses are two lines each. Blocks are deliberately untouched -- storm is the breed that
- * rearranges the world, and giving three more breeds terrain effects would make a light dragon
- * unusable near a build.
- */
 public abstract class LightBreath extends DragonBreath implements LightningBreath {
     public LightBreath(TameableDragonEntity dragon, float damage) {
         super(dragon, damage);

@@ -134,13 +134,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     private static final EntityDataAccessor<Boolean> DATA_SLEEPING = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_SHEARED = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_TRUST_OTHER = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    /**
-     * Bronco taming: set once the wild dragon has been fed enough to allow break-in rides. Distinct from DATA_TRUST_OTHER.
-     */
     private static final EntityDataAccessor<Boolean> DATA_BREAK_IN_TRUST = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    /**
-     * Player-set V-formation flight rank (0 = auto/unset; 1 = innermost wing, 2 = next, ...).
-     */
     private static final EntityDataAccessor<Integer> DATA_FLIGHT_RANK = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<ItemStack> DATA_CHEST_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<ItemStack> DATA_SADDLE_ITEM = SynchedEntityData.defineId(TameableDragonEntity.class, EntityDataSerializers.ITEM_STACK);
@@ -153,11 +147,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public static final String BREAK_IN_TRUSTED_PARAMETER_KEY = "BreakInTrust";
     public static final String FLIGHT_RANK_PARAMETER_KEY = "FlightRank";
     public static final String HOME_PARAMETER_KEY = "Home";
-    /**
-     * Where this dragon calls home, or null if it was never given one. Server-authoritative and
-     * saved with the entity; the flute keeps its own cached copy purely so the button can be
-     * labelled correctly while the dragon is too far away to be tracked by the client.
-     */
+
     protected @Nullable GlobalPos home;
     protected DragonType lastType;
     protected EndCrystal nearestCrystal;
@@ -304,7 +294,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         builder.define(DATA_FLIGHT_RANK, 0);
         builder.define(DATA_SADDLE_ITEM, ItemStack.EMPTY);
         builder.define(DATA_CHEST_ITEM, ItemStack.EMPTY);
-        builder.define(DATA_DRAGON_VARIANT, DragonVariants.ENDER_JEAN);
+        builder.define(DATA_DRAGON_VARIANT, DragonVariants.LEGACY_ENDER);
     }
 
     @Override
@@ -322,19 +312,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public void tick() {
-        // DATA_DRAGON_VARIANT defaults to ENDER_JEAN, so a dragon that genuinely *is* ender_jean
-        // never fires a change event for it -- and applyType(), the only thing that installs the
-        // breath weapon and the type's attribute modifiers, hangs off that event.
-        //
-        // Server side: setVariant(ENDER_JEAN) equals the current value, so SynchedEntityData
-        // discards it as a no-op and onSyncedDataUpdated is never called. setDragonType() skips
-        // the call entirely anyway, since ENDER_JEAN's type already matches.
-        // Client side: getNonDefaultValues() omits anything still at its default, so the variant
-        // is left out of the spawn packet and the hook has nothing to fire on.
-        //
-        // Result on both sides: breath stays null, canBreathe() is false, and setBreathing() can
-        // never latch. applyType() is idempotent -- it returns immediately once lastType matches
-        // -- so initialising here costs one reference comparison per tick thereafter.
         if (this.lastType == null) {
             this.applyType(this.getDragonType());
         }
@@ -462,18 +439,14 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
             seat = s;
         }
 
-        // locatePassenger returns an ADULT-sized offset. It was only being scaled by
-        // MOJANG_MODEL_SCALE, so a juvenile -- whose model is drawn at getAdjustedSize() -- got a
-        // seat placed for a full-grown dragon and the rider floated above its back. Scaling by the
-        // same factor the model uses keeps the seat on the saddle at every life stage.
         Vec3 base = this.getDragonType().locatePassenger(seat, this.isInSittingPose())
                 .scale(MathUtil.MOJANG_MODEL_SCALE * this.getAdjustedSize());
 
         if (this.getPassengers().size() == 1 && this.isFlying()) {
             float pitch = Mth.lerp(partialTick, this.renderPitchO, this.renderPitch);
             float roll = Mth.lerp(partialTick, this.renderRollO, this.renderRoll);
-            base = base.xRot(-pitch * MathUtil.TO_RAD_FACTOR);   // pitch shifts seat fwd/back+up/down
-            base = base.zRot(-roll * MathUtil.TO_RAD_FACTOR);     // roll shifts seat left/right (the part you want)
+            base = base.xRot(-pitch * MathUtil.TO_RAD_FACTOR);
+            base = base.zRot(-roll * MathUtil.TO_RAD_FACTOR);
         }
         return base.yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
     }
@@ -536,7 +509,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     protected ResourceKey<LootTable> getDefaultLootTable() {
         return this.getDragonType().getLootTable();
     }
-
 
     //----------AgeableEntity----------
     protected void refreshAge() {
@@ -607,9 +579,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_TRUST_OTHER, state);
     }
 
-    /**
-     * Bronco taming: whether this wild dragon has been fed enough to be mounted for break-in.
-     */
     public boolean isBreakInTrusted() {
         return this.entityData.get(DATA_BREAK_IN_TRUST);
     }
@@ -618,9 +587,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_BREAK_IN_TRUST, state);
     }
 
-    /**
-     * Player-set V-formation flight rank. 0 means "auto" (fall back to age-based ordering).
-     */
     public int getFlightRank() {
         return this.entityData.get(DATA_FLIGHT_RANK);
     }
@@ -629,11 +595,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         this.entityData.set(DATA_FLIGHT_RANK, Math.max(0, rank));
     }
 
-    /**
-     * Assigns the lowest rank not already used by another of this owner's nearby dragons.
-     * Useful to avoid duplicate numbers when auto-ranking at spawn or from the GUI. Returns
-     * the rank chosen. If no owner/level context is available, leaves the dragon on Auto (0).
-     */
     public int assignNextFreeRank() {
         var owner = this.getOwner();
         if (owner == null || this.level().isClientSide) return this.getFlightRank();
@@ -668,7 +629,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     //----------ConditionalShearable----------
-
     public final boolean isSheared() {
         return this.entityData.get(DATA_SHEARED);
     }
@@ -729,16 +689,9 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public boolean wantsToAttack(@Nullable LivingEntity target, @Nullable LivingEntity owner) {
-        // The owner is never a target. The Player case below does not cover this: canHarmPlayer()
-        // returns true for a teamless player against themselves, so a stray hit from the owner
-        // would otherwise fall through to `default -> true`.
         if (target == this || target == owner || target == this.getOwner()) return false;
         return switch (target) {
             case ArmorStand ignored -> false;
-            // Any tamed animal is off-limits, not only this owner's. Breath is an area effect, so
-            // retaliation between pets is self-amplifying: one stray blast across a pen sets the
-            // whole pen fighting and every counter-attack sprays again. Untamed stays fair game,
-            // so a wild or hostile dragon that starts the fight is still fought back.
             case TamableAnimal other -> !other.isTame();
             case AbstractHorse horse -> !horse.isTamed();
             case Player other when owner instanceof Player $owner && !$owner.canHarmPlayer(other) -> false;
@@ -746,20 +699,10 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         };
     }
 
-    /**
-     * Body pitch the breath may reach, in degrees. 90 is straight down, which is the most
-     * atan2 can produce, so this removes the ceiling entirely rather than merely widening it.
-     * The head does not follow this far -- DragonHeadLocator clamps what is drawn.
-     */
     public static final int BREATH_MAX_PITCH = 90;
 
     @Override
     public int getMaxHeadXRot() {
-        // A ceiling, not a turn rate. LookControl zeroes xRot every tick and then steps back
-        // toward the look target by at most this many degrees, so at the vanilla 40 the dragon
-        // physically cannot pitch past 40 degrees -- faceTarget's steeper aim was overwritten on
-        // the same tick it was applied, which is why an airborne dragon fired over the top of
-        // anything below it. Widened only while breathing so ordinary looking-about is unchanged.
         return this.isBreathing() ? BREATH_MAX_PITCH : super.getMaxHeadXRot();
     }
 
@@ -770,7 +713,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     //----------Player Control----------
-
     @Override
     protected float getFlyingSpeed() {
         return this.adjustSpeed((float) this.getAttributeValue(Attributes.FLYING_SPEED));
@@ -799,78 +741,32 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         super.setYRot(yRot);
     }
 
-    /**
-     * Heading the rider is asking for, in degrees, derived from the camera yaw plus the
-     * WASD input vector. Forward = camera yaw, left = -90, right = +90, back = 180.
-     * <p>
-     * In Minecraft yaw increases clockwise (viewed from above) and {@code xxa} is +1 for
-     * strafe-LEFT, so the strafe component is negated to map left input to a left turn.
-     *
-     * @return the desired world heading, or the camera yaw when no key is held.
-     */
     public static float getInputHeading(Player player) {
         if (player.xxa == 0.0F && player.zza == 0.0F) return player.getYRot();
         return player.getYRot() + (float) Math.toDegrees(Math.atan2(-player.xxa, player.zza));
     }
 
-    /**
-     * True while the dragon's body is pinned to the rider's crosshair instead of to its
-     * direction of travel. Movement keys then strafe rather than steer, which is what lets
-     * a rider circle a target while keeping the breath on it.
-     */
     public boolean isAimLocked() {
         return this.isBreathing() && this.getControllingPassenger() != null;
     }
 
-    /**
-     * The direction the breath weapon (and any aimed projectile) should travel.
-     * <p>
-     * This deliberately does <em>not</em> go through {@link #getLookAngle()}: the dragon's own
-     * rotation is smoothed and damped so the body turns believably, which would drop the beam
-     * behind a fast-moving crosshair. Taking the rider's view vector directly means the stream
-     * lands exactly where the player is pointing, and the body catches up over the next few
-     * ticks. Falls back to the dragon's own look when nobody is steering (wild dragons,
-     * bronco rides, AI-driven breath attacks).
-     */
     public Vec3 getAimVector() {
         Player driver = this.getControllingPassenger();
         return driver == null ? this.getLookAngle() : driver.getViewVector(1.0F);
     }
 
-    /** Distance from the jaw pivot out to the muzzle, in model units. */
     public static final float MUZZLE_OFFSET = 24.0F;
 
-    /**
-     * Where anything the dragon spits leaves it: the jaw pivot, stepped along the aim.
-     * <p>
-     * Anchored at the jaw and projected along {@link #getAimVector()} rather than through the
-     * head, deliberately. The drawn head pitch is clamped for looks (see DragonHeadLocator) while
-     * the aim is free to point anywhere, so projecting through the head would put the origin
-     * somewhere the shot is not actually going.
-     * <p>
-     * Breath and projectiles both come from here so the two cannot drift apart.
-     */
     public Vec3 getMuzzlePosition() {
         float reach = MUZZLE_OFFSET * this.getAdjustedSize()
                 * MathUtil.MOJANG_MODEL_SCALE * DragonModelContracts.MAGICAL_HEAD_SCALE;
         return this.getHeadRelativeOffset(0.0F, -10.0F, 0.0F).add(this.getAimVector().scale(reach));
     }
 
-    /** How fast the body swings onto the rider's crosshair while breathing. */
     private static final float AIM_TURN_RATE = 0.45F;
-    /** How fast the body swings onto the travel heading while flying. */
     private static final float AIR_TURN_RATE = 0.20F;
-    /** How fast the body swings onto the travel heading on the ground. */
     private static final float GROUND_TURN_RATE = 0.15F;
 
-    /**
-     * The body yaw {@link #tickRidden} is about to settle on this tick while aim-locked.
-     * <p>
-     * {@code travelRidden} calls {@link #getRiddenInput} <em>before</em> {@code tickRidden}, but
-     * {@code travel} then rotates that vector by the already-updated yaw. Both sides go through
-     * here so the strafe vector is resolved against the same heading the movement will use,
-     * instead of lagging a tick behind whenever the rider swings the camera hard.
-     */
     private float nextAimYaw(Player player) {
         float rotY = this.getYRot();
         return rotY + Mth.wrapDegrees(player.getYRot() - rotY) * AIM_TURN_RATE;
@@ -880,10 +776,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     protected void tickRidden(Player player, Vec3 input) {
         super.tickRidden(player, input);
 
-        // ---- AIM LOCK ----------------------------------------------------------------
-        // While breathing, the body tracks the crosshair rather than the direction of
-        // travel, so the dragon visibly points along its own beam. Pitch is taken at full
-        // strength (not the damped ride pitch) so the head lines up with the stream.
         if (this.isAimLocked()) {
             float rotY = this.nextAimYaw(player);
             float rotX = this.getXRot();
@@ -893,10 +785,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
             return;
         }
 
-        // ---- STEERING ----------------------------------------------------------------
-        // Desired heading = where the player is actually trying to GO, not just where the
-        // camera points, so pressing A/D/S turns the dragon to face that way instead of
-        // crab-walking sideways/backwards. Applies on the ground as well as in the air.
         var rot = EntityUtil.getRiddenRotation(player);
         float targetYaw = getInputHeading(player);
         float rotY = this.getYRot();
@@ -906,7 +794,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     //----------Home----------
-
     public @Nullable GlobalPos getHomePos() {
         return this.home;
     }
@@ -919,13 +806,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         return this.home != null;
     }
 
-    /**
-     * True when this dragon has a home it could actually be sent to right now — i.e. one that
-     * exists and sits in the level the dragon is currently standing in. Cross-dimension recall
-     * is deliberately not supported: dragging an entity between levels needs a full
-     * {@code teleportTo(ServerLevel, ...)} and would let a flute pull a dragon out of the
-     * Nether from the Overworld.
-     */
     public boolean canReturnHome() {
         return this.home != null && this.level().dimension().equals(this.home.dimension());
     }
@@ -934,8 +814,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         DragonProjectileAbility p = this.getVariant().projectile;   // variant override wins
         return p != null ? p : this.getVariant().getDragonType().getProjectile();
     }
-
-    /** Speed multiplier applied while strafing under aim lock, relative to a normal run. */
     private static final float AIM_STRAFE_SCALE = 0.7F;
 
     @Override
@@ -945,32 +823,18 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         boolean moving = strafe != 0.0F || forward != 0.0F;
         boolean grounded = this.onGround();
 
-        // ---- AIM LOCK ----------------------------------------------------------------
-        // The body is pinned to the crosshair, so WASD can no longer be expressed as pure
-        // forward thrust. Convert the requested world heading into the dragon's local frame
-        // and hand back a real strafe vector: the dragon slides sideways while the mouth
-        // stays on target.
         if (this.isAimLocked()) {
             double localX = 0.0;
             double localZ = 0.0;
             if (moving) {
-                // moveRelative() rotates this vector by the dragon's yaw, so the local
-                // direction for world heading H is (-sin d, cos d) with d = H - bodyYaw.
                 float delta = Mth.wrapDegrees(getInputHeading(player) - this.nextAimYaw(player)) * MathUtil.TO_RAD_FACTOR;
                 localX = -Mth.sin(delta) * AIM_STRAFE_SCALE;
                 localZ = Mth.cos(delta) * AIM_STRAFE_SCALE;
             }
-            // Climb/dive is deliberately cut loose from the look pitch here: aiming the
-            // breath at the floor should not fly the dragon into it. Jump/descend still work.
             double upward = grounded ? 0.0 : player.jumping ? 0.5 : this.isDescending() ? -0.5 : 0.0;
             return new Vec3(localX, upward, localZ);
         }
 
-        // ---- STEERING ----------------------------------------------------------------
-        // Any movement key means "go": tickRidden has already turned the dragon onto that
-        // heading, so all that is left is forward thrust. Holding only A or D still gives
-        // full speed, which is why the magnitude is the larger of the two axes rather than
-        // the forward axis alone.
         float thrust = moving ? Math.max(Math.abs(strafe), Math.abs(forward)) : 0.0F;
         if (grounded) {
             return new Vec3(0.0, 0.0, thrust);
@@ -1130,22 +994,17 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
         float targetPitch = 0.0F;
         float targetRoll = 0.0F;
-        // Bank whenever the dragon is flying — under a rider OR flying itself (e.g. a
-        // bronco break-in ride, or following its owner). Pitch comes from vertical
-        // velocity, roll from how fast the heading is turning.
+
         if (this.isFlying() && getPassengers().size() == 1) {
             Vec3 v = this.getDeltaMovement();
             double horizontal = Math.sqrt(v.x * v.x + v.z * v.z);
 
-            // only pitch when actually flying forward — not when hovering or going straight up
             if (horizontal > 0.08) {
                 targetPitch = (float) Mth.clamp(-v.y * 45.0, -25.0, 25.0);
             } else {
-                targetPitch = 0.0F;   // hovering / vertical ascent -> level out
+                targetPitch = 0.0F;
             }
 
-            // Roll from heading turn-rate. Use the driver's intended yaw when a player
-            // is steering (snappier), otherwise the dragon's own yaw (autonomous flight).
             Player driver = this.getControllingPassenger();
             float yaw = (driver != null) ? driver.getYRot() : this.getYRot();
             float turn = Mth.wrapDegrees(yaw - this.lastYRotForRoll);

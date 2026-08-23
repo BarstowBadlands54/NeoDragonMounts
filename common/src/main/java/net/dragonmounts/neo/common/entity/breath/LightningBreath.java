@@ -17,24 +17,19 @@ import net.minecraft.world.entity.LivingEntity;
  * @see net.dragonmounts.neo.common.client.renderer.breath.LightningBeamRenderer
  */
 public interface LightningBreath {
-    /// Pale blue-white, the colour of a vanilla bolt.
+
     int STORM_COLOR = 0xE8F2FF;
     int MOONLIGHT_COLOR = 0x4C7BFF;
     int SUNLIGHT_COLOR = 0xFF8A1E;
 
-    /// Water conducts, so a target standing in rain or a pool takes the arc harder.
     float WET_DAMAGE_MULTIPLIER = 1.5F;
 
-    /// Packed 0xRRGGBB tint for the arc. Additive blending pushes the core towards white, so
-    /// this reads as the colour of the glow around the bolt rather than of the bolt itself.
     int getLightningColor();
 
-    /// How many arcs are drawn at once. More reads as a thicker, angrier beam.
     default int getBoltCount() {
         return 2;
     }
 
-    /// Burn time given to a mob caught in the arc.
     default int getIgniteTicks() {
         return 100;
     }

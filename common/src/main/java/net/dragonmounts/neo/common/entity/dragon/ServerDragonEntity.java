@@ -73,68 +73,40 @@ public class ServerDragonEntity extends TameableDragonEntity {
     public final DragonHeadLocator<ServerDragonEntity> headLocator = new DragonHeadLocator<>(this);
 
     // --- Bronco-style taming (server-only state) ---
-    /**
-     * Counts up while an untamed dragon is being ridden; when it exceeds buckThreshold the dragon bucks the rider.
-     */
+
     private int rideTicks = 0;
-    /**
-     * Randomized number of ticks the player must stay mounted before the dragon attempts to buck.
-     */
+
     private int buckThreshold = 0;
-    /**
-     * Successful rides accumulated toward taming.
-     */
+
     private int breakProgress = 0;
-    /**
-     * How many successful rides are needed to tame.
-     */
+
     public static final int RIDES_TO_TAME = 5;
-    /**
-     * Player must hang on at least this many ticks for the ride to "count" as successful.
-     */
+
     public static final int SUCCESS_RIDE_TICKS = 60; // 3 seconds
-    /**
-     * Min/max ticks before a buck attempt.
-     */
+
     public static final int BUCK_MIN_TICKS = 70;   // ~3.5s
     public static final int BUCK_MAX_TICKS = 160;  // ~8s
-    /**
-     * How high (blocks above the start) the dragon climbs while bucking.
-     */
+
     public static final double BRONCO_CLIMB_HEIGHT = 40.0;
-    /**
-     * Speed multiplier for the bronco climb (DragonFollowPlayerFlying uses ~1.5-2.0).
-     */
+
     public static final double BRONCO_FLY_SPEED = 2.0;
-    /**
-     * Horizontal radius (blocks) of the wild sweep while bucking — bigger = wider flight.
-     */
+
     public static final double BRONCO_SWEEP_RADIUS = 24.0;
-    /**
-     * Position where the current break-in ride began (anchors the wide sweep + climb target).
-     */
+
     private double breakInStartX = 0.0;
     private double breakInStartY = 0.0;
     private double breakInStartZ = 0.0;
     private int ticksClimbY = 0;
-    /**
-     * The player currently attempting to break in this dragon (server-side).
-     */
+
     @Nullable
     private java.util.UUID breakingInPlayer = null;
 
     // --- Saddle-less flight grace (a tamed dragon will fly briefly without a saddle, then insist on one) ---
-    /**
-     * Ticks spent flying-while-ridden with no saddle.
-     */
+
     private int noSaddleFlightTicks = 0;
-    /**
-     * Warn the rider once they've flown this long without a saddle.
-     */
+
     public static final int NO_SADDLE_WARN_TICKS = 100;   // ~5s
-    /**
-     * After this long with no saddle, the dragon stops cooperating and sets the rider down.
-     */
+
     public static final int NO_SADDLE_LAND_TICKS = 300;   // ~15s
     private boolean noSaddleWarned = false;
 
@@ -392,14 +364,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 .yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
     }
 
-
-    /**
-     * Friendly = not a hostile mob.
-     */
-    private static boolean isFriendly(Entity entity) {
-        return !(entity instanceof Enemy);   // Enemy is the hostile-mob marker (zombies, skeletons, etc.)
-    }
-
     /**
      * Bronco-style taming tick. While an unbroken dragon carries a rider:
      * - it forces itself airborne and flies erratically,
@@ -640,8 +604,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
         if (this.inventory.onInteract(stack)) return InteractionResult.SUCCESS;
 
-        // Baton toggles sitting. Works at any age -- a baton on a baby is one of the two ways to
-        // park it, and babies have no other use for the interaction.
         if (stack.is(DMItemTags.BATONS)) {
             this.setOrderedToSit(!this.isOrderedToSit());
             return InteractionResult.SUCCESS;
@@ -650,28 +612,13 @@ public class ServerDragonEntity extends TameableDragonEntity {
         InteractionResult result = stack.interactLivingEntity(player, this, hand);
         if (result.consumesAction()) return result;
 
-        // Sneak opens the inventory; a plain right-click rides.
-        //
-        // The inventory is deliberately open to babies as well: its equipment slots already
-        // refuse a baby via each slot's mayPlace, so nothing can be fitted, but the sit toggle
-        // inside remains reachable. Baton and inventory are therefore both routes to the same
-        // thing, which is what a player expects.
-        //
-        // Note the earlier form of this method ended with a trailing
-        // `else { openCustomInventoryScreen(player); }`, so ANY case that failed the ride test --
-        // including simply holding an item -- popped the inventory open without sneaking. That is
-        // why this is now an explicit sneak check with a PASS fallthrough.
+
         if (player.isSecondaryUseActive()) {
             this.openCustomInventoryScreen(player);
             return InteractionResult.SUCCESS;
         }
 
-        // Riding stays adult-only. A baby is too small to carry a rider, and startRiding would
-        // otherwise seat the player inside a hatchling.
         if (this.isTame() && this.isBreakInTrusted() && !this.isBaby()) {
-            // Optional saddle requirement. Off by default, so nothing changes unless a server
-            // turns it on. Checked here as well as in getControllingPassenger so an unsaddled
-            // dragon refuses the mount rather than seating a rider who then cannot steer.
             if (ServerConfig.INSTANCE.requireSaddleToRide.get() && !this.isSaddled()) {
                 player.displayClientMessage(
                         Component.translatable("message.neodragonmounts.needs_saddle"), true);
@@ -688,21 +635,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
             return InteractionResult.SUCCESS;
         }
 
-        // Nothing to do -- PASS rather than SUCCESS so the held item still gets its own use()
-        // (this is what lets an amulet fire on a dragon that cannot be ridden).
         return InteractionResult.PASS;
     }
 
-    /**
-     * Vanilla's thunderHit deals 5 damage <em>and</em> sets the entity alight for 8 seconds.
-     * Damage immunity only covers the first half, so a lightning-immune dragon still caught
-     * flames -- harmless, since the entity type is fireImmune and every dragon type is immune
-     * to ON_FIRE, but it burnt for about two seconds and looked like the bolt had landed.
-     * <p>
-     * The type hook stays outside the branch on purpose: it is what converts a water dragon
-     * to storm and buffs a storm dragon standing in its own beam, and neither should depend
-     * on having taken damage first.
-     */
     @Override
     public void thunderHit(ServerLevel level, LightningBolt bolt) {
         if (!this.isInvulnerableTo(level.damageSources().lightningBolt())) {
