@@ -1072,11 +1072,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         controllers.add(
                 new AnimationController<>(this, "movement", 5, state -> {
                     if (this.isDeadOrDying()) {
-                        // Hold the pose it died in. PlayState.STOP unbinds the bones and GeckoLib
-                        // eases them back to the model's default over the controller's 5 transition
-                        // ticks -- that easing is the neck and tail appearing to shrink and the head
-                        // swinging round. Speed 0 keeps the current frame pinned while the dissolve
-                        // decal in DragonRenderer fades the body out.
                         state.getController().setAnimationSpeed(0.0D);
                         return PlayState.CONTINUE;
                     }
@@ -1103,17 +1098,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                 })
                         .setSoundKeyframeHandler(event -> {
                             if (!"wings_flap".equals(event.getKeyframeData().getSound())) return;
-                            // The predicate above runs once per render frame and flips between
-                            // FLAP/HOVER/DIVE whenever velocity crosses a threshold. Each flip
-                            // clears GeckoLib's executed-keyframe set and re-arms this handler, so
-                            // a ridden dragon jittering around 0.08 horizontal fires it every
-                            // frame -- which drains the 247-slot static sound channel pool in
-                            // seconds and stops every other sound from being able to start.
                             if (this.tickCount - this.lastFlapSoundTick < FLAP_SOUND_COOLDOWN) return;
                             this.lastFlapSoundTick = this.tickCount;
-                            // Read the scale now, not at registerControllers time: on the client
-                            // the entity is built before its age data arrives, so a captured value
-                            // was frozen at the spawn-time scale.
                             float flapVolume = Mth.clamp(1.5F + this.getAgeScale(), 1.5F, 2.5F);
                             this.level().playLocalSound(
                                     this.getX(),
@@ -1136,11 +1122,6 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         // 3) BITE — triggered one-shot, layered over movement
         controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
                 .triggerableAnim("bite", BITE));
-
-        // No death controller: animation.dragonmounts2.dragon.death is an empty stub
-        // ({"loop": true, "animation_length": 1.0833} with no bones), so playing it animated
-        // nothing while stopping the movement controller reset the pose. Freezing movement above
-        // reproduces the original behaviour -- hold the last pose, then dissolve.
     }
 
     public void updateRenderPitchAndRoll() {
