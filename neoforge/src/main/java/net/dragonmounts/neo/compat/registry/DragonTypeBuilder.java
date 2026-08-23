@@ -17,6 +17,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.function.BiFunction;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
@@ -49,6 +51,8 @@ public final class DragonTypeBuilder {
     public ResourceLocation geoModel = makeId("geo/model/dragonmounts2.dragon.normal.geo.json");
     public ResourceLocation headGeoModel = makeId("geo/head/dragonmounts2.head_block.base.geo.json");
     public ResourceLocation texture;
+    public final EnumMap<ArmorItem.Type, ResourceLocation> armorGeo = new EnumMap<>(ArmorItem.Type.class);
+    public @Nullable ResourceLocation armorTexture;
 
 
     public DragonTypeBuilder(int color, @Nullable ArmorMaterialBuilder material, @Nullable ItemTierBuilder tier) {
@@ -127,6 +131,23 @@ public final class DragonTypeBuilder {
 
     public DragonTypeBuilder texture(ResourceLocation texture) {
         this.texture = texture;
+        return this;
+    }
+
+    /// Opts this type into GeckoLib armour rendering.
+    /// Texture -> assets/neodragonmounts/textures/models/armor/geo/&lt;name&gt;.png
+    /// Left unset, DragonScaleArmorItem hands back a null renderer and the type stays on
+    /// vanilla's _layer_1/_layer_2 path. That is the intended state for types without art.
+    public DragonTypeBuilder armor(String name) {
+        this.armorTexture = makeId("textures/models/armor/geo/" + name + ".png");
+        return this;
+    }
+
+    /// Overrides the geometry of a single slot -- a chestplate that carries wings, say.
+    /// Slots left alone fall back to the shared dragon_scale set.
+    /// -> assets/neodragonmounts/geo/armor/dragonmounts2.&lt;set&gt;.&lt;slot&gt;.geo.json
+    public DragonTypeBuilder armorGeo(ArmorItem.Type slot, String set) {
+        this.armorGeo.put(slot, makeId("geo/armor/dragonmounts2." + set + "." + slot.getName() + ".geo.json"));
         return this;
     }
 

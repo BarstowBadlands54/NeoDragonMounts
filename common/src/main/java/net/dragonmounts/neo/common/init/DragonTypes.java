@@ -53,6 +53,7 @@ public class DragonTypes {
                 .setEnchantmentValue(11);
         MOONLIGHT = new DragonTypeBuilder(0x2C427C, material, tier)
                 .model("normal", "base")
+                .armor("moonlight_classic")
                 .texture(makeId("textures/entity/dragon/moonlight/constellation/body.png"))
                 .setMaterial(DMItemTags.MOONLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLUE)
@@ -97,6 +98,7 @@ public class DragonTypes {
                 .register(ZombieType::new, makeId("zombie"));
         DARK = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
                 .model("normal", "base")
+                .armor("dark_classic")
                 .texture(makeId("textures/entity/dragon/dark/bloodmoon/body.png"))
                 .setMaterial(DMItemTags.DARK_DRAGON_SCALES)
                 .setScaleColor(MapColor.DEEPSLATE)
@@ -107,6 +109,7 @@ public class DragonTypes {
                 .register(DarkType::new, makeId("dark"));
         LIGHT = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
                 .model("winged_horned", "winged_horned")
+                .armor("light_classic")
                 .texture(makeId("textures/entity/dragon/light/prism/body.png"))
                 .setMaterial(DMItemTags.LIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_YELLOW)
@@ -117,6 +120,7 @@ public class DragonTypes {
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
                 .model("normal", "base")   // TODO confirm body shape (old COMPAT)
+                .armor("aether_classic")
                 .texture(makeId("textures/entity/dragon/aether/aether/body.png"))
                 .setMaterial(DMItemTags.AETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_LIGHT_BLUE)
@@ -131,6 +135,7 @@ public class DragonTypes {
                 .register(AetherType::new, makeId("aether"));
         FIRE = new DragonTypeBuilder(0x960B0F, material, tier)
                 .model("normal", "base")
+                .armor("fire_classic")
                 .texture(makeId("textures/entity/dragon/fire/fire/body.png"))
                 .setMaterial(DMItemTags.FIRE_DRAGON_SCALES)
                 .setScaleColor(MapColor.FIRE)
@@ -150,6 +155,7 @@ public class DragonTypes {
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
                 .model("horned_antlers", "horned_antlers")
+                .armor("forest_classic")
                 .texture(makeId("textures/entity/dragon/forest/nature/body.png"))
                 .setMaterial(DMItemTags.FOREST_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_GREEN)
@@ -172,6 +178,7 @@ public class DragonTypes {
                 .register(ForestType::new, makeId("forest"));
         ICE = new DragonTypeBuilder(0x00F2FF, material, tier)
                 .model("tail_scale_inclined", "base")
+                .armor("ice_classic")
                 .texture(makeId("textures/entity/dragon/ice/frost/body.png"))
                 .setMaterial(DMItemTags.ICE_DRAGON_SCALES)
                 .setScaleColor(MapColor.SNOW)
@@ -196,6 +203,7 @@ public class DragonTypes {
                 .register(StormType::new, makeId("storm"));
         SUNLIGHT = new DragonTypeBuilder(0xFFDE00, material, tier)
                 .model("normal", "base")
+                .armor("sunlight_classic")
                 .texture(makeId("textures/entity/dragon/sunlight/aurora/body.png"))
                 .setMaterial(DMItemTags.SUNLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_YELLOW)
@@ -206,6 +214,7 @@ public class DragonTypes {
                 .register(SunlightType::new, makeId("sunlight"));
         WATER = new DragonTypeBuilder(0x4F69A8, material, tier)
                 .model("scale_sharpened", "base")
+                .armor("water_classic")
                 .texture(makeId("textures/entity/dragon/water/pond/body.png"))
                 .setMaterial(DMItemTags.WATER_DRAGON_SCALES)
                 .setScaleColor(MapColor.WATER)
@@ -238,6 +247,7 @@ public class DragonTypes {
         tier = new ItemTierBuilder(netherite, 3000, 8.0F, 6.0F).setEnchantmentValue(11);
         ENDER = new DragonTypeBuilder(0xAB39BE, material, tier)
                 .model("normal", "base")   // TODO confirm body shape (old COMPAT)
+                .armor("ender_classic")
                 .texture(makeId("textures/entity/dragon/ender/female/body.png"))
                 .setMaterial(DMItemTags.ENDER_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)
@@ -252,6 +262,7 @@ public class DragonTypes {
                 .register(EnderType::new, DragonType.DEFAULT_KEY);
         SCULK = new DragonTypeBuilder(0x29DFEB, material, tier)
                 .model("sculk", "base")
+                .armor("sculk_classic")
                 .texture(makeId("textures/entity/dragon/sculk/wild_type/body.png"))
                 .setMaterial(DMItemTags.SCULK_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)
@@ -266,6 +277,7 @@ public class DragonTypes {
         //modify builders
         NETHER = new DragonTypeBuilder(0xE5B81B, material.setDurabilityFactor(55).setToughness(8.0F), new ItemTierBuilder(netherite, 2700, 8.0F, 6.0F).setEnchantmentValue(11))
                 .model("scale_sharpened", "base")
+                .armor("nether_classic")
                 .texture(makeId("textures/entity/dragon/nether/magma/body.png"))
                 .setMaterial(DMItemTags.NETHER_DRAGON_SCALES)
                 .setScaleColor(MapColor.NETHER)

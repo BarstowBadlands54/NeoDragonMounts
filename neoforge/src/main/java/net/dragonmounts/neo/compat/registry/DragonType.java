@@ -50,6 +50,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -89,6 +90,8 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final ResourceLocation geoModel;
     public final ResourceLocation headGeoModel;
     public final ResourceLocation texture;
+    public final @Nullable ResourceLocation armorTexture;
+    private final EnumMap<ArmorItem.Type, ResourceLocation> armorGeo;
 
     public DragonType(ResourceLocation identifier, DragonTypeBuilder builder) {
         this.identifier = identifier;
@@ -104,11 +107,13 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.eggParticle = builder.eggParticle;
         this.scaleColor = builder.scaleColor;
         this.name = new TranslatableContents(this.makeDescriptionId(), null, TranslatableContents.NO_ARGS);
-        this.material = builder.material == null ? null : builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
+        this.material = builder.material.build(builder.scales, identifier.withSuffix("_dragon_scale"));
         this.tier = builder.tier == null ? null : builder.tier.build(builder.scales);
         this.geoModel = builder.geoModel;
         this.headGeoModel = builder.headGeoModel;
         this.texture = builder.texture;
+        this.armorTexture = builder.armorTexture;
+        this.armorGeo = builder.armorGeo;
     }
 
     public ResourceLocation geoModel() {
@@ -121,6 +126,21 @@ public class DragonType implements TooltipProvider, DragonTypified {
 
     public ResourceLocation texture() {
         return this.texture;
+    }
+
+    /// Shared fallback geometry, built once. Slot tokens are ArmorItem.Type#getName():
+    /// helmet, chestplate, leggings, boots (plus body, which no scale-armour item uses).
+    /// Precomputed because getModelResource runs every render pass, per armour piece.
+    private static final EnumMap<ArmorItem.Type, ResourceLocation> DEFAULT_ARMOR_GEO =
+            Util.make(new EnumMap<ArmorItem.Type, ResourceLocation>(ArmorItem.Type.class), map -> {
+                for (ArmorItem.Type slot : ArmorItem.Type.values()) {
+                    map.put(slot, makeId("geo/armor/dragonmounts2.dragon_scale." + slot.getName() + ".geo.json"));
+                }
+            });
+
+    public ResourceLocation armorGeo(ArmorItem.Type slot) {
+        ResourceLocation override = this.armorGeo.get(slot);
+        return override == null ? DEFAULT_ARMOR_GEO.get(slot) : override;
     }
 
     public final ResourceLocation getId() {

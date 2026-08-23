@@ -49,6 +49,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.EnumMap;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -80,6 +81,8 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public final ResourceLocation geoModel;
     public final ResourceLocation headGeoModel;
     public final ResourceLocation texture;
+    public final @Nullable ResourceLocation armorTexture;
+    private final EnumMap<ArmorItem.Type, ResourceLocation> armorGeo;
     private final Reference2ObjectOpenHashMap<Class<?>, Object> map = new Reference2ObjectOpenHashMap<>();
     private final Style style;
     private final Set<ResourceKey<DamageType>> immunities;
@@ -107,6 +110,8 @@ public class DragonType implements TooltipProvider, DragonTypified {
         this.geoModel = builder.geoModel;
         this.headGeoModel = builder.headGeoModel;
         this.texture = builder.texture;
+        this.armorTexture = builder.armorTexture;
+        this.armorGeo = builder.armorGeo;
     }
 
     public final ResourceLocation getId() {
@@ -123,6 +128,21 @@ public class DragonType implements TooltipProvider, DragonTypified {
 
     public ResourceLocation texture() {
         return this.texture;
+    }
+
+    /// Shared fallback geometry, built once. Slot tokens are ArmorItem.Type#getName():
+    /// helmet, chestplate, leggings, boots (plus body, which no scale-armour item uses).
+    /// Precomputed because getModelResource runs every render pass, per armour piece.
+    private static final EnumMap<ArmorItem.Type, ResourceLocation> DEFAULT_ARMOR_GEO =
+            Util.make(new EnumMap<ArmorItem.Type, ResourceLocation>(ArmorItem.Type.class), map -> {
+                for (ArmorItem.Type slot : ArmorItem.Type.values()) {
+                    map.put(slot, makeId("geo/armor/dragonmounts2.dragon_scale." + slot.getName() + ".geo.json"));
+                }
+            });
+
+    public ResourceLocation armorGeo(ArmorItem.Type slot) {
+        ResourceLocation override = this.armorGeo.get(slot);
+        return override == null ? DEFAULT_ARMOR_GEO.get(slot) : override;
     }
 
     protected String makeDescriptionId() {
