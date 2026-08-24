@@ -321,7 +321,7 @@ public class DragonTypes {
                         .setToughness(5.0F),
                 new ItemTierBuilder(netherite, 2400, 8.0F, 5.0F).setEnchantmentValue(13))
                 .setMaterial(DMItemTags.WITHER_DRAGON_BONES)
-                .model("spiked_horned", "spiked_horned")   // TODO confirm body shape (old WITHER)
+                .model("skeleton", "skeleton")   // TODO confirm body shape (old WITHER)
                 .texture(makeId("textures/entity/dragon/wither/body.png"))
                 .notConvertible()
                 .putAttributeModifier(Attributes.MAX_HEALTH, BONUS_ID, -10.0D, AttributeModifier.Operation.ADD_VALUE)

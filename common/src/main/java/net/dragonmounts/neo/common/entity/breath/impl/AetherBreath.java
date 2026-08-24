@@ -38,11 +38,8 @@ public class AetherBreath extends DragonBreath {
         return time * time * 400;
     }
 
-    /// Hit density a flame must take before the airflow carries it into a neighbouring block.
     protected static final float FAN_THRESHOLD = 0.3F;
-    /// Density at which the fire flares up and jumps sideways as well as downwind.
     protected static final float FLARE_THRESHOLD = FAN_THRESHOLD * 3.0F;
-    /// Burn time granted to an entity that is already alight when the airflow fans it.
     protected static final int FANNED_BURN_TICKS = 100;
 
     public AetherBreath(TameableDragonEntity dragon, float damage) {
@@ -117,8 +114,6 @@ public class AetherBreath extends DragonBreath {
             level.setBlock(pos, state.setValue(AGE_15, 0), 3);
             changed = true;
         }
-        // Spreading the block's own default state keeps blue and soul fire propagating as
-        // themselves rather than turning into vanilla orange fire.
         var spread = state.getBlock().defaultBlockState();
         var random = level.random;
         for (var facing : Direction.values()) {
@@ -128,7 +123,6 @@ public class AetherBreath extends DragonBreath {
             }
         }
         if (max >= FLARE_THRESHOLD) {
-            // Held beam: the fire roars up and takes anything beside it, not just downwind.
             for (var facing : Direction.values()) {
                 if (random.nextBoolean()) continue;
                 if (this.igniteIfPossible(level, pos.relative(facing), spread, random)) {
