@@ -56,6 +56,7 @@ public class DragonTypes {
                 .armor("moonlight_classic")
                 .texture(makeId("textures/entity/dragon/moonlight/constellation/body.png"))
                 .setMaterial(DMItemTags.MOONLIGHT_DRAGON_SCALES)
+                .setSneezeParticle(ParticleTypes.CRIT)
                 .setScaleColor(MapColor.COLOR_BLUE)
                 .addHabitat(Blocks.BLUE_GLAZED_TERRACOTTA)
                 .register(MoonlightType::new, makeId("moonlight"));
@@ -75,11 +76,9 @@ public class DragonTypes {
                 .addHabitat(Blocks.RED_SANDSTONE_SLAB)
                 .addHabitat(Blocks.RED_SANDSTONE_STAIRS)
                 .addHabitat(Blocks.RED_SANDSTONE_WALL)
-                //.addHabitat(BiomeKeys.MESA)
-                //.addHabitat(BiomeKeys.MESA_ROCK)
-                //.addHabitat(BiomeKeys.MESA_CLEAR_ROCK)
-                //.addHabitat(BiomeKeys.MUTATED_MESA_CLEAR_ROCK)
-                //.addHabitat(BiomeKeys.MUTATED_MESA_ROCK)
+                .addHabitat(Biomes.BADLANDS)
+                .addHabitat(Biomes.ERODED_BADLANDS)
+                .addHabitat(Biomes.WOODED_BADLANDS)
                 .register(TerraType::new, makeId("terra"));
         ZOMBIE = new DragonTypeBuilder(0x5A5602, material, tier)
                 .model("skeleton", "skeleton")
@@ -106,6 +105,9 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
+                .addHabitat(Blocks.BLACK_GLAZED_TERRACOTTA)
+                .addHabitat(Blocks.BLACK_STAINED_GLASS)
+                .addHabitat(Blocks.BLACK_STAINED_GLASS_PANE)
                 .register(DarkType::new, makeId("dark"));
         LIGHT = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
                 .model("winged_horned", "winged_horned")
@@ -116,6 +118,9 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.MAGIC)
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
+                .addHabitat(Blocks.WHITE_GLAZED_TERRACOTTA)
+                .addHabitat(Blocks.WHITE_STAINED_GLASS)
+                .addHabitat(Blocks.WHITE_STAINED_GLASS_PANE)
                 .register(LightType::new, makeId("light"));
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
@@ -144,13 +149,6 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
                 .addHabitat(Blocks.FIRE)
-                //.addHabitat(Blocks.LIT_FURNACE)
-                //.addHabitat(Blocks.YELLOW_FLOWER)
-                //.addHabitat(Blocks.RED_FLOWER)
-                //.addHabitat(Blocks.SAPLING)
-                //.addHabitat(Blocks.LEAVES)
-                //.addHabitat(Blocks.LEAVES2)
-                //.addHabitat(Biomes.JUNGLE_HILLS)
                 .addHabitat(Blocks.LAVA)
                 .register(FireType::new, makeId("fire"));
         FOREST = new DragonTypeBuilder(0x298317, material, tier)
@@ -165,15 +163,15 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.WITHER)
                 .addEffectImmunity(MobEffects.POISON)
                 .setSneezeParticle(ParticleTypes.HAPPY_VILLAGER)
-                //.addHabitat(Blocks.YELLOW_FLOWER)
-                //.addHabitat(Blocks.RED_FLOWER)
+                .addHabitat(Blocks.SUNFLOWER)
+                .addHabitat(Blocks.LILAC)
                 .addHabitat(Blocks.MOSSY_COBBLESTONE)
                 .addHabitat(Blocks.VINE)
-                //.addHabitat(Blocks.SAPLING)
-                //.addHabitat(Blocks.LEAVES)
-                //.addHabitat(Blocks.LEAVES2)
-                //.addHabitat(BiomeKeys.JUNGLE)
-                //.addHabitat(BiomeKeys.JUNGLE_HILLS)
+                .addHabitat(Blocks.ROSE_BUSH)
+                .addHabitat(Blocks.DANDELION)
+                .addHabitat(Blocks.POPPY)
+                .addHabitat(Blocks.SHORT_GRASS)
+                .addHabitat(Blocks.TALL_GRASS)
                 .addHabitat(Biomes.JUNGLE)
                 .register(ForestType::new, makeId("forest"));
         ICE = new DragonTypeBuilder(0x00F2FF, material, tier)
@@ -197,6 +195,7 @@ public class DragonTypes {
         STORM = new DragonTypeBuilder(0xF5F1E9, material, tier)
                 .model("tail_horned", "base")
                 .texture(makeId("textures/entity/dragon/storm/thunder/body.png"))
+                .setSneezeParticle(ParticleTypes.CRIT)
                 .setMaterial(DMItemTags.STORM_DRAGON_SCALES)
                 .setScaleColor(MapColor.WOOL)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
@@ -207,6 +206,7 @@ public class DragonTypes {
                 .texture(makeId("textures/entity/dragon/sunlight/aurora/body.png"))
                 .setMaterial(DMItemTags.SUNLIGHT_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_YELLOW)
+                .setSneezeParticle(ParticleTypes.CRIT)
                 .addHabitat(Blocks.GLOWSTONE)
                 .addHabitat(Blocks.JACK_O_LANTERN)
                 .addHabitat(Blocks.SHROOMLIGHT)
@@ -240,7 +240,7 @@ public class DragonTypes {
                 .addHabitat(Blocks.BOOKSHELF)
                 .addHabitat(Blocks.ENCHANTING_TABLE)
                 .register(EnchantedType::new, makeId("enchanted"));
-        material.setDurabilityFactor(70)
+                 material.setDurabilityFactor(70)
                 .setDefense(CHESTPLATE, 9)
                 .setEnchantmentValue(11)
                 .setToughness(9.0F);
@@ -272,6 +272,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
+                .addHabitat(Blocks.SCULK)
                 .addEffectImmunity(MobEffects.POISON)
                 .register(SculkType::new, makeId("sculk"));
         //modify builders
@@ -286,7 +287,9 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.HOT_FLOOR)
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
-                //.addHabitat(BiomeKeys.HELL)
+                .addHabitat(Biomes.NETHER_WASTES)
+                .addHabitat(Biomes.WARPED_FOREST)
+                .addHabitat(Biomes.CRIMSON_FOREST)
                 .setEggParticle(ParticleTypes.DRIPPING_LAVA)
                 .register(NetherType::new, makeId("nether"));
         //no scale items
@@ -310,6 +313,7 @@ public class DragonTypes {
                 .addImmunity(DamageTypes.LIGHTNING_BOLT)
                 .addImmunity(DamageTypes.WITHER)
                 .addHabitat(Blocks.BONE_BLOCK)
+                .addHabitat(Biomes.SOUL_SAND_VALLEY)
                 .register(SkeletonType::new, makeId("skeleton"));
         WITHER = new DragonTypeBuilder(0x50260A,
                 new ArmorMaterialBuilder(50)
