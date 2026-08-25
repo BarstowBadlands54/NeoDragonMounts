@@ -68,17 +68,15 @@ public class DragonTargetSensor extends NearestLivingEntitySensor<ServerDragonEn
         var owner = brain.getMemory(DMMemories.FOLLOWABLE_OWNER).orElse(null);
         var current = brain.getMemory(MemoryModuleType.NEAREST_ATTACKABLE).orElse(null);
 
-        // REVENGE first, and without the visibility gate, so the dragon fights back against
-        // whoever (or whatever) just hit it — players included.
+        // Revenge first, and ungated by visibility, so the dragon fights back against whatever
+        // just hit it.
         var selfAttacker = this.selfHurtBy.updateTarget(dragon, current);
         if (takeIfHurtBy(brain, dragon, selfAttacker, owner)) return;
         if (takeIfHurtBy(brain, dragon, this.ownerHurtBy.updateTarget(owner, current), owner)) return;
-        // Arguments were transposed here: takeIfAttackable takes (target, owner), so passing
-        // `owner` fourth asked "should I attack my owner?" instead of "should I help my owner
-        // fight what they are fighting?".
+        // takeIfAttackable takes (target, owner), in that order
         if (takeIfAttackable(level, brain, dragon, this.ownerTarget.updateTarget(owner, current), owner)) return;
 
-        // Otherwise look for a nearby hostile (Enemy) to attack proactively.
+        // otherwise look for a nearby hostile to attack proactively
         var nearestEnemy = brain.getMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES)
                 .stream()
                 .flatMap(Collection::stream)
@@ -89,9 +87,8 @@ public class DragonTargetSensor extends NearestLivingEntitySensor<ServerDragonEn
             return;
         }
 
-        // No hostile nearby. Only clear the target if the CURRENT one is no longer valid —
-        // i.e. don't wipe a revenge target (e.g. a player) just because they aren't an Enemy.
-        // Keep it while it's alive and the dragon still wants to attack it; otherwise erase.
+        // No hostile nearby. Clear only if the current target is no longer valid: a revenge
+        // target is kept while it lives, rather than wiped for not being an Enemy.
         if (current == null || !current.isAlive() || !dragon.wantsToAttack(current, owner)) {
             dragon.getBrain().eraseMemory(MemoryModuleType.NEAREST_ATTACKABLE);
         }

@@ -34,7 +34,6 @@ public class DragonHeadLocator<T extends TameableDragonEntity> {
     }
 
     public void tick() {
-        // server side impl:
         var dragon = this.dragon;
         // don't move anything during death sequence
         if (dragon.deathTime > 0) return;
@@ -74,16 +73,14 @@ public class DragonHeadLocator<T extends TameableDragonEntity> {
     }
 
     public void calculateHeadAndNeck(Segment[] necks, float lookRotX, float lookRotY) {
-        // Aim and pose are deliberately different numbers. The breath fires along getAimVector(),
-        // which reads body rotation and may sit a full 85 degrees down at something underneath;
-        // drawing that literally folds the skull back through the chest. Cap what is drawn, and
-        // give the head joint only part of it -- the remainder curves the neck, so a steep shot
-        // arcs the whole neck down instead of snapping at one joint.
+        // Aim and pose are deliberately different numbers: getAimVector() reads body rotation
+        // and may sit 85 degrees down at something underneath, which drawn literally folds the
+        // skull through the chest. Cap what is drawn and give the head joint only part of it, so
+        // the remainder curves the neck.
         float drawnPitch = Mth.clamp(lookRotX, -MAX_DRAWN_PITCH, MAX_DRAWN_PITCH);
         float headPitch = Mth.clamp(drawnPitch, -MAX_HEAD_PITCH, MAX_HEAD_PITCH);
-        // Positive is down. Only the look-driven part is clamped: speedFactor below is the
-        // compensation for the reared-up hover pose from getPitch(), so clamping the sum would
-        // make the head droop whenever the dragon hovers.
+        // Positive is down. Only the look-driven part is clamped: speedFactor below compensates
+        // for the reared-up hover pose, so clamping the sum would droop the head while hovering.
         float neckPitch = (drawnPitch - headPitch) * MathUtil.TO_RAD_FACTOR;
         var dragon = this.dragon;
         var head = this.head;
@@ -114,7 +111,7 @@ public class DragonHeadLocator<T extends TameableDragonEntity> {
                     + speedFactor * vertMulti
                     // lower neck on low health
                     - Mth.lerp(healthFactor, 0.0F, Mth.sin(vertMulti * MathUtil.PI * 0.9F) * 0.63F)
-                    // steep-aim share: ramps from 0 at the shoulders to full at the head
+                    // steep-aim share, ramping from 0 at the shoulders to full at the head
                     + neckPitch * vertMulti;
             // use looking yaw
             lastRotY = segment.rotY = rotYFactor * vertMulti;
@@ -125,8 +122,7 @@ public class DragonHeadLocator<T extends TameableDragonEntity> {
             segment.posY = posY + Mth.sin(rotX) * ANIMATION_NECK_SIZE;
             segment.posZ = posZ - Mth.cos(lastRotY) * factor;
         }
-        //final float HEAD_TILT_DURING_BREATH = -0.1F;
-        head.rotX = headPitch * MathUtil.TO_RAD_FACTOR + speedFactor; // + breath * HEAD_TILT_DURING_BREATH
+        head.rotX = headPitch * MathUtil.TO_RAD_FACTOR + speedFactor;
         head.rotY = lastRotY;
         head.rotZ = 0.0F;
     }

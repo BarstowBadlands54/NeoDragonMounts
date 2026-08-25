@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -33,11 +32,8 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
         addRenderLayer(new DragonArmorLayer(this));
     }
 
-    /**
-     * Lightning breath is drawn here rather than as particles: before super.render the pose
-     * is still at the entity's interpolated position and un-rotated, which is the only point
-     * in the pass where a world-aligned beam can be emitted without undoing the body's yaw.
-     */
+    /// Lightning breath is drawn before super.render, the only point in the pass where the pose
+    /// is still at the entity's interpolated position and un-rotated by the model.
     @Override
     public void render(TameableDragonEntity animatable, float entityYaw, float partialTick,
                        PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
@@ -89,7 +85,7 @@ public class DragonRenderer extends GeoEntityRenderer<TameableDragonEntity> {
                                   float ageInTicks, float rotationYaw, float partialTick, float nativeScale) {
         super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
 
-        if (animatable.isFlying()) {   // bank under a rider OR during autonomous flight (bronco / follow)
+        if (animatable.isFlying()) {   // bank under a rider, and during autonomous flight
             float pitch = Mth.lerp(partialTick, animatable.renderPitchO, animatable.renderPitch);
             poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
 

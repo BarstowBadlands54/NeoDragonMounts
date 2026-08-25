@@ -61,9 +61,8 @@ public class ClientBreathHelper extends DragonBreathHelper<ClientDragonEntity> {
                 this.lookZ = lookZ;
             }
             if (breath instanceof LightningBreath) {
-                // The arc itself is drawn by LightningBeamRenderer as real lightning
-                // geometry. Billboarded breath particles would sit on top of it and wash
-                // it out, so all that is left here is a couple of sparks off the muzzle.
+                // LightningBeamRenderer draws the arc itself; billboarded particles would sit
+                // on top and wash it out, so this is just a couple of sparks off the muzzle
                 for (int i = 0; i < 2; ++i) {
                     level.addParticle(
                             ParticleTypes.ELECTRIC_SPARK,

@@ -70,16 +70,17 @@ public class DragonAi {
             Activity.IDLE
     );
 
+    /// CORE, not FIGHT: a rider forces the CONTROLLED activity, which runs nothing but
+    /// ControlledByPlayer, so anything a ridden dragon still has to do belongs here.
+    /// The list is explicitly typed so the GoalBehavior<TameableDragonEntity> entries sit
+    /// alongside the vanilla Behavior<Mob> sinks without inference collapsing it.
+    /// BreakInBucking goes last so its wanted position is not overwritten by MoveToTargetSink.
     static void initCoreActivity(Brain<ServerDragonEntity> brain) {
-        // Explicitly typed so RiddenBiteAttack, which is a GoalBehavior<TameableDragonEntity>,
-        // sits alongside the vanilla Behavior<Mob> sinks without inference collapsing the list.
         brain.addActivity(Activity.CORE, 0, ImmutableList.<BehaviorControl<? super ServerDragonEntity>>of(
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),
-                // CORE, not FIGHT: tickBrain forces the CONTROLLED activity while a player is
-                // aboard, and CONTROLLED runs nothing but ControlledByPlayer. Anything registered
-                // under FIGHT is simply not running while the dragon is ridden.
-                new RiddenBiteAttack()
+                new RiddenBiteAttack(),
+                new BreakInBucking()
         ));
     }
 
@@ -112,13 +113,8 @@ public class DragonAi {
     static void initFightActivity(Brain<ServerDragonEntity> brain) {
         brain.addActivityAndRemoveMemoryWhenStopped(Activity.FIGHT, 10,
                 ImmutableList.<BehaviorControl<? super ServerDragonEntity>>of(
-                        // Aerial positioning first: if the fight warrants flying (airborne target,
-                        // or we're hurt vs a ground target) this takes the dragon into the air and
-                        // holds an attack position. It doesn't attack itself.
+                        // positioning first, then breath, then walk-to-melee and bite
                         new DragonAerialCombat(),
-                        // Breath BEFORE the walk-to-melee + bite. When a breath is warranted it halts
-                        // the dragon and breathes; otherwise it does nothing and the dragon walks in
-                        // and bites as normal.
                         new DragonBreathAttack(),
                         SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(1.0F),
                         MeleeAttack.create(40),
@@ -152,7 +148,7 @@ public class DragonAi {
         brain.addActivityAndRemoveMemoriesWhenStopped(DMActivities.SLEEPING, ImmutableList.of(Pair.of(0, BrainUtil.dispatch(
                 new DragonSleep(),
                 new TryFindGround<>(32, 48, 0.75F, dragon -> {
-                    if (dragon.isSleeping()) return false;              // was: dragon.isOrderedToSit()
+                    if (dragon.isSleeping()) return false;
                     dragon.getBrain().eraseMemory(DMMemories.IS_SLEEPING);
                     return true;
                 }),

@@ -292,9 +292,6 @@ public class DragonTypes {
                 .addHabitat(Biomes.CRIMSON_FOREST)
                 .setEggParticle(ParticleTypes.DRIPPING_LAVA)
                 .register(NetherType::new, makeId("nether"));
-        //no scale items
-        // Bone is lighter and less protective than scale: slightly lower defence and a
-        // shorter-lived tier than the scale types, but it keeps a high enchantment value.
         var boneMaterial = new ArmorMaterialBuilder(50)
                 .setDefense(HELMET, 2)
                 .setDefense(CHESTPLATE, 7)

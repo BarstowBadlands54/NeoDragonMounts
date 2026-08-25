@@ -32,11 +32,8 @@ public class DragonMoveControl extends MoveControl {
                 return;
             }
 
-            // ============ WATER FIRST — before onGround/air, so  depth never matters ============
-            // inside MOVE_TO, immediately after the "close enough" early-return:
-            // inside MOVE_TO, immediately after the "close enough" early-return:
+            // Water is handled before ground and air, so depth never matters.
             if (dragon.isInWater()) {
-                // smooth swim toward target — same slow speed regardless of floor below
                 float yaw = (float) (Mth.atan2(distZ, distX) * Mth.RAD_TO_DEG) - 90.0F;
                 dragon.setYRot(this.rotlerp(dragon.getYRot(), yaw, 10.0F));
                 dragon.yBodyRot = dragon.getYRot();
@@ -50,12 +47,10 @@ public class DragonMoveControl extends MoveControl {
                     pitch = Mth.clamp(Mth.wrapDegrees(pitch), -75.0F, 75.0F);
                     dragon.setXRot(this.rotlerp(dragon.getXRot(), pitch, 5.0F));
                 }
-                // gentle vertical follow so it rises/dives toward the target smoothly
                 dragon.setYya(distY > 0.0 ? speed : -speed);
-                return;   // never fall into onGround/air branches
+                return;
             }
 
-            // ---- GROUND ----
             if (dragon.onGround()) {
                 dragon.setYRot(this.rotlerp(
                         dragon.getYRot(),
@@ -78,16 +73,13 @@ public class DragonMoveControl extends MoveControl {
                     dragon.setYya(dragon.yya + 0.5F);
                 }
             }
-            // ---- AIR (flight) ----
             else {
                 double dist = Math.sqrt(squared);
                 float speed = (float) (this.speedModifier * dragon.getAttributeValue(Attributes.FLYING_SPEED));
                 dragon.setSpeed(speed);
-                // While breathing, DON'T steer rotation toward the flight heading — the breath
-                // behavior's faceTarget owns yaw AND pitch so the breath aims at the target.
-                // Overriding here is what made an airborne dragon fire level/along its path
-                // instead of angling down at a target below it. We still allow vertical thrust
-                // so it can hold altitude.
+                // While breathing, DragonBreathAttack's faceTarget owns yaw and pitch, so do not
+                // steer toward the flight heading; vertical thrust is still allowed, to hold
+                // altitude.
                 boolean breathing = dragon.isBreathing();
                 if (!breathing) {
                     dragon.setYRot(this.rotlerp(
@@ -108,7 +100,6 @@ public class DragonMoveControl extends MoveControl {
                 }
             }
         } else if (dragon.isInWater()) {
-            // idle in water — stop cleanly, slight float
             dragon.setSpeed(0.0F);
             dragon.setYya(0.0F);
             dragon.setZza(0.0F);

@@ -1,7 +1,7 @@
 package net.dragonmounts.neo.common.entity.breath.impl;
 
+import net.dragonmounts.neo.common.entity.breath.LightningProfile;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-
 
 public class MoonlightBreath extends LightBreath {
     public MoonlightBreath(TameableDragonEntity dragon, float damage) {
@@ -9,7 +9,7 @@ public class MoonlightBreath extends LightBreath {
     }
 
     @Override
-    public int getLightningColor() {
-        return MOONLIGHT_COLOR;
+    public LightningProfile getLightningProfile() {
+        return LightningProfile.MOONLIGHT;
     }
 }

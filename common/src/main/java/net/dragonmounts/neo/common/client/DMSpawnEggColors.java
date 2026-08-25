@@ -11,23 +11,15 @@ import java.util.Map;
 /**
  * Spawn-egg tint per dragon breed.
  * <p>
- * DragonSpawnEggItem passes 0xFFFFFF, 0xFFFFFF to SpawnEggItem, which is why every egg renders
- * white. Changing those constructor arguments alone is not enough: vanilla registers spawn-egg
- * colours by walking SpawnEggItem.eggs(), and that map is keyed by EntityType -- all 18 dragon
- * eggs share one entity type, so at most one of them would ever receive a colour handler. The
- * tint therefore has to come from the stack's DRAGON_TYPE component, which is what getColor does.
- * <p>
- * Colours were sampled from the breeds' own body textures: every variant of a breed pooled
- * together, the darkest 45% of pixels dropped so outlines and shading do not drag the result
- * toward black, then the dominant hue cluster of what remains. The highlight is that colour
- * lifted in value and eased off in saturation, matching how vanilla eggs read.
+ * Vanilla registers spawn-egg colours by walking {@code SpawnEggItem.eggs()}, keyed by
+ * EntityType. Every dragon egg shares one entity type, so at most one of them could ever get a
+ * colour handler that way; the tint has to come from the stack's DRAGON_TYPE component instead.
  */
 public final class DMSpawnEggColors {
     /**
-     * 1.21.1 reads item tints as ARGB, not RGB: ItemRenderer pulls the alpha byte out with
-     * FastColor.ARGB32.alpha(). A plain 0xRRGGBB therefore has alpha 0 and the item renders
-     * fully transparent -- which looks exactly like a missing model. Every value here carries
-     * 0xFF in the top byte for that reason.
+     * ARGB, not RGB: ItemRenderer pulls the alpha byte out with FastColor.ARGB32.alpha(), so a
+     * plain 0xRRGGBB has alpha 0 and renders fully transparent. Hence the 0xFF top byte on every
+     * value here.
      */
     private static final Map<DragonType, int[]> COLORS = new IdentityHashMap<>(24);
 

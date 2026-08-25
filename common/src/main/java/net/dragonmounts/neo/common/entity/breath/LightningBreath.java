@@ -1,59 +1,65 @@
 package net.dragonmounts.neo.common.entity.breath;
 
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
+import net.dragonmounts.neo.common.init.DMSounds;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Marks a breath that is drawn as real lightning geometry rather than as billboarded breath
- * particles.
+ * A breath drawn as real lightning geometry rather than as billboarded breath particles, and
+ * carrying the strike that goes with it.
  * <p>
- * This is an interface and not a base class on purpose: storm has to keep inheriting
+ * An interface and not a base class on purpose: storm has to keep inheriting
  * {@link net.dragonmounts.neo.common.entity.breath.impl.WaterBreath WaterBreath}'s block
- * handling, so lightning-ness cannot live in the superclass chain. The client renderer only
- * needs the colour and the bolt count, and both breeds can supply those from wherever they
- * happen to sit in the hierarchy.
+ * handling, so lightning-ness cannot live in the superclass chain. Everything shared is a
+ * default here; implementors only supply a {@link LightningProfile} and forward the two members
+ * {@link DragonBreath} declares as class methods, which no interface default can override.
  *
  * @see net.dragonmounts.neo.common.client.renderer.breath.LightningBeamRenderer
  */
 public interface LightningBreath {
+    /// Knockback matches WaterBreath's, so the breeds still feel related in the hand.
+    float KNOCKBACK = 0.05F;
 
-    int STORM_COLOR = 0xE8F2FF;
-    int MOONLIGHT_COLOR = 0x4C7BFF;
-    int SUNLIGHT_COLOR = 0xFF8A1E;
-
-    float WET_DAMAGE_MULTIPLIER = 1.5F;
-
-    int getLightningColor();
-
-    default int getBoltCount() {
-        return 2;
-    }
-
-    default int getIgniteTicks() {
-        return 100;
-    }
+    LightningProfile getLightningProfile();
 
     /**
-     * Damage plus fire, shared by every lightning breed.
-     * <p>
-     * Note the interaction with {@link #WET_DAMAGE_MULTIPLIER}: a wet target takes more damage
-     * but the fire is snuffed out on its next tick, so soaking in water trades burning for a
-     * bigger hit rather than escaping both.
+     * Damage, ignite and knockback, shared by every lightning breed. Forward
+     * {@link DragonBreath#affectEntity} to this.
      *
-     * @param damage already scaled by hit density at the call site
+     * @param damage the breath's base damage, before hit density is applied
      */
-    static void shock(
+    default void strike(
             ServerLevel level,
             TameableDragonEntity dragon,
-            LivingEntity target,
             float damage,
-            int igniteTicks
+            LivingEntity target,
+            BreathAffectedEntity hit
     ) {
+        var profile = this.getLightningProfile();
+        float density = hit.getHitDensity();
+        float dealt = damage * density;
         if (target.isInWaterOrRain()) {
-            damage *= WET_DAMAGE_MULTIPLIER;
+            dealt *= profile.wetDamageMultiplier();
         }
-        target.igniteForTicks(igniteTicks);
-        target.hurt(level.damageSources().mobAttack(dragon), damage);
+        target.igniteForTicks(profile.igniteTicks());
+        target.hurt(level.damageSources().mobAttack(dragon), dealt);
+        var direction = hit.getHitDirection();
+        target.knockback(KNOCKBACK * density, -direction.x, -direction.z);
+    }
+
+    /// One set of sounds for every breed and life stage: a hatchling's arc crackles like an
+    /// adult's, and BreathSound already scales volume by age.
+    default SoundEvent getLightningStartSound() {
+        return DMSounds.DRAGON_BREATH_START_LIGHTNING;
+    }
+
+    default SoundEvent getLightningLoopSound() {
+        return DMSounds.DRAGON_BREATH_LOOP_LIGHTNING;
+    }
+
+    default SoundEvent getLightningStopSound() {
+        return DMSounds.DRAGON_BREATH_STOP_LIGHTNING;
     }
 }

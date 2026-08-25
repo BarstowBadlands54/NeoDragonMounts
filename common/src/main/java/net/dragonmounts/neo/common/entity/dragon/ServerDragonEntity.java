@@ -41,7 +41,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -71,44 +70,6 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 public class ServerDragonEntity extends TameableDragonEntity {
     private final Segment[] neckSegments = ArrayUtil.fillArray(new Segment[NECK_SEGMENTS], Segment::new);
     public final DragonHeadLocator<ServerDragonEntity> headLocator = new DragonHeadLocator<>(this);
-
-    // --- Bronco-style taming (server-only state) ---
-
-    private int rideTicks = 0;
-
-    private int buckThreshold = 0;
-
-    private int breakProgress = 0;
-
-    public static final int RIDES_TO_TAME = 5;
-
-    public static final int SUCCESS_RIDE_TICKS = 60; // 3 seconds
-
-    public static final int BUCK_MIN_TICKS = 70;   // ~3.5s
-    public static final int BUCK_MAX_TICKS = 160;  // ~8s
-
-    public static final double BRONCO_CLIMB_HEIGHT = 40.0;
-
-    public static final double BRONCO_FLY_SPEED = 2.0;
-
-    public static final double BRONCO_SWEEP_RADIUS = 24.0;
-
-    private double breakInStartX = 0.0;
-    private double breakInStartY = 0.0;
-    private double breakInStartZ = 0.0;
-    private int ticksClimbY = 0;
-
-    @Nullable
-    private java.util.UUID breakingInPlayer = null;
-
-    // --- Saddle-less flight grace (a tamed dragon will fly briefly without a saddle, then insist on one) ---
-
-    private int noSaddleFlightTicks = 0;
-
-    public static final int NO_SADDLE_WARN_TICKS = 100;   // ~5s
-
-    public static final int NO_SADDLE_LAND_TICKS = 300;   // ~15s
-    private boolean noSaddleWarned = false;
 
     public ServerDragonEntity(EntityType<? extends TameableDragonEntity> type, ServerLevel level) {
         super(type, level);
@@ -172,11 +133,9 @@ public class ServerDragonEntity extends TameableDragonEntity {
         } else if (tag.contains(DragonType.DATA_PARAMETER_KEY)) {
             this.setVariant(DragonType.REGISTRY.get(tryParse(tag.getString(DragonType.DATA_PARAMETER_KEY))).variants.draw(this.random, DragonVariants.ENDER_JEAN, true));
         }
-        // Unconditional, and deliberately before super restores Health: setVariant() only reaches
-        // applyType() via a sync change event, which never fires when the saved variant already
-        // equals the synched default (ender_jean). Running it here keeps the health rescale in
-        // applyType() operating on a full-health entity, exactly as it did for every other
-        // variant, instead of proportionally re-scaling the saved value on the first tick.
+        // Unconditional, and before super restores Health: setVariant() only reaches applyType()
+        // through a sync change event, which never fires when the saved variant already equals the
+        // synched default. Running it here keeps applyType()'s health rescale on a full-health entity.
         this.applyType(this.getDragonType());
         super.readAdditionalSaveData(tag);
         this.setInSittingPose(this.isOrderedToSit() && this.onGround());
@@ -309,7 +268,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (passenger instanceof Player player && player == this.getControllingPassenger()
                 && this.isFlying() && this.getPassengers().size() == 1) {
             float dragonYaw = this.getYRot();
-            // lock the MODEL orientation to the dragon (NOT setYRot — that moves the camera)
+            // model orientation only; setYRot would move the camera
             player.setYBodyRot(dragonYaw);
             player.setYHeadRot(dragonYaw);
             player.yBodyRotO = this.yRotO;
@@ -319,7 +278,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         if (!(passenger instanceof Player)) {
             float dragonYaw = this.getYRot();
             passenger.setYRot(dragonYaw);
-            passenger.yRotO = dragonYaw;            // prev-tick yaw, prevents render interpolation swing
+            passenger.yRotO = dragonYaw;            // prev-tick yaw, stops the interpolation swing
             if (passenger instanceof LivingEntity living) {
                 living.setYBodyRot(dragonYaw);
                 living.setYHeadRot(dragonYaw);
@@ -334,7 +293,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
         boolean wasDriver = (passenger instanceof Player);
         super.removePassenger(passenger);
         if (wasDriver) {
-            this.ejectPassengers();   // driver left -> drop all animal passengers too
+            this.ejectPassengers();   // driver left, so drop the animal passengers too
         }
     }
 
@@ -345,15 +304,15 @@ public class ServerDragonEntity extends TameableDragonEntity {
     @Override
     protected Vec3 getPassengerAttachmentPoint(Entity entity, EntityDimensions dimensions, float scale) {
         int seat;
-        Player driver = this.getControllingPassenger();   // the player driver, if any
+        Player driver = this.getControllingPassenger();
         if (entity == driver) {
-            seat = 0;   // driver -> front-center
+            seat = 0;
         } else {
-            // non-driver passengers fill seats 1, 2 by their order, skipping the driver
+            // the rest fill seats 1 and 2 in order
             int idx = 0;
             seat = 1;
             for (Entity p : this.getPassengers()) {
-                if (p == driver) continue;     // don't count the driver
+                if (p == driver) continue;
                 if (p == entity) break;
                 idx++;
                 seat++;
@@ -364,125 +323,8 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 .yRot(-MathUtil.TO_RAD_FACTOR * this.yBodyRot);
     }
 
-    /**
-     * Bronco-style taming tick. While an unbroken dragon carries a rider:
-     * - it forces itself airborne and flies erratically,
-     * - after a randomized delay it BUCKS the rider off (mid-air = a real fall),
-     * - if the rider hung on long enough, the ride counts toward taming,
-     * - enough successful rides -> tamed.
-     */
-    private void tickBronco() {
-        if (this.level().isClientSide) return;
-
-        // The player clinging on during a break-in (untamed dragon).
-        Player rider = this.getBreakInRider();
-        if (rider == null || (this.isBreakInTrusted() && isTame())) {
-            this.rideTicks = 0;
-            return;
-        }
-
-        // Safety: baby dragons can never be broken in.
-        if (this.isBaby()) {
-            this.ejectPassengers();
-            this.rideTicks = 0;
-            return;
-        }
-
-        // try to limit how the dragon flies too high
-        if (ticksClimbY < 120) {
-            ticksClimbY++;
-        }
-
-        // reset it to 0 so it starts flying high again when on ground;
-        if (onGround() && ticksClimbY > 0) {
-            ticksClimbY = 0;
-        }
-
-        // Drive the dragon's own flight controller to climb HIGH and weave around,
-        // exactly like DragonFollowPlayerFlying does — but toward a wild point far
-        // above the start, so the player is carried dangerously high.
-        this.setFlying(true);
-        this.setOrderedToSit(false);
-
-        // Anchor the climb at where the ride began (first tick records it).
-        if (this.rideTicks == 0) {
-            this.breakInStartX = this.getX();
-            this.breakInStartY = this.getY();
-            this.breakInStartZ = this.getZ();
-        }
-
-        // Target: high above, sweeping in WIDE arcs anchored to where the ride began
-        // (anchoring to the start — not the live position — makes it cover a large area
-        // instead of chasing its own tail in tight circles).
-        double climbHeight = ticksClimbY < 120 ? BRONCO_CLIMB_HEIGHT : 0;
-        double climbTarget = this.breakInStartY + climbHeight;
-        double t = this.tickCount * 0.12;                 // slower phase = broader, sweeping arcs
-        double sweepX = Math.sin(t) * BRONCO_SWEEP_RADIUS;
-        double sweepZ = Math.cos(t * 0.6) * BRONCO_SWEEP_RADIUS;  // different freq -> figure-8 / wandering path
-
-        // Stop any pathfinding/brain walk target from competing with our climb.
-        this.getNavigation().stop();
-        this.getBrain().eraseMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET);
-
-        this.getMoveControl().setWantedPosition(
-                this.breakInStartX + sweepX,
-                climbTarget,
-                this.breakInStartZ + sweepZ,
-                BRONCO_FLY_SPEED
-        );
-
-        ++this.rideTicks;
-
-        // Time to resolve the ride?
-        if (this.rideTicks >= this.buckThreshold) {
-            boolean success = this.rideTicks >= SUCCESS_RIDE_TICKS;
-            // Would this successful ride be the one that finally tames it?
-            boolean willTame = success
-                    && (this.breakProgress + 1) >= RIDES_TO_TAME
-                    && this.breakingInPlayer != null
-                    && rider.getUUID().equals(this.breakingInPlayer);
-
-            if (willTame) {
-                // BROKEN IN — accept the rider. Do NOT buck. Keep flying a victory lap.
-                ++this.breakProgress;
-                this.tame(rider);
-                this.setBreakInTrusted(true);
-                this.level().broadcastEntityEvent(this, ON_TAMING_SUCCEED); // hearts
-                this.rideTicks = 0;
-                // Dragon is tamed now; the rider keeps flying. The saddle-less flight
-                // timer (in TameableDragonEntity) will warn and eventually set them down.
-            } else {
-                this.buckOffRider(rider, success);
-            }
-        }
-    }
-
-    /**
-     * Throw the current rider off (a non-final outcome). If {@code success} the ride
-     * counted toward taming but didn't finish it; either way the dragon bucks and smokes.
-     */
-    private void buckOffRider(Player rider, boolean success) {
-        Level level = this.level();
-
-        // Fling the player off with some momentum so they actually tumble.
-        Vec3 fling = this.getLookAngle().scale(-0.4).add(0.0, 0.3, 0.0);
-        this.ejectPassengers();
-        rider.setDeltaMovement(rider.getDeltaMovement().add(fling));
-        rider.hasImpulse = true;
-        rider.hurtMarked = true;
-
-        if (success) {
-            ++this.breakProgress;   // progress, but not the final ride
-        }
-        level.broadcastEntityEvent(this, ON_TAMING_FAIL); // smoke either way — it threw you
-
-        this.rideTicks = 0;
-        this.buckThreshold = BUCK_MIN_TICKS + this.random.nextInt(BUCK_MAX_TICKS - BUCK_MIN_TICKS);
-    }
-
     @Override
     public void aiStep() {
-        this.tickBronco();
         if (this.isDeadOrDying()) {
             this.nearestCrystal = null;
         } else {
@@ -539,11 +381,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 Level level = this.level();
                 boolean locked = this.isAgeLocked();
 
-//                for (var effect : food.effects()) {
-//                    // effect MUST be your custom wrapper in 1.21.1
-//                    effect.apply(level, this);
-//                }
-
                 if (!locked) {
                     this.ageUp(food.age(), false);
                 }
@@ -557,17 +394,16 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 } else if (!this.isTame()) {
                     if (this.random.nextFloat() < food.tamingProbability()) {
                         this.tame(player);
-                        level.broadcastEntityEvent(this, ON_TAMING_SUCCEED); // reuse heart particles for "now trusts"
+                        level.broadcastEntityEvent(this, ON_TAMING_SUCCEED);
                     } else {
                         level.broadcastEntityEvent(this, ON_TAMING_FAIL);
                     }
-                    // already trusting: feeding still heals/ages but no further effect here
                 }
 
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
-                player.setItemInHand(hand, stack.isEmpty() ? ItemStack.EMPTY : stack);   // ← fixed
+                player.setItemInHand(hand, stack.isEmpty() ? ItemStack.EMPTY : stack);
 
                 ServerNetworkHandler.sendTracking(
                         this,
@@ -578,18 +414,15 @@ public class ServerDragonEntity extends TameableDragonEntity {
             }
         }
 
-        // --- Bronco taming: mount an untamed-but-trusting dragon to break it in ---
+        // Mount an untamed-but-trusting dragon to break it in; BreakInBucking takes it from here.
         if (this.isTame() && !this.isBreakInTrusted() && stack.isEmpty()
                 && !this.isBaby() && this.getPassengers().isEmpty()) {
             if (this.isSleeping()) {
-                this.setSleeping(false); // wake it up first; player has to click again to mount
+                this.setSleeping(false); // wake it first; mounting takes a second click
                 return InteractionResult.SUCCESS;
             }
             if (this.level().isClientSide) return InteractionResult.SUCCESS;
             this.setOrderedToSit(false);
-            this.breakingInPlayer = player.getUUID();
-            this.rideTicks = 0;
-            this.buckThreshold = BUCK_MIN_TICKS + this.random.nextInt(BUCK_MAX_TICKS - BUCK_MIN_TICKS);
             player.setYRot(this.getYRot());
             player.setXRot(this.getXRot());
             player.startRiding(this, true);
@@ -625,7 +458,7 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 return InteractionResult.FAIL;
             }
             if (this.isSleeping()) {
-                this.setSleeping(false); // wake it up instead of riding immediately
+                this.setSleeping(false); // wake it rather than riding immediately
             } else {
                 this.setOrderedToSit(false);
                 player.setYRot(this.getYRot());
@@ -660,7 +493,6 @@ public class ServerDragonEntity extends TameableDragonEntity {
                 level().broadcastEntityEvent(this, ON_ROAR);
             }
             if (!source.is(DamageTypes.IN_WALL)) {
-                // don't just sit there!
                 this.setOrderedToSit(false);
             }
             return true;
@@ -772,14 +604,13 @@ public class ServerDragonEntity extends TameableDragonEntity {
 
     @Override
     public boolean isPersistenceRequired() {
-        return true;// double insurance
+        return true;
     }
 
     @Override
     public void openCustomInventoryScreen(Player player) {
-        // Inventory is only accessible on a TAMED dragon, and only by its owner.
-        // An untamed dragon — even one that trusts the player and is being ridden
-        // during a break-in attempt — never exposes its inventory.
+        // Tamed dragons only, and only for the owner: a dragon being ridden during a break-in
+        // still keeps its inventory shut.
         if (!this.isTame() || !this.isOwnedBy(player)) return;
         player.openMenu(this);
     }

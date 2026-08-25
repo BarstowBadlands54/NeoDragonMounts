@@ -33,11 +33,10 @@ public class RiddenBiteAttack extends GoalBehavior<TameableDragonEntity> {
 
     @Override
     protected boolean canUse(ServerLevel level, TameableDragonEntity dragon) {
-        // Unridden combat is already handled by the FIGHT activity; running here as well would
-        // just give the dragon two independent bite timers.
+        // unridden combat is FIGHT's job; running here too gives two independent bite timers
         if (!dragon.isBeingRiddenByPlayer()) return false;
         long now = level.getGameTime();
-        // Overflow-safe: lastBite starts at Long.MIN_VALUE, so subtract in this direction only.
+        // lastBite starts at Long.MIN_VALUE, so subtract in this direction only
         if (this.lastBite != Long.MIN_VALUE && now - this.lastBite < BITE_COOLDOWN) return false;
         return findVictim(level, dragon) != null;
     }
@@ -68,7 +67,7 @@ public class RiddenBiteAttack extends GoalBehavior<TameableDragonEntity> {
         var victim = findVictim(level, dragon);
         if (victim == null) return;
         this.lastBite = level.getGameTime();
-        // doHurtTarget broadcasts ON_ATTACK, so the bite animation and sound come along for free.
+        // doHurtTarget broadcasts ON_ATTACK, so the animation and sound come with it
         dragon.doHurtTarget(victim);
     }
 

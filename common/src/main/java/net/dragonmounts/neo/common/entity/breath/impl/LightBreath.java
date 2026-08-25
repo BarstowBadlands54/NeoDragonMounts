@@ -6,11 +6,11 @@ import net.dragonmounts.neo.common.entity.breath.DragonBreath;
 import net.dragonmounts.neo.common.entity.breath.LightningBreath;
 import net.dragonmounts.neo.common.entity.dragon.DragonLifeStage;
 import net.dragonmounts.neo.common.entity.dragon.TameableDragonEntity;
-import net.dragonmounts.neo.common.init.DMSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 
+/// A pure arc: no terrain effect at all, only the strike. Subclasses supply the profile.
 public abstract class LightBreath extends DragonBreath implements LightningBreath {
     public LightBreath(TameableDragonEntity dragon, float damage) {
         super(dragon, damage);
@@ -23,27 +23,21 @@ public abstract class LightBreath extends DragonBreath implements LightningBreat
 
     @Override
     public void affectEntity(ServerLevel level, LivingEntity target, BreathAffectedEntity hit) {
-        float density = hit.getHitDensity();
-        LightningBreath.shock(level, this.dragon, target, this.damage * density, this.getIgniteTicks());
-        var direction = hit.getHitDirection();
-        target.knockback(0.05F * density, -direction.x, -direction.z);
+        this.strike(level, this.dragon, this.damage, target, hit);
     }
-
-    // One set of lightning sounds for every breed and life stage, so a hatchling's arc
-    // crackles like an adult's. BreathSound already scales volume by age scale.
 
     @Override
     public SoundEvent getStartSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_START_LIGHTNING;
+        return this.getLightningStartSound();
     }
 
     @Override
     public SoundEvent getLoopSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_LOOP_LIGHTNING;
+        return this.getLightningLoopSound();
     }
 
     @Override
     public SoundEvent getStopSound(DragonLifeStage stage) {
-        return DMSounds.DRAGON_BREATH_STOP_LIGHTNING;
+        return this.getLightningStopSound();
     }
 }

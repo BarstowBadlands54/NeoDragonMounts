@@ -12,10 +12,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Autonomous fire-breath attack for an UNRIDDEN dragon in combat. Bites trivial foes; breathes
- * fire on genuinely dangerous targets (heavily armoured players, high-health / hard-hitting NPCs).
- * Also breathes continuously when it has taken to the air to chase a flying target — an aerial
- * duel should be fought with fire, not by flapping in for a bite.
+ * Autonomous breath attack for an unridden dragon. Trivial foes get bitten; dangerous ones get
+ * breathed on. An aerial duel is fought with a continuous stream rather than by flapping in for
+ * a bite.
  */
 public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     private static final int BATTLE_LONG_TICKS = 200;      // 10s
@@ -24,9 +23,9 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     private static final float STRONG_ATTACK = 7.0F;
     private static final double MAX_BREATH_RANGE_SQR = 32.0 * 32.0;
     /**
-     * Cut a burst short if a ground target closes inside this while we are airborne, so
-     * DragonAerialCombat can re-establish its standoff. Holding position through a burst is what
-     * let a Warden walk in underneath and melee a hovering dragon.
+     * Cut a burst short if a ground target closes inside this while the dragon is airborne, so
+     * DragonAerialCombat can re-establish its standoff. Holding position through a burst lets a
+     * melee foe walk in underneath.
      */
     private static final double BREAK_OFF_RANGE_SQR = 10.0 * 10.0;
     /** Ceiling on how far ahead of a target the aim will lead, in ticks. */
@@ -64,16 +63,13 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         double distSqr = dragon.distanceToSqr(target);
         if (distSqr > MAX_BREATH_RANGE_SQR) return false;
 
-        // AERIAL DUEL: when WE have taken to the air to fight a flying target, breathe constantly.
-        // No threat-gating and no cooldown here — an airborne chase against a flying foe should be
-        // a continuous stream of fire. (We are unridden; the isRiddenByPlayer check above already
-        // excludes a player-controlled dragon.)
+        // Aerial duel: no threat gate and no cooldown, an airborne chase is a continuous stream.
         if (dragon.isFlying() && isAirborne(target)) {
             return true;
         }
 
-        // Otherwise apply the normal sparing cooldown. Overflow-safe: only gate after the first
-        // burst (before that lastBreathEnd is Long.MIN_VALUE and the subtraction would overflow).
+        // Otherwise the normal sparing cooldown. Only gated after the first burst: before that
+        // lastBreathEnd is Long.MIN_VALUE and the subtraction would overflow.
         long now = dragon.level().getGameTime();
         if (this.hasBreathedOnce && now - this.lastBreathEnd < BREATH_COOLDOWN) {
             return false;
@@ -82,16 +78,15 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         return this.shouldBreathe(dragon, target, now);
     }
 
-    /** Is the target meaningfully off the ground (another flying dragon, phantom, etc.)? */
+    /** Is the target meaningfully off the ground? */
     private boolean isAirborne(LivingEntity target) {
         if (target instanceof TameableDragonEntity d && d.isFlying()) return true;
         return !target.onGround() && target.fallDistance == 0.0F && !target.onClimbable();
     }
 
     /**
-     * Is this target worth spending breath on -- and, to DragonAerialCombat, worth refusing to
-     * melee at all? Shared between the two behaviours so they cannot drift apart on what counts
-     * as dangerous. A Warden clears it three times over: 500 max health, 30 attack damage.
+     * Is this target worth spending breath on, and -- to {@link DragonAerialCombat} -- worth
+     * refusing to melee at all? Shared so the two cannot drift apart on what counts as dangerous.
      */
     public static boolean isDangerous(LivingEntity target) {
         if (target.getArmorValue() >= STRONG_ARMOR) return true;
@@ -110,22 +105,17 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
     }
 
     /**
-     * Rotate the dragon's BODY (and head) to face the target. The breath fires along
-     * dragon.getLookAngle(), which is derived from the body yRot/xRot — NOT the head. We aim from
-     * the dragon's eye to the target's centre of mass so the breath connects, including pitching
-     * up/down when the target is above or below us in the air.
+     * Rotate the dragon's body to face the target. The breath fires along
+     * {@code getLookAngle()}, which reads body rotation rather than the head, so the aim runs
+     * from the eye to the target's centre of mass and pitches with it.
      */
     private void faceTarget(TameableDragonEntity dragon, LivingEntity target) {
         Vec3 from = dragon.getEyePosition();
         Vec3 centre = target.position().add(0.0, target.getBbHeight() * 0.5, 0.0);
 
-        // Lead the target. The stream is not instant -- a node covers power.speed * INITIAL_SPEED
-        // blocks a tick -- so aiming where the target stands right now puts the line behind
-        // anything running at the dragon by the time the fire arrives. The error is worst exactly
-        // where it was reported: a chaser closing on a dragon that is holding altitude moves
-        // mostly ACROSS the line of fire, not along it, so almost all of its motion is miss.
-        // Solving the intercept properly is a quadratic; two refinement passes converge close
-        // enough at these speeds and cost nothing.
+        // Lead the target: the stream is not instant, so aiming where it stands now puts the line
+        // behind anything moving across the line of fire. The exact intercept is a quadratic; two
+        // refinement passes converge close enough at these speeds.
         double nodeSpeed = BreathNode.getStartingSpeed(dragon.getLifeStage().power);
         Vec3 velocity = target.getDeltaMovement();
         Vec3 to = centre;
@@ -148,14 +138,12 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         dragon.setYRot(newYaw);
         dragon.yBodyRot = newYaw;
         dragon.yHeadRot = newYaw;
-        // Pitch tracks the target exactly, with no clamp: atan2 already bounds wantPitch to
-        // +/-90, and anything narrower means the stream cannot reach something directly below.
-        // The neck does not bend this far -- DragonHeadLocator draws a clamped pose while the
-        // stream itself follows this rotation.
+        // Pitch is unclamped: atan2 already bounds it to +/-90, and anything narrower cannot
+        // reach a target directly below. DragonHeadLocator draws a clamped pose regardless.
         dragon.setXRot(wantPitch);
     }
 
-    /** Move `current` toward `target` (degrees) by at most maxStep, wrapping correctly. */
+    /** Move {@code current} toward {@code target}, in degrees, by at most maxStep. */
     private static float approachDegrees(float current, float target, float maxStep) {
         float delta = Mth.wrapDegrees(target - current);
         if (delta > maxStep) delta = maxStep;
@@ -186,12 +174,10 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
                 || dragon.distanceToSqr(target) > MAX_BREATH_RANGE_SQR;
         boolean controlled = dragon.isBeingRiddenByPlayer();
 
-        // In an aerial duel we keep the burst going as long as the target stays in range, so the
-        // 2s burst limit doesn't cut the fire stream short mid-chase.
+        // an aerial duel runs as long as the target stays in range, ignoring the burst limit
         boolean aerialDuel = dragon.isFlying() && target != null && isAirborne(target);
-        // A ground foe that has closed underneath us gets the burst cut short. The alternative is
-        // hovering in place for the full two seconds while it beats on the dragon, which is how a
-        // Warden -- knockback-immune, so it is never pushed off -- wins the exchange.
+        // A ground foe that has closed underneath cuts the burst short; the alternative is
+        // hovering for the full duration while it beats on the dragon.
         boolean crowded = dragon.isFlying() && target != null && !isAirborne(target)
                 && dragon.distanceToSqr(target) < BREAK_OFF_RANGE_SQR;
         if ((expired && !aerialDuel) || targetGone || controlled || crowded) {
@@ -202,7 +188,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         dragon.getBrain().setMemory(MemoryModuleType.LOOK_TARGET, new EntityTracker(target, true));
         dragon.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
         dragon.getNavigation().stop();
-        this.faceTarget(dragon, target);   // keep the BODY aimed (yaw + pitch) at the target
+        this.faceTarget(dragon, target);
         dragon.setBreathing(true);
     }
 

@@ -16,26 +16,19 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 /**
- * Draws a dragon's breath as actual lightning, through {@link RenderType#lightning()} -- the
- * same render type, shader and additive blend vanilla uses for a bolt out of the sky.
+ * Draws a dragon's breath as lightning through {@link RenderType#lightning()}: the same render
+ * type, shader and additive blend vanilla uses for a bolt out of the sky. Not a particle -- the
+ * arc is a chain of untextured square tubes carrying position and colour only, and its brightness
+ * comes from stacking passes in the additive buffer.
  * <p>
- * This is not a particle. Nothing here is billboarded and nothing is textured: the arc is a
- * chain of untextured square tubes whose vertices carry only position and colour, exactly like
- * {@code LightningBoltRenderer}'s quads, and the brightness comes from drawing the same path
- * several times into an additive buffer so the overlap saturates towards white while the tint
- * survives at the edges.
- * <p>
- * Three details are lifted straight from the vanilla bolt because they are what makes lightning
- * read as lightning rather than as a wobbly line:
+ * Three things are lifted from the vanilla bolt because they are what makes it read as lightning:
  * <ul>
  *   <li>the path is a random walk perpendicular to the beam, not a smooth curve;</li>
- *   <li>every pass redraws the <em>same</em> path at a greater width, so the core is a thin
- *       bright thread inside a dim halo;</li>
- *   <li>the shape is re-rolled once per tick and held for the whole tick. Re-rolling per frame
- *       looks like static; holding it for a tick is the flicker.</li>
+ *   <li>every pass redraws the <em>same</em> path wider, so a thin bright core sits in a halo;</li>
+ *   <li>the shape is re-rolled once per tick and held. Per-frame re-rolls look like static.</li>
  * </ul>
- * Geometry is generated from a seeded {@link RandomSource}, so it is stateless -- there is
- * nothing to tick, store or sync, and every client sees the same arc.
+ * Geometry comes from a seeded {@link RandomSource}, so there is nothing to tick, store or sync
+ * and every client sees the same arc.
  */
 public final class LightningBeamRenderer {
     /// Kinks along the beam. Vanilla uses 8 over a 128-block bolt.
@@ -65,11 +58,10 @@ public final class LightningBeamRenderer {
     private LightningBeamRenderer() {}
 
     /**
-     * Draw the arc, if this dragon is currently breathing lightning.
-     * <p>
-     * Call from {@code DragonRenderer.render} <em>before</em> {@code super.render}, while the
-     * pose stack is still translated to the entity's interpolated position and not yet rotated
-     * by the model -- the arc is world-aligned and must not inherit the body's yaw.
+     * Draw the arc, if this dragon is currently breathing lightning. Call from
+     * {@code DragonRenderer.render} <em>before</em> {@code super.render}: the arc is
+     * world-aligned, so the pose must still be at the entity's interpolated position and
+     * un-rotated by the model.
      */
     public static void render(
             TameableDragonEntity dragon,
@@ -86,8 +78,7 @@ public final class LightningBeamRenderer {
         if (aim.lengthSqr() < 1.0E-6) return;
         aim = aim.normalize();
 
-        // Stop the arc on whatever the beam is pointing at, so it visibly lands on a surface
-        // instead of hanging in the air or burying itself in a wall.
+        // stop the arc on whatever it is pointing at, so it lands on a surface
         double range = Mth.clamp(
                 BreathNode.getStartingSpeed(dragon.getLifeStage().power) * 6.0,
                 MIN_RANGE,
@@ -104,32 +95,31 @@ public final class LightningBeamRenderer {
                 ? range
                 : Math.max(clip.getLocation().distanceTo(muzzle), 1.0);
 
-        // The pose is already at the entity's render position, so everything below is expressed
-        // relative to it rather than to the camera.
+        // the pose is already at the entity's render position, so work relative to it
         double originX = muzzle.x - Mth.lerp(partialTick, dragon.xOld, dragon.getX());
         double originY = muzzle.y - Mth.lerp(partialTick, dragon.yOld, dragon.getY());
         double originZ = muzzle.z - Mth.lerp(partialTick, dragon.zOld, dragon.getZ());
 
-        // A frame perpendicular to the beam. The reference vector is swapped near vertical so
-        // the cross product never degenerates when the dragon looks straight up or down.
+        // A frame perpendicular to the beam. The reference is swapped near vertical so the cross
+        // product cannot degenerate when the dragon looks straight up or down.
         var reference = Math.abs(aim.y) > 0.99 ? new Vec3(1.0, 0.0, 0.0) : new Vec3(0.0, 1.0, 0.0);
         var right = aim.cross(reference).normalize();
         var up = right.cross(aim).normalize();
 
-        int rgb = breath.getLightningColor();
-        float red = ((rgb >> 16) & 0xFF) / 255.0F * COLOR_SCALE;
-        float green = ((rgb >> 8) & 0xFF) / 255.0F * COLOR_SCALE;
-        float blue = (rgb & 0xFF) / 255.0F * COLOR_SCALE;
+        var profile = breath.getLightningProfile();
+        float red = profile.red() * COLOR_SCALE;
+        float green = profile.green() * COLOR_SCALE;
+        float blue = profile.blue() * COLOR_SCALE;
 
         int tick = dragon.tickCount;
-        // Interpolating between this tick's brightness and the last one's keeps the flicker
-        // smooth at high frame rates while the shape itself still snaps once per tick.
+        // interpolating against the previous tick keeps the flicker smooth at high frame rates
+        // while the shape itself still snaps once per tick
         float flicker = Mth.lerp(partialTick, brightness(dragon, tick - 1), brightness(dragon, tick));
         float scale = Mth.clamp(dragon.getAdjustedSize(), 0.4F, 1.6F);
 
         var matrix = poseStack.last().pose();
         var buffer = bufferSource.getBuffer(RenderType.lightning());
-        int bolts = breath.getBoltCount();
+        int bolts = profile.bolts();
         for (int bolt = 0; bolt < bolts; ++bolt) {
             arc(
                     matrix, buffer,
@@ -178,8 +168,7 @@ public final class LightningBeamRenderer {
         float walkR = 0.0F;
         float walkU = 0.0F;
         for (int i = 0; i <= SEGMENTS; ++i) {
-            // The envelope pins both ends: the arc leaves the muzzle and lands on the hit point,
-            // and does its wandering in between.
+            // the envelope pins both ends, so the wandering happens in between
             float envelope = Mth.sin(i / (float) SEGMENTS * Mth.PI);
             offsetR[i] = walkR * envelope;
             offsetU[i] = walkU * envelope;
@@ -201,15 +190,14 @@ public final class LightningBeamRenderer {
             }
         }
 
-        // Branches. Only the thin pass, so they read as sparks off the main arc rather than as
-        // a second beam.
+        // Branches, thin pass only, so they read as sparks rather than a second beam.
         for (int fork = 0; fork < FORKS; ++fork) {
             int start = 1 + random.nextInt(SEGMENTS - FORK_LENGTH);
             float branchR = offsetR[start];
             float branchU = offsetU[start];
             for (int i = 0; i < FORK_LENGTH; ++i) {
-                // Three times the main walk's jitter, and it never comes back -- a fork that
-                // rejoined the beam would just look like a thicker beam.
+                // three times the main jitter, and it never rejoins: a fork that came back would
+                // just look like a thicker beam
                 float nextR = branchR + (random.nextFloat() - 0.5F) * spread * 3.0F;
                 float nextU = branchU + (random.nextFloat() - 0.5F) * spread * 3.0F;
                 segment(
@@ -218,7 +206,6 @@ public final class LightningBeamRenderer {
                         step * (start + i), branchR, branchU,
                         step * (start + i + 1), nextR, nextU,
                         CORE_WIDTH * scale, red, green, blue,
-                        // fading out along the branch
                         alpha * (1.0F - i / (float) FORK_LENGTH)
                 );
                 branchR = nextR;
@@ -259,8 +246,8 @@ public final class LightningBeamRenderer {
         float rx = (float) right.x * width, ry = (float) right.y * width, rz = (float) right.z * width;
         float ux = (float) up.x * width, uy = (float) up.y * width, uz = (float) up.z * width;
 
-        // Corners are walked in the same order at both ends, so consecutive quads wind
-        // consistently and the tube culls like a solid box instead of flickering inside out.
+        // Same corner order at both ends, so quads wind consistently and the tube culls like a
+        // solid box instead of flickering inside out.
         for (int side = 0; side < 4; ++side) {
             float a1 = CORNER_R[side], b1 = CORNER_U[side];
             float a2 = CORNER_R[(side + 1) & 3], b2 = CORNER_U[(side + 1) & 3];

@@ -405,19 +405,14 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public @Nullable Player getControllingPassenger() {
-        // Untamed dragons are never controlled by their rider: during a break-in
-        // attempt the dragon flies ITSELF (via its move control) while the player
-        // merely clings on. Only a tamed dragon yields control to the rider.
-        if (!this.isTame() || this.isSleeping()) return null;   // add the sleeping check
-        // Steering also stops the moment the saddle comes off, so a rider cannot keep control of
-        // a dragon that no longer meets the requirement.
+        // An untamed dragon flies itself during a break-in while the rider clings on, so only a
+        // tamed one yields control. Steering also stops the moment the saddle comes off.
+        if (!this.isTame() || this.isSleeping()) return null;
         if (ServerConfig.INSTANCE.requireSaddleToRide.get() && !this.isSaddled()) return null;
         return !this.isNoAi() && isBreakInTrusted() && this.getFirstPassenger() instanceof Player player ? player : null;
     }
 
-    /**
-     * The player currently clinging to an untamed dragon during a break-in (may not be the controller).
-     */
+    /// The player clinging to an untamed dragon during a break-in. Not the controlling passenger.
     @Nullable
     public Player getBreakInRider() {
         return this.getFirstPassenger() instanceof Player p ? p : null;
@@ -512,9 +507,8 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     //----------AgeableEntity----------
     protected void refreshAge() {
-        // Vanilla AgeableMob uses a signed age: negative counts UP toward 0 (still a baby),
-        // positive counts DOWN toward 0 (an adult on breeding cooldown). So the two pre-adult
-        // stages start negative and JUVENILE starts positive.
+        // Vanilla AgeableMob's age is signed: negative counts up toward 0 (a baby), positive
+        // counts down toward 0 (an adult on breeding cooldown).
         switch (this.stage.ordinal()) {
             case 0: // HATCHLING
             case 1: // FLEDGLING
@@ -811,7 +805,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     }
 
     public @Nullable DragonProjectileAbility getProjectile() {
-        DragonProjectileAbility p = this.getVariant().projectile;   // variant override wins
+        DragonProjectileAbility p = this.getVariant().projectile;   // the variant override wins
         return p != null ? p : this.getVariant().getDragonType().getProjectile();
     }
     private static final float AIM_STRAFE_SCALE = 0.7F;
@@ -841,13 +835,13 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
         }
         float upward = 0.0F;
         if (moving) {
-            // climb/dive component from where the player is looking (pitch)
+            // climb and dive come from the player's pitch
             float facing = player.getXRot() * MathUtil.TO_RAD_FACTOR;
-            upward = -Mth.sin(facing);          // look up -> climb
-            thrust *= Mth.cos(facing);          // horizontal factor
+            upward = -Mth.sin(facing);
+            thrust *= Mth.cos(facing);
         }
         return new Vec3(
-                0.0,   // no lateral strafe — turning is handled by facing the movement direction
+                0.0,   // no strafe: turning is handled by facing the movement direction
                 player.jumping ? upward + 0.5F : this.isDescending() ? upward - 0.5F : upward,
                 thrust
         );
@@ -932,7 +926,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // 1) LOCOMOTION state machine
+        // locomotion state machine
         controllers.add(
                 new AnimationController<>(this, "movement", 5, state -> {
                     if (this.isDeadOrDying()) {
@@ -978,12 +972,12 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
                         })
         );
 
-        // 2) FIRE BREATH — independent layer, plays on TOP of flap/walk/etc.
+        // breath, layered over locomotion
         controllers.add(new AnimationController<>(this, "breath", 3, state ->
                 this.isBreathing() ? state.setAndContinue(BREATH) : PlayState.STOP
         ));
 
-        // 3) BITE — triggered one-shot, layered over movement
+        // bite, a triggered one-shot
         controllers.add(new AnimationController<>(this, "attack", 0, state -> PlayState.STOP)
                 .triggerableAnim("bite", BITE));
     }
