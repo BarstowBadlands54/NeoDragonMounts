@@ -19,6 +19,8 @@ import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
  * the 1.21.4 asset key becomes a {@link ArmorMaterial.Layer} in the {@code layers} list.
  */
 public class DragonArmorMaterials {
+    /// The dyeable tier, and the only one below copper.
+    public static final ArmorMaterial LEATHER = makeMaterial(ArmorMaterials.LEATHER, 1);
     public static final ArmorMaterial COPPER;
     public static final ArmorMaterial IRON = makeMaterial(ArmorMaterials.IRON, 3);
     public static final ArmorMaterial GOLD = makeMaterial(ArmorMaterials.GOLD, 5);

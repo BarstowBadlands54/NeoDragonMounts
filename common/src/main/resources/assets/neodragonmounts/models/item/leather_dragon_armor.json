@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "neodragonmounts:item/equipment/dragon/leather_dragon_armor",
+    "layer1": "neodragonmounts:item/equipment/dragon/leather_dragon_armor_overlay"
+  }
+}

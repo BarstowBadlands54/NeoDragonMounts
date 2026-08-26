@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.dragonmounts.neo.common.DragonMountsShared;
 import net.dragonmounts.neo.common.api.DescribedArmorEffect;
 import net.dragonmounts.neo.common.client.ClientDragonEntity;
+import net.dragonmounts.neo.common.client.DMItemColors;
 import net.dragonmounts.neo.common.client.gui.DragonCoreScreen;
 import net.dragonmounts.neo.common.client.gui.DragonInventoryScreen;
 import net.dragonmounts.neo.common.client.renderer.DMCoreShaders;
@@ -27,6 +28,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 // 1.21.1: SpecialBlockRendererRegistry (Fabric 1.21.4 API) absent
@@ -77,23 +79,7 @@ public class DragonMountsClient implements
         );
         MenuScreens.register(DMScreenHandlers.DRAGON_CORE, DragonCoreScreen::new);
         MenuScreens.register(DMScreenHandlers.DRAGON_INVENTORY, DragonInventoryScreen::new);
-//        for (var model : BuiltinFactory.values()) {
-//            EntityModelLayerRegistry.registerModelLayer(model.location, model::makeModel);
-//        }
-        /* TODO 1.21.1: 1.21.4 special-model API (SpecialModelRenderers / SpecialBlockRendererRegistry /
-           DragonCoreRenderer.Unbaked / DragonHeadRenderer.Unbaked) is absent. Re-implement core/head item
-           rendering via a BlockEntityWithoutLevelRenderer once common's DragonCoreRenderer/DragonHeadRenderer
-           are ported off SpecialModelRenderer.
-        SpecialModelRenderers.ID_MAPPER.put(makeId("dragon_core"), DragonCoreRenderer.Unbaked.CODEC);
-        SpecialModelRenderers.ID_MAPPER.put(makeId("dragon_head"), DragonHeadRenderer.Unbaked.CODEC);
-        SpecialBlockRendererRegistry.register(DMBlocks.DRAGON_CORE.get(), new DragonCoreRenderer.Unbaked(0.0F, Direction.SOUTH));
-        for (var variant : DragonVariants.BUILTIN_VALUES) {
-            var head = variant.head;
-            var renderer = new DragonHeadRenderer.Unbaked(variant, 0.0F);
-            SpecialBlockRendererRegistry.register(head.standing.get(), renderer);
-            SpecialBlockRendererRegistry.register(head.wall.get(), renderer);
-        }
-        */
+
         ClientTickEvents.START_CLIENT_TICK.register(this);
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_CORE.get(), DragonCoreRenderer::new);
         BlockEntityRenderers.register(DMBlockEntities.DRAGON_HEAD.get(), DragonHeadRenderer::new);
@@ -105,6 +91,7 @@ public class DragonMountsClient implements
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(this);
         ParticleFactoryRegistry.getInstance().register(DMParticles.DRAGON_BREATH, BreathParticleProvider::new);
         ClientCommandRegistrationCallback.EVENT.register(DMClientCommand::register);
+        ColorProviderRegistry.ITEM.register(DMItemColors::dyeableArmor, DMItems.LEATHER_DRAGON_ARMOR);
         FabricLoader.getInstance().getModContainer(DragonMountsShared.NAMESPACE).ifPresent(mod ->
                 ResourceManagerHelper.registerBuiltinResourcePack(
                         makeId("classic_amulet"),

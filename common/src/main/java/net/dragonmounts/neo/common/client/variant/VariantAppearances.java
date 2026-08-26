@@ -9,7 +9,9 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
-import static net.dragonmounts.neo.common.client.variant.DefaultAppearance.registerArmorTexture;
+import static net.dragonmounts.neo.common.client.variant.DefaultAppearance.registerArmorSkin;
+import static net.dragonmounts.neo.common.client.variant.DragonArmorSkin.dyeable;
+import static net.dragonmounts.neo.common.client.variant.DragonArmorSkin.solid;
 import static net.dragonmounts.neo.common.client.variant.VariantAppearance.TEXTURES_ROOT;
 
 public class VariantAppearances {
@@ -19,13 +21,23 @@ public class VariantAppearances {
         return new DefaultAppearance.Builder();
     }
 
-    public static void registerArmorTextures(@Nullable String category, ResourceLocation folder) {
-        registerArmorTexture(category, makeId("copper_dragon_armor"),    folder.withSuffix("/copper.png"));
-        registerArmorTexture(category, makeId("iron_dragon_armor"),      folder.withSuffix("/iron.png"));
-        registerArmorTexture(category, makeId("golden_dragon_armor"),    folder.withSuffix("/gold.png"));
-        registerArmorTexture(category, makeId("emerald_dragon_armor"),   folder.withSuffix("/emerald.png"));
-        registerArmorTexture(category, makeId("diamond_dragon_armor"),   folder.withSuffix("/diamond.png"));
-        registerArmorTexture(category, makeId("netherite_dragon_armor"), folder.withSuffix("/netherite.png"));
+    /// The metal set, which every body ships in full.
+    public static void registerArmorSkins(@Nullable String category, ResourceLocation folder) {
+        registerArmorSkin(category, makeId("copper_dragon_armor"),    solid(folder.withSuffix("/copper.png")));
+        registerArmorSkin(category, makeId("iron_dragon_armor"),      solid(folder.withSuffix("/iron.png")));
+        registerArmorSkin(category, makeId("golden_dragon_armor"),    solid(folder.withSuffix("/gold.png")));
+        registerArmorSkin(category, makeId("emerald_dragon_armor"),   solid(folder.withSuffix("/emerald.png")));
+        registerArmorSkin(category, makeId("diamond_dragon_armor"),   solid(folder.withSuffix("/diamond.png")));
+        registerArmorSkin(category, makeId("netherite_dragon_armor"), solid(folder.withSuffix("/netherite.png")));
+    }
+
+    /// Leather, the one dyeable set. Kept out of {@link #registerArmorSkins} because not every
+    /// body ships the art, and a body that does not falls back to the default set.
+    public static void registerLeatherArmorSkin(@Nullable String category, ResourceLocation folder) {
+        registerArmorSkin(category, makeId("leather_dragon_armor"), dyeable(
+                folder.withSuffix("/leather_dyeable.png"),
+                folder.withSuffix("/leather_overlay.png")
+        ));
     }
 
     public static final VariantAppearance AETHER_AETHER;
@@ -293,9 +305,16 @@ public class VariantAppearances {
     }
 
     static {
-        registerArmorTextures(null, makeId("textures/entity/equipment/normal_dragon_body"));
-        registerArmorTextures("sculk", makeId("textures/entity/equipment/sculk_dragon_body"));
-        registerArmorTextures("skeleton", makeId("textures/entity/equipment/skeleton_dragon_body"));
+        var normal = makeId("textures/entity/equipment/normal_dragon_body");
+        var sculk = makeId("textures/entity/equipment/sculk_dragon_body");
+        var skeleton = makeId("textures/entity/equipment/skeleton_dragon_body");
+        registerArmorSkins(null, normal);
+        registerArmorSkins("sculk", sculk);
+        registerArmorSkins("skeleton", skeleton);
+        // Skeleton draws leather on its own narrower body; sculk ships none yet and falls back to
+        // the default set, whose wrap it matches more closely than the skeleton one anyway.
+        registerLeatherArmorSkin(null, normal);
+        registerLeatherArmorSkin("skeleton", skeleton);
     }
 
     public static Function<String, VariantAppearance> getBuiltinSupplier() {

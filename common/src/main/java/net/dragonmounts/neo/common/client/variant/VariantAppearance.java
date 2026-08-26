@@ -58,7 +58,8 @@ public interface VariantAppearance {
 
     RenderType getSaddle(DragonRenderer state);
 
-    @Nullable ResourceLocation getArmorTexture(@Nullable ResourceLocation asset);
+    /// Textures for the armour item with this registry id, or null if it has none on this body.
+    @Nullable DragonArmorSkin getArmorSkin(@Nullable ResourceLocation asset);
 
     ResourceLocation getBodyTexture(DragonRenderer state);
 

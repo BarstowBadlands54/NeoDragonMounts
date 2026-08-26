@@ -22,14 +22,16 @@ import java.util.Map;
 import static net.dragonmounts.neo.common.DragonMountsShared.makeId;
 
 public class DefaultAppearance implements VariantAppearance {
-    private static final Object2ObjectOpenHashMap<ResourceLocation, ResourceLocation> DEFAULT_ARMOR_TEXTURES = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectOpenHashMap<String, Map<ResourceLocation, ResourceLocation>> ARMOR_TEXTURES = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<ResourceLocation, DragonArmorSkin> DEFAULT_ARMOR_SKINS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<String, Map<ResourceLocation, DragonArmorSkin>> ARMOR_SKINS = new Object2ObjectOpenHashMap<>();
 
-    public static void registerArmorTexture(@Nullable String category, ResourceLocation asset, ResourceLocation texture) {
+    /// A category that registers no skin for an asset falls back to the one registered under
+    /// {@code category == null}, so a body only needs its own art where it actually differs.
+    public static void registerArmorSkin(@Nullable String category, ResourceLocation asset, DragonArmorSkin skin) {
         if (category == null) {
-            if (DEFAULT_ARMOR_TEXTURES.putIfAbsent(asset, texture) == null) return;
+            if (DEFAULT_ARMOR_SKINS.putIfAbsent(asset, skin) == null) return;
         } else if (
-                ARMOR_TEXTURES.computeIfAbsent(category, DefaultAppearance::makeMap).putIfAbsent(asset, texture) == null
+                ARMOR_SKINS.computeIfAbsent(category, DefaultAppearance::makeMap).putIfAbsent(asset, skin) == null
         ) return;
         throw new IllegalStateException("Duplicate key: " + asset);
     }
@@ -43,7 +45,7 @@ public class DefaultAppearance implements VariantAppearance {
     public final RenderType glowDecal;
     public final RenderType chest;
     public final RenderType saddle;
-    public final Map<ResourceLocation, ResourceLocation> armors;
+    public final Map<ResourceLocation, DragonArmorSkin> armors;
     public final @Nullable ResourceLocation geoModel;
     public final @Nullable ResourceLocation headGeoModel;
     public final ResourceLocation saddleTexture;
@@ -53,7 +55,7 @@ public class DefaultAppearance implements VariantAppearance {
             ResourceLocation body,
             ResourceLocation glow,
             ResourceLocation breath,
-            Map<ResourceLocation, ResourceLocation> armors,
+            Map<ResourceLocation, DragonArmorSkin> armors,
             BreathParticleFactory factory
     ) {
         this(body, glow, breath, armors, factory, null, null, DEFAULT_SADDLE);
@@ -63,7 +65,7 @@ public class DefaultAppearance implements VariantAppearance {
             ResourceLocation body,
             ResourceLocation glow,
             ResourceLocation breath,
-            Map<ResourceLocation, ResourceLocation> armors,
+            Map<ResourceLocation, DragonArmorSkin> armors,
             BreathParticleFactory factory,
             @Nullable ResourceLocation geoModel,
             @Nullable ResourceLocation headGeoModel,
@@ -145,9 +147,9 @@ public class DefaultAppearance implements VariantAppearance {
     }
 
     @Override
-    public @Nullable ResourceLocation getArmorTexture(@Nullable ResourceLocation asset) {
-        if (this.armors.containsKey(asset)) return this.armors.get(asset);
-        return DEFAULT_ARMOR_TEXTURES.get(asset);
+    public @Nullable DragonArmorSkin getArmorSkin(@Nullable ResourceLocation asset) {
+        var skin = this.armors.get(asset);
+        return skin == null ? DEFAULT_ARMOR_SKINS.get(asset) : skin;
     }
 
     @Override
@@ -158,7 +160,7 @@ public class DefaultAppearance implements VariantAppearance {
     public static class Builder {
         public BreathParticleFactory factory = FlameBreathParticle.FACTORY;
         public ResourceLocation breath = DMParticleSprites.FLAME_BREATH;
-        public Map<ResourceLocation, ResourceLocation> armors = Collections.emptyMap();
+        public Map<ResourceLocation, DragonArmorSkin> armors = Collections.emptyMap();
         public @Nullable ResourceLocation geoModel = null;
         public @Nullable ResourceLocation headGeoModel = null;
         public ResourceLocation saddleTexture = DEFAULT_SADDLE;
@@ -184,7 +186,7 @@ public class DefaultAppearance implements VariantAppearance {
         }
 
         public Builder setArmorCategory(@Nullable String category) {
-            this.armors = category == null ? Collections.emptyMap() : ARMOR_TEXTURES.computeIfAbsent(category, DefaultAppearance::makeMap);
+            this.armors = category == null ? Collections.emptyMap() : ARMOR_SKINS.computeIfAbsent(category, DefaultAppearance::makeMap);
             return this;
         }
 
@@ -221,7 +223,7 @@ public class DefaultAppearance implements VariantAppearance {
         }
     }
 
-    static Map<ResourceLocation, ResourceLocation> makeMap(Object ignored) {
+    static Map<ResourceLocation, DragonArmorSkin> makeMap(Object ignored) {
         return new Object2ObjectOpenHashMap<>();
     }
 }

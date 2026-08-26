@@ -77,7 +77,10 @@ public class DragonAmuletItem extends AmuletItem<TameableDragonEntity> implement
         var stack = new ItemStack(this);
         var tag = saveWithId(entity, new CompoundTag());
         tag.remove(FLYING_DATA_PARAMETER_KEY);
-        tag.remove("UUID");
+        // The UUID stays. An amulet holds one specific dragon, not a copy of one, and a bound
+        // flute resolves its dragon by UUID -- stripping it here is what unbound the flute.
+        // Contrast EntityContainer#saveEntityData, where dropping it is correct: an essence
+        // hatches a new dragon rather than restoring the one that went in.
         stack.set(DataComponents.ENTITY_DATA, EntityContainer.simplifyData(tag));
         LivingEntity owner = entity.getOwner();
         if (owner != null) {
@@ -103,6 +106,7 @@ public class DragonAmuletItem extends AmuletItem<TameableDragonEntity> implement
             CustomData data = stack.get(DataComponents.ENTITY_DATA);
             if (data != null) {
                 mergeEntityData(dragon, level, player, data);
+                restoreIdentity(level, dragon, data);
                 dragon.setDragonType(this.type, false);
             } else {
                 dragon.setDragonType(this.type, true);

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "neodragonmounts.dragon_armor",
+  "key": {
+    "#": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "#  ",
+    "###",
+    " ##"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neodragonmounts:leather_dragon_armor"
+  }
+}

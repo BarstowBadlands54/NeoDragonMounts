@@ -17,6 +17,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.DispenserBlock;
 
@@ -30,6 +32,14 @@ import static net.minecraft.resources.ResourceLocation.withDefaultNamespace;
 
 public class DMItems {
     public static final ResourceLocation DRAGON_ARMOR_MODIFIER_NAME = withDefaultNamespace("armor." + ArmorItem.Type.BODY.getName());
+    /**
+     * Undyed leather brown, ARGB, the same literal vanilla uses for its own leather gear.
+     * <p>
+     * Attached to every dyeable armour as a default {@code DYED_COLOR} component, so an uncrafted
+     * set already reads as leather rather than as the bare greyscale mask, and so dyeing it brown
+     * is still a visible change rather than a no-op.
+     */
+    public static final int UNDYED_LEATHER = -6265536;
     public static final BlockItemHolder<DragonCoreBlock, ?> DRAGON_CORE = BlockItemHolder.registerItem(
             DMBlocks.DRAGON_CORE,
             (block, props) -> new BlockItem(block, props.rarity(Rarity.RARE))
@@ -205,6 +215,7 @@ public class DMItems {
             new VariationOrbItem(props.stacksTo(16))
     );
     // Dragon Armors
+    public static final ItemHolder<Item> LEATHER_DRAGON_ARMOR = COMBAT_TAB.register("leather_dragon_armor", props -> makeDyeableDragonArmor(DragonArmorMaterials.LEATHER, props));
     public static final ItemHolder<Item> COPPER_DRAGON_ARMOR = COMBAT_TAB.register("copper_dragon_armor", props -> makeDragonArmor(DragonArmorMaterials.COPPER, props));
     public static final ItemHolder<Item> IRON_DRAGON_ARMOR = COMBAT_TAB.register("iron_dragon_armor", props -> makeDragonArmor(DragonArmorMaterials.IRON, props));
     public static final ItemHolder<Item> GOLDEN_DRAGON_ARMOR = COMBAT_TAB.register("golden_dragon_armor", props -> makeDragonArmor(DragonArmorMaterials.GOLD, props));
@@ -622,6 +633,17 @@ public class DMItems {
             builder.add(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(DRAGON_ARMOR_MODIFIER_NAME, material.knockbackResistance(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.BODY);
         }
         return new Item(props.stacksTo(1).attributes(builder.build()));
+    }
+
+    /// Dragon armour whose body texture is a greyscale mask tinted by the stack's dye. Also needs
+    /// the item in the `minecraft:dyeable` tag for cauldron washing and the dye recipe, and its
+    /// icon tint registered per loader; see DMItemColors.
+    /// @see net.dragonmounts.neo.common.client.variant.DragonArmorSkin
+    static Item makeDyeableDragonArmor(ArmorMaterial material, Properties props) {
+        return makeDragonArmor(
+                material,
+                props.component(DataComponents.DYED_COLOR, new DyedItemColor(UNDYED_LEATHER, false))
+        );
     }
 
     static DragonEssenceItem makeDragonEssence(DragonType type, Properties props) {

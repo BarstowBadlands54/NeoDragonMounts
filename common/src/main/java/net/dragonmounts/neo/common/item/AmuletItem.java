@@ -81,6 +81,7 @@ public class AmuletItem<T extends Entity> extends ArmorItem implements EntityCon
         var entity = type.create(level, null, pos, reason, yOffset, extraOffset);
         if (entity == null) return null;
         mergeEntityData(entity, level, player, data);
+        restoreIdentity(level, entity, data);
         applyScores(level.getScoreboard(), stack, entity);
         return entity;
     }

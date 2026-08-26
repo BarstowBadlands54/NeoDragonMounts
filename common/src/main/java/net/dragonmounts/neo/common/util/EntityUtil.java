@@ -31,6 +31,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public abstract class EntityUtil extends /*to access protected methods*/ EntityType<Entity> {
     public static Vec2 getRiddenRotation(LivingEntity rider) {
         return new Vec2(rider.getXRot() * 0.5F, rider.getYRot());
@@ -66,6 +68,28 @@ public abstract class EntityUtil extends /*to access protected methods*/ EntityT
         if (entity.getType() == type && (!entity.onlyOpCanSetNbt() || player != null && server.getPlayerList().isOp(player.getGameProfile()))) {
             data.loadInto(entity);
         }
+    }
+
+    /**
+     * Put a captured entity's own UUID back after {@link #mergeEntityData}.
+     * <p>
+     * {@code CustomData#loadInto} snapshots the fresh entity's UUID and reapplies it after the
+     * merge, so that a stack of spawn eggs cannot spawn colliding entities. A container holding
+     * one specific entity wants the opposite: anything that remembers that entity by UUID -- a
+     * bound flute, above all -- is looking for the identity it went in with.
+     * <p>
+     * Skipped when something already answers to that UUID here, so releasing a copied container
+     * yields a distinct entity rather than one the entity manager silently refuses to add.
+     */
+    public static void restoreIdentity(ServerLevel level, Entity entity, CustomData data) {
+        var tag = data.copyTag();
+        if (!tag.hasUUID("UUID")) return;
+        UUID uuid = tag.getUUID("UUID");
+        if (uuid.equals(entity.getUUID())) return;
+        var existing = level.getEntity(uuid);
+        // a discarded entity still answers until the manager sweeps at end of tick
+        if (existing != null && !existing.isRemoved()) return;
+        entity.setUUID(uuid);
     }
 
     public static boolean addOrMergeEffect(LivingEntity entity, Holder<MobEffect> holder, int duration, int amplifier, boolean ambient, boolean visible, boolean showIcon) {
