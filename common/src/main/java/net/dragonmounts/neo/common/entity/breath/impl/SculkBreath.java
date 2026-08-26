@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class SculkBreath extends DragonBreath {
     private static final float CATALYST_CHANCE = 0.0004F;
-    private static final float VEIN_CHANCE = 0.22F;
+    private static final float VEIN_CHANCE = 0.08F;
     private static final int DARKNESS_TICKS = 80;
     private static final float DARKNESS_THRESHOLD = 0.2F;
 

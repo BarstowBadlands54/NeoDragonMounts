@@ -121,6 +121,10 @@ public class DragonTypes {
                 .addHabitat(Blocks.WHITE_GLAZED_TERRACOTTA)
                 .addHabitat(Blocks.WHITE_STAINED_GLASS)
                 .addHabitat(Blocks.WHITE_STAINED_GLASS_PANE)
+                .addHabitat(Blocks.QUARTZ_BLOCK)
+                .addHabitat(Blocks.QUARTZ_BRICKS)
+                .addHabitat(Blocks.QUARTZ_PILLAR)
+                .addHabitat(Blocks.QUARTZ_SLAB)
                 .register(LightType::new, makeId("light"));
         material.setDefense(HELMET, 4).setDefense(BOOTS, 4);
         AETHER = new DragonTypeBuilder(0x0294BD, material, new ItemTierBuilder(netherite, 2700, 8.0F, 5.0F).setEnchantmentValue(11))
