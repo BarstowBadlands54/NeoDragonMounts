@@ -12,17 +12,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BreathParticle extends TextureSheetParticle implements BreathNodeHost {
     public static final float NORMAL_PARTICLE_CHANCE = 0.1F;
     public static final float SPECIAL_PARTICLE_CHANCE = 0.3F;
     public final BreathNode node;
+    /// The dragon breathing, if it is still loaded. Never collided with; see {@link #stopsStream}.
+    private final @Nullable Entity source;
     private boolean collided;
     private boolean inWater;
     private float lastQuadSize;
@@ -40,6 +45,7 @@ public abstract class BreathParticle extends TextureSheetParticle implements Bre
     ) {
         super(level, x, y, z);
         this.setSprite(sprite);
+        this.source = option.source() == BreathParticleOption.NO_SOURCE ? null : level.getEntity(option.source());
         this.node = new BreathNode(option.power(), this.random);
         this.lastQuadSize = this.quadSize = this.getRenderSize();
         Vec3 motion = this.node.getRandomisedStartingMotion(new Vec3(motionX, motionY, motionZ), this.random);
@@ -115,12 +121,30 @@ public abstract class BreathParticle extends TextureSheetParticle implements Bre
         return border.getDistanceToBorder(x, y) < size * 2.0 && border.isWithinBounds(x, y, size);
     }
 
+    /**
+     * Whether the stream should pile up against this entity instead of washing over it.
+     * <p>
+     * The dragon breathing is excluded because the stream starts at its muzzle, and its riders
+     * because they are behind that. Everything else the beam can reach stops it.
+     */
+    protected boolean stopsStream(LivingEntity entity) {
+        if (entity.isRemoved() || entity.isSpectator()) return false;
+        var source = this.source;
+        return source == null || (entity != source && entity.getVehicle() != source);
+    }
+
     public static Vec3 collectCollision(BreathParticle particle, double motionX, double motionY, double motionZ) {
         var box = particle.getBoundingBox();
         var moved = box.expandTowards(motionX, motionY, motionZ);
         var candidates = particle.level.getEntityCollisions(null, moved);
         var shapes = new ObjectArrayList<VoxelShape>(candidates.size() + 16);
         shapes.addAll(candidates);
+        // Mobs are not hard collision, so the vanilla call above yields boats and shulkers but
+        // walks straight past a warden -- the stream kept rendering beyond a target the server
+        // was already damaging. Add their boxes explicitly.
+        for (var entity : particle.level.getEntitiesOfClass(LivingEntity.class, moved, particle::stopsStream)) {
+            shapes.add(Shapes.create(entity.getBoundingBox()));
+        }
         var border = particle.level.getWorldBorder();
         if (isInsideCloseToBorder(border, particle.x, particle.y, moved)) {
             shapes.add(border.getCollisionShape());

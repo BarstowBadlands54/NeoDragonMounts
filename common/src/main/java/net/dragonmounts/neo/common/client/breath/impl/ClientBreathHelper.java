@@ -60,6 +60,8 @@ public class ClientBreathHelper extends DragonBreathHelper<ClientDragonEntity> {
                 this.lookY = lookY;
                 this.lookZ = lookZ;
             }
+            // motionX/Y/Z below is added to the sparks' velocity, not their position, so they
+            // drift with the dragon instead of being displaced away from it
             if (breath instanceof LightningBreath) {
                 // LightningBeamRenderer draws the arc itself; billboarded particles would sit
                 // on top and wash it out, so this is just a couple of sparks off the muzzle
@@ -75,15 +77,20 @@ public class ClientBreathHelper extends DragonBreathHelper<ClientDragonEntity> {
                     );
                 }
             } else {
-                var option = new BreathParticleOption(dragon.getVariant(), stage.power);
+                var option = new BreathParticleOption(dragon.getVariant(), stage.power, dragon.getId());
                 final int PARTICLES_PER_TICK = 4;
                 for (int i = 0; i < PARTICLES_PER_TICK; ++i) {
+                    // Spawn on the muzzle's path across this tick, and nowhere else. The dragon's
+                    // velocity used to be added here, which displaced the whole visible stream by
+                    // one tick of travel while BreathNodeEntity, which is what actually deals the
+                    // damage, spawns squarely on the muzzle. The faster the dragon flew, the
+                    // further the particles sat from the line the server was hitting along.
                     double partialTickHeadStart = i / (double) PARTICLES_PER_TICK;
                     level.addParticle(
                             option,
-                            lerp(partialTickHeadStart, this.throatX, throatX) + motionX,
-                            lerp(partialTickHeadStart, this.throatY, throatY) + motionY,
-                            lerp(partialTickHeadStart, this.throatZ, throatZ) + motionZ,
+                            lerp(partialTickHeadStart, this.throatX, throatX),
+                            lerp(partialTickHeadStart, this.throatY, throatY),
+                            lerp(partialTickHeadStart, this.throatZ, throatZ),
                             lerp(partialTickHeadStart, this.lookX, lookX),
                             lerp(partialTickHeadStart, this.lookY, lookY),
                             lerp(partialTickHeadStart, this.lookZ, lookZ)

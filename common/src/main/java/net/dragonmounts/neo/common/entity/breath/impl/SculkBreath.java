@@ -18,11 +18,38 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
+/**
+ * Sculk breath. It seeds sculk rather than laying it down: a burst leaves a block or two where
+ * the beam dwelt, not a carpet over everything it swept across.
+ * <p>
+ * Three things hold the rate down. A block has to soak in the stream before it is a candidate at
+ * all, so a passing sweep leaves the ground alone. Conversions are then spaced by a hard interval,
+ * because {@code affectBlock} runs once per struck block per tick and there can be hundreds of
+ * those. The chance roll on top only decides which of the soaked blocks goes, so the patch grows
+ * unevenly instead of always from the same spot.
+ */
 public class SculkBreath extends DragonBreath {
-    private static final float CATALYST_CHANCE = 0.0004F;
+    /**
+     * Hit density a block must reach before it can convert.
+     * <p>
+     * Density accrues per tick of exposure and decays once the beam moves off, so this is a dwell
+     * time in disguise. For scale, {@link FireBreath} smelts at 0.5 and sets a solid face alight
+     * at 6.0; sculk wants a deliberate hold, not a brush.
+     */
+    private static final float SPREAD_THRESHOLD = 2.0F;
+    /// Minimum ticks between two conversions, whatever else the beam is touching.
+    private static final int SPREAD_INTERVAL = 20;
+    /// Per-block chance to convert, once the interval above has elapsed.
+    private static final float SPREAD_CHANCE = 0.5F;
+    /// Chance a conversion plants a catalyst instead of plain sculk.
+    private static final float CATALYST_CHANCE = 0.02F;
+    /// Chance a plain conversion also grows a vein on the block above.
     private static final float VEIN_CHANCE = 0.08F;
     private static final int DARKNESS_TICKS = 80;
     private static final float DARKNESS_THRESHOLD = 0.2F;
+
+    /// Game time the next conversion becomes available. Instance state: one breath per dragon.
+    private long nextSpreadTime;
 
     public SculkBreath(TameableDragonEntity dragon, float damage) {
         super(dragon, damage);
@@ -30,13 +57,17 @@ public class SculkBreath extends DragonBreath {
 
     @Override
     public BreathAffectedBlock affectBlock(ServerLevel level, long location, BreathAffectedBlock hit) {
-        if (!ServerConfig.INSTANCE.destructiveBreath.get()) return new BreathAffectedBlock();
+        if (!ServerConfig.INSTANCE.destructiveBreath.get()) return hit;
+        if (hit.getMaxHitDensity() < SPREAD_THRESHOLD) return hit;
+
+        long now = level.getGameTime();
+        var random = level.random;
+        if (now < this.nextSpreadTime || random.nextFloat() >= SPREAD_CHANCE) return hit;
 
         var pos = BlockPos.of(location);
-        var state = level.getBlockState(pos);
-        if (!state.is(BlockTags.SCULK_REPLACEABLE)) return new BreathAffectedBlock();
+        if (!level.getBlockState(pos).is(BlockTags.SCULK_REPLACEABLE)) return hit;
 
-        var random = level.random;
+        this.nextSpreadTime = now + SPREAD_INTERVAL;
         boolean catalyst = random.nextFloat() < CATALYST_CHANCE;
         level.setBlockAndUpdate(pos, (catalyst ? Blocks.SCULK_CATALYST : Blocks.SCULK).defaultBlockState());
         level.sendParticles(ParticleTypes.SCULK_SOUL,
@@ -50,6 +81,7 @@ public class SculkBreath extends DragonBreath {
                         .setValue(BlockStateProperties.DOWN, true));
             }
         }
+        // spent: the block starts soaking again from zero, though as sculk it no longer qualifies
         return new BreathAffectedBlock();
     }
 
