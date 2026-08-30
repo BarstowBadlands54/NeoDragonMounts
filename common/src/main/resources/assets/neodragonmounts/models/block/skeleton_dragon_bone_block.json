@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "neodragonmounts:block/skeleton_dragon_bone_block"
+  }
+}

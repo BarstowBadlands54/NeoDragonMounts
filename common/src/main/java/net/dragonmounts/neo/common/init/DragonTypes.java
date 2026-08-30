@@ -96,7 +96,7 @@ public class DragonTypes {
                 .addEffectImmunity(MobEffects.POISON)
                 .register(ZombieType::new, makeId("zombie"));
         DARK = new DragonTypeBuilder(0x808080, material.setDefense(HELMET, 5), tier)
-                .model("normal", "base")
+                .model("spiked_horned", "spiked_horned")
                 .armor("dark_classic")
                 .texture(makeId("textures/entity/dragon/dark/bloodmoon/body.png"))
                 .setMaterial(DMItemTags.DARK_DRAGON_SCALES)

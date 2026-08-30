@@ -32,8 +32,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/// Netherite armour + Dragon Scale Upgrade template + one dragon scale -> dragon scale armour of
-/// that scale's type, keeping enchantments, name and (rescaled) damage.
+/// Netherite armour + Dragon Scale Upgrade template + one dragon scale or bone -> dragon scale (or
+/// bone) armour of that material's type, keeping enchantments, name and (rescaled) damage.
 ///
 /// The template stays untyped: the addition carries the type, so one template item covers every
 /// dragon type and the End loot table needs a single entry.
@@ -69,14 +69,18 @@ public class DragonScaleUpgradeRecipe implements SmithingRecipe {
         }
         // Each dragon type has exactly one armour family -- makeDragonScaleArmor for most,
         // makeDragonBoneArmor for skeleton and wither -- so there is no (type, slot) collision.
-        // If a type ever gets both, putIfAbsent silently picks whichever registered first and
-        // this needs to become an explicit family check.
+        // That is also why bone armour needs no special case below: SKELETON and WITHER resolve
+        // through the same map, they just happen to hold DragonScaleArmorItems built with the
+        // "dragon_bone_" key prefix. If a type ever gets both families, putIfAbsent silently
+        // picks whichever registered first and this needs an explicit family check.
         return lookup = map;
     }
 
-    /// The scales carry the type. Reading the item's own field rather than the stack's
-    /// DRAGON_TYPE component: the component is a default set at construction, so the two always
-    /// agree, but the field cannot be stripped off a stack by a command or another mod.
+    /// The scales -- or bones -- carry the type. Reading the item's own field rather than the
+    /// stack's DRAGON_TYPE component: the component is a default set at construction, so the two
+    /// always agree, but the field cannot be stripped off a stack by a command or another mod.
+    ///
+    /// Bones are DragonScalesItem too (DMItems#makeDragonBones), so one instanceof covers both.
     private static @Nullable DragonScaleArmorItem resultFor(ItemStack base, ItemStack addition) {
         if (!(base.getItem() instanceof ArmorItem armor)) return null;
         if (!(addition.getItem() instanceof DragonScalesItem scales)) return null;
@@ -161,9 +165,11 @@ public class DragonScaleUpgradeRecipe implements SmithingRecipe {
         return new DragonScaleUpgradeRecipe(
                 Ingredient.of(DMItems.DRAGON_SCALE_UPGRADE_SMITHING_TEMPLATE),
                 Ingredient.of(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS),
-                // 15 types, matching the 15 that have scale armour. Skeleton and wither bones are
-                // NOT in this tag, so bone armour stays on its direct-craft recipes.
-                Ingredient.of(DMItemTags.DRAGON_SCALES)
+                // Union of dragon_scales (15 types) and dragon_bones (skeleton, wither), so all
+                // 17 armour families go through one recipe. Has to be a tag-of-tags: Ingredient.of
+                // takes a single TagKey and Ingredient.TagValue is package-private, so two tags
+                // cannot be combined in code.
+                Ingredient.of(DMItemTags.DRAGON_SMITHING_MATERIALS)
         );
     }
 

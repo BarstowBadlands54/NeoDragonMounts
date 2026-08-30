@@ -42,6 +42,13 @@ public interface DMItemTags {
     TagKey<Item> SKELETON_DRAGON_BONES = create("dragon_bones/skeleton");
     TagKey<Item> WITHER_DRAGON_BONES = create("dragon_bones/wither");
     TagKey<Item> DRAGON_BONES = create("dragon_bones");
+    /// Umbrella over dragon_scales + dragon_bones, so the smithing addition slot is one tag.
+    /// Ingredient.of takes a single TagKey and Ingredient.TagValue is package-private, so two
+    /// tags cannot be OR'd in code -- the union has to exist as data.
+    TagKey<Item> DRAGON_SMITHING_MATERIALS = create("dragon_smithing_materials");
+    /// Bone storage blocks. Folded into dragon_scale_blocks by that tag's json, so they also
+    /// work in the smithing template duplication recipe.
+    TagKey<Item> DRAGON_BONE_BLOCKS = create("dragon_bone_blocks");
     /// Every flute variety. Use this instead of testing for a single item.
     TagKey<Item> FLUTES = create("flutes");
 
