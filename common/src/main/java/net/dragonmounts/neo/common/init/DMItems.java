@@ -134,6 +134,8 @@ public class DMItems {
     public static final BlockItemHolder<DragonScaleBlock, ?> TERRA_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.TERRA_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> WATER_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.WATER_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> ZOMBIE_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.ZOMBIE_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
+    public static final BlockItemHolder<DragonScaleBlock, ?> SKELETON_DRAGON_BONE_BLOCK = BLOCK_TAB.register(DMBlocks.SKELETON_DRAGON_BONE_BLOCK, DMItems::makeDragonScaleBlock);
+    public static final BlockItemHolder<DragonScaleBlock, ?> WITHER_DRAGON_BONE_BLOCK = BLOCK_TAB.register(DMBlocks.WITHER_DRAGON_BONE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final ItemHolder<Item> DRAGON_MEAT = MISC_TAB.register("dragon_meat", props -> new Item(props.food(new FoodProperties.Builder().nutrition(3).saturationModifier(0.5F).build())));
     public static final ItemHolder<Item> COOKED_DRAGON_MEAT = MISC_TAB.register("cooked_dragon_meat", props -> new Item(props.food(new FoodProperties.Builder().nutrition(6).saturationModifier(1.5F).build())));
     public static final ItemHolder<DragonScalesItem> AETHER_DRAGON_SCALES = MISC_TAB.register("aether_dragon_scales", props -> makeDragonScales(DragonTypes.AETHER, props));

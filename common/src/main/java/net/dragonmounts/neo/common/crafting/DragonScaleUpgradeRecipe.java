@@ -8,8 +8,8 @@ import com.mojang.serialization.RecordBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.dragonmounts.neo.common.init.DMItems;
 import net.dragonmounts.neo.common.init.DMRecipes;
+import net.dragonmounts.neo.common.block.DragonScaleBlock;
 import net.dragonmounts.neo.common.item.DragonScaleArmorItem;
-import net.dragonmounts.neo.common.item.DragonScalesItem;
 import net.dragonmounts.neo.common.tag.DMItemTags;
 import net.dragonmounts.neo.compat.registry.DragonType;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -18,6 +18,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -32,8 +33,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/// Netherite armour + Dragon Scale Upgrade template + one dragon scale or bone -> dragon scale (or
-/// bone) armour of that material's type, keeping enchantments, name and (rescaled) damage.
+/// Netherite armour + Dragon Scale Upgrade template + one dragon scale or bone block -> dragon
+/// scale (or bone) armour of that block's type, keeping enchantments, name and (rescaled) damage.
 ///
 /// The template stays untyped: the addition carries the type, so one template item covers every
 /// dragon type and the End loot table needs a single entry.
@@ -76,16 +77,14 @@ public class DragonScaleUpgradeRecipe implements SmithingRecipe {
         return lookup = map;
     }
 
-    /// The scales -- or bones -- carry the type. Reading the item's own field rather than the
-    /// stack's DRAGON_TYPE component: the component is a default set at construction, so the two
-    /// always agree, but the field cannot be stripped off a stack by a command or another mod.
-    ///
-    /// Bones are DragonScalesItem too (DMItems#makeDragonBones), so one instanceof covers both.
+    /// The block carries the type. Bone blocks are DragonScaleBlock too, built by
+    /// DMBlocks#makeDragonBoneBlock, so one instanceof covers scale and bone alike.
     private static @Nullable DragonScaleArmorItem resultFor(ItemStack base, ItemStack addition) {
         if (!(base.getItem() instanceof ArmorItem armor)) return null;
-        if (!(addition.getItem() instanceof DragonScalesItem scales)) return null;
+        if (!(addition.getItem() instanceof BlockItem item)) return null;
+        if (!(item.getBlock() instanceof DragonScaleBlock block)) return null;
 
-        var slots = lookup().get(scales.type);
+        var slots = lookup().get(block.type);
         return slots == null ? null : slots.get(armor.getType());
     }
 
@@ -165,10 +164,9 @@ public class DragonScaleUpgradeRecipe implements SmithingRecipe {
         return new DragonScaleUpgradeRecipe(
                 Ingredient.of(DMItems.DRAGON_SCALE_UPGRADE_SMITHING_TEMPLATE),
                 Ingredient.of(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS),
-                // Union of dragon_scales (15 types) and dragon_bones (skeleton, wither), so all
-                // 17 armour families go through one recipe. Has to be a tag-of-tags: Ingredient.of
-                // takes a single TagKey and Ingredient.TagValue is package-private, so two tags
-                // cannot be combined in code.
+                // Tag-of-tags over dragon_scale_blocks and dragon_bone_blocks, so all 17 armour
+                // families go through one recipe. Ingredient.of takes a single TagKey and
+                // Ingredient.TagValue is package-private, so the union has to exist as data.
                 Ingredient.of(DMItemTags.DRAGON_SMITHING_MATERIALS)
         );
     }

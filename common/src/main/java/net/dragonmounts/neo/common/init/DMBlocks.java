@@ -97,6 +97,8 @@ public class DMBlocks {
     public static final BlockHolder<DragonScaleBlock> TERRA_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> WATER_DRAGON_SCALE_BLOCK;
     public static final BlockHolder<DragonScaleBlock> ZOMBIE_DRAGON_SCALE_BLOCK;
+    public static final BlockHolder<DragonScaleBlock> SKELETON_DRAGON_BONE_BLOCK;
+    public static final BlockHolder<DragonScaleBlock> WITHER_DRAGON_BONE_BLOCK;
 
     public static BlockBehaviour.Properties configureDragonHead(BlockBehaviour.Properties props) {
         return props.strength(1.0F).instrument(NoteBlockInstrument.DRAGON).pushReaction(PushReaction.DESTROY);
@@ -115,6 +117,16 @@ public class DMBlocks {
         var block = new DragonScaleBlock(type, props.strength(4.0F, 20.0F)
                 .mapColor(type.scaleColor)
                 .sound(SoundType.METAL)
+                .requiresCorrectToolForDrops()
+        );
+        type.bindInstance(DragonScaleBlock.class, block);
+        return block;
+    }
+
+    static DragonScaleBlock makeDragonBoneBlock(DragonType type, BlockBehaviour.Properties props) {
+        var block = new DragonScaleBlock(type, props.strength(3.0F, 15.0F)
+                .mapColor(type.scaleColor)
+                .sound(SoundType.BONE_BLOCK)
                 .requiresCorrectToolForDrops()
         );
         type.bindInstance(DragonScaleBlock.class, block);
@@ -198,7 +210,10 @@ public class DMBlocks {
         blocks.add(TERRA_DRAGON_SCALE_BLOCK = registerBlock("terra_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.TERRA, props)));
         blocks.add(WATER_DRAGON_SCALE_BLOCK = registerBlock("water_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.WATER, props)));
         blocks.add(ZOMBIE_DRAGON_SCALE_BLOCK = registerBlock("zombie_dragon_scale_block", props -> makeDragonScaleBlock(DragonTypes.ZOMBIE, props)));
+        blocks.add(SKELETON_DRAGON_BONE_BLOCK = registerBlock("skeleton_dragon_bone_block", props -> makeDragonBoneBlock(DragonTypes.SKELETON, props)));
+        blocks.add(WITHER_DRAGON_BONE_BLOCK = registerBlock("wither_dragon_bone_block", props -> makeDragonBoneBlock(DragonTypes.WITHER, props)));
         BUILTIN_DRAGON_SCALE_BLOCKS = blocks.build();
+
     }
 
     public static int defaultEggLuminance(BlockState ignored) {

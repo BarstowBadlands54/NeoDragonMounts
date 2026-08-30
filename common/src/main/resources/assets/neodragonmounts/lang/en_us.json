@@ -344,5 +344,13 @@
   "block.neodragonmounts.terra_dragon_egg": "Terra Dragon Egg",
   "block.neodragonmounts.water_dragon_egg": "Water Dragon Egg",
   "block.neodragonmounts.wither_dragon_egg": "Wither Dragon Egg",
-  "block.neodragonmounts.zombie_dragon_egg": "Zombie Dragon Egg"
+  "block.neodragonmounts.zombie_dragon_egg": "Zombie Dragon Egg",
+  "block.neodragonmounts.skeleton_dragon_bone_block": "Skeleton Dragon Bone Block",
+  "block.neodragonmounts.wither_dragon_bone_block": "Wither Dragon Bone Block",
+  "item.neodragonmounts.dragon_scale_upgrade_smithing_template": "Smithing Template",
+  "item.neodragonmounts.smithing_template.dragon_scale_upgrade": "Dragon Scale Upgrade",
+  "item.neodragonmounts.smithing_template.dragon_scale_upgrade.applies_to": "Netherite Armor",
+  "item.neodragonmounts.smithing_template.dragon_scale_upgrade.ingredients": "Dragon Scale or Bone Block",
+  "item.neodragonmounts.smithing_template.dragon_scale_upgrade.base_slot_description": "Add netherite armor",
+  "item.neodragonmounts.smithing_template.dragon_scale_upgrade.additions_slot_description": "Add a dragon scale or bone block"
 }

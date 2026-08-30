@@ -6,7 +6,7 @@
       "item": "minecraft:diamond"
     },
     "S": {
-      "tag": "neodragonmounts:dragon_scale_blocks"
+      "item": "minecraft:diamond_block"
     },
     "T": {
       "item": "neodragonmounts:dragon_scale_upgrade_smithing_template"
