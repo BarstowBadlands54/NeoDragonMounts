@@ -116,6 +116,7 @@ public class DMItems {
             DMBlocks.ZOMBIE_DRAGON_EGG,
             (block, props) -> makeDragonEggBlock(block, props.rarity(Rarity.UNCOMMON))
     );
+
     public static final BlockItemHolder<FlammableBlock, ?> DRAGON_NEST = BLOCK_TAB.register(DMBlocks.DRAGON_NEST, BlockItem::new);
     public static final BlockItemHolder<DragonScaleBlock, ?> AETHER_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.AETHER_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
     public static final BlockItemHolder<DragonScaleBlock, ?> DARK_DRAGON_SCALE_BLOCK = BLOCK_TAB.register(DMBlocks.DARK_DRAGON_SCALE_BLOCK, DMItems::makeDragonScaleBlock);
@@ -153,6 +154,7 @@ public class DMItems {
     public static final ItemHolder<DragonScalesItem> WITHER_DRAGON_BONES = MISC_TAB.register("wither_dragon_bones", props -> makeDragonBones(DragonTypes.WITHER, props.fireResistant()));
     public static final ItemHolder<DragonScalesItem> DARK_DRAGON_SCALES = MISC_TAB.register("dark_dragon_scales", props -> makeDragonScales(DragonTypes.DARK, props));
     public static final ItemHolder<DragonScalesItem> LIGHT_DRAGON_SCALES = MISC_TAB.register("light_dragon_scales", props -> makeDragonScales(DragonTypes.LIGHT, props));
+    public static final ItemHolder<SmithingTemplateItem> DRAGON_SCALE_UPGRADE_SMITHING_TEMPLATE = MISC_TAB.register("dragon_scale_upgrade_smithing_template", props -> DragonScaleUpgradeTemplate.create());
     // Shears
     public static final ItemHolder<TieredShearsItem> DIAMOND_SHEARS = TOOL_TAB.register("diamond_shears", props ->
             makeTieredShears(Tiers.DIAMOND, props)

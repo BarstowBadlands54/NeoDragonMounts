@@ -47,8 +47,8 @@ public class DragonScaleArmorItem extends ArmorItem implements DragonTypified, G
         this.effect = effect;
         this.name = new TranslatableContents(ITEM_TRANSLATION_KEY_PREFIX + keyPrefix + slot.getName() + ".name", null, new Object[]{MutableComponent.create(type.name)});
     }
+    private static final int DURABILITY_FACTOR = 50; // netherite, tune it for balancing
 
-    private static final int DURABILITY_FACTOR = 33;   // diamond-tier; tune per balance
     @Override
     public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
         return Optional.ofNullable(this.effect);
