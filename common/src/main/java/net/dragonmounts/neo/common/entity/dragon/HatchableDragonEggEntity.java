@@ -155,15 +155,6 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
         this.isVanilla = vanilla;
     }
 
-    protected void spawnScales(int amount) {
-        if (amount > 0) {
-            var scales = this.getDragonType().getInstance(DragonScalesItem.class, null);
-            if (scales != null && level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
-                this.spawnAtLocation(new ItemStack(scales, amount), 1.25F);
-            }
-        }
-    }
-
     @Override
     public void setLevelCallback(EntityInLevelCallback callback) {
         if (this.hatched && callback == EntityInLevelCallback.NULL && this.level() instanceof ServerLevel level) {
@@ -175,7 +166,6 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
 
     public void hatch() {
         if (this.level() instanceof ServerLevel level) {
-            this.spawnScales(this.random.nextInt(4) + 4);
             this.hatched = true;
             ((ScoreboardAccessor) this.level().getScoreboard()).neodragonmounts$preventRemoval(this);
         }
@@ -234,9 +224,6 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
                             random.nextInt(180),
                             random.nextBoolean() ? 0b10 | flag : flag
                     ));
-                    if (crack) {
-                        this.spawnScales(1);
-                    }
                 }
             }
             if (ServerConfig.INSTANCE.isEggPushable.get()) {
@@ -294,18 +281,10 @@ public class HatchableDragonEggEntity extends LivingEntity implements DynamicAtt
         if (source.getDirectEntity() instanceof Player player &&
                 player.getMainHandItem().is(Items.MACE) &&
                 MaceItem.canSmashAttack(player)) {
-            if (super.hurt(source, Math.max(20F, amount * 3F))) {
-                this.spawnScales(1);
-                return true;
-            }
             return false;
         } else {
             var weapon = source.getWeaponItem();
             if (weapon != null && (weapon.is(ItemTags.MACE_ENCHANTABLE))) {
-                if (super.hurt(source, amount * 3F)) {
-                    this.spawnScales( 1);
-                    return true;
-                }
                 return false;
             }
         }
