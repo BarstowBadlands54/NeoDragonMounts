@@ -175,6 +175,7 @@
   "tooltip.neodragonmounts.health": "Vie: %s",
   "tooltip.neodragonmounts.owner_name": "Propriétaire: %s",
   "block.neodragonmounts.light_dragon_egg": "Œuf de dragon de lumière",
-  "button.neodragonmounts.flight_rank.auto": "Position en Vol en V",
-  "button.neodragonmounts.flight_rank.tooltip": "Définit la place de ce dragon dans la formation en V lors du vol groupé"
+  "button.neodragonmounts.flight_rank.auto": "Premier rang",
+  "button.neodragonmounts.flight_rank.tooltip": "Rang de vol",
+  "button.neodragonmounts.flight_rank.value": "Rang de vol: %s"
 }

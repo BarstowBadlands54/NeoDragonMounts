@@ -40,10 +40,9 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
     private static final ResourceLocation HEALTH_SPRITE = makeId("dragon_panel/health");
     private static final ResourceLocation FOOD_SPRITE = makeId("dragon_panel/food");
     private static final Component TRUST_STATE = Component.translatable("button.neodragonmounts.trust_state");
-    private static final Component FLIGHT_RANK = Component.translatable("button.neodragonmounts.flight_rank");
     private static final Component FLIGHT_RANK_TOOLTIP = Component.translatable("button.neodragonmounts.flight_rank.tooltip");
     private static final Component FLIGHT_RANK_AUTO = Component.translatable("button.neodragonmounts.flight_rank.auto");
-    private static final int MAX_FLIGHT_RANK = 9;
+    private static final int MAX_FLIGHT_RANK = 24;
     private static final Component SITTING_STATE = Component.translatable("button.neodragonmounts.sitting_state");
     private static final Component ORDER_TO_SIT = Component.translatable("button.neodragonmounts.order_to_sit");
     private static final Component ORDER_TO_STAND = Component.translatable("button.neodragonmounts.order_to_stand");
@@ -86,9 +85,9 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
                 wrapDefaultNarrationMessage(toggle.getState() ? DragonInventoryScreen.ORDER_TO_SIT : DragonInventoryScreen.ORDER_TO_STAND)
         ));
         // Flight-rank cycle button: click to advance the dragon's V-formation slot (Auto, 1..9).
-        this.flightRankButton = Button.builder(this.flightRankLabel(this.menu.dragon.getFlightRank()), this::handleCycleFlightRank)
+        this.flightRankButton = Button.builder(FLIGHT_RANK_TOOLTIP, this::handleCycleFlightRank)
                 .bounds(x + 59, y + 194, 67, 20)
-                .tooltip(Tooltip.create(FLIGHT_RANK_TOOLTIP))
+                .tooltip(Tooltip.create(this.flightRankTooltip(this.menu.dragon.getFlightRank())))
                 .build();
         this.addWidget(this.flightRankButton);
         this.containerTick();
@@ -102,7 +101,7 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         this.armor = String.format("%.2f", dragon.getAttributeValue(Attributes.ARMOR));
         this.sittingToggle.setState(this.menu.sitting.get() != 0, ORDER_TO_STAND, ORDER_TO_SIT);
         this.trustToggle.setState(dragon.isTrustingAnyPlayer());
-//        this.flightRankButton.setMessage(this.flightRankLabel(dragon.getFlightRank()));
+        this.flightRankButton.setTooltip(Tooltip.create(this.flightRankTooltip(dragon.getFlightRank())));
     }
 
     @Override
@@ -139,7 +138,8 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         while (next <= MAX_FLIGHT_RANK && used.contains(next)) ++next;
         if (next > MAX_FLIGHT_RANK) next = 0;   // wrap back to Auto
         dragon.setFlightRank(next);             // optimistic client update; server is authoritative
-        this.flightRankButton.setMessage(this.flightRankLabel(next));
+        this.flightRankButton.setTooltip(Tooltip.create(this.flightRankTooltip(next)));
+        ClientNetworkHandler.send(new SetFlightRankPayload(dragon.getId(), next));
         ClientNetworkHandler.send(new SetFlightRankPayload(dragon.getId(), next));
     }
 
@@ -158,10 +158,8 @@ public class DragonInventoryScreen extends AbstractContainerScreen<DragonInvento
         return used;
     }
 
-    private Component flightRankLabel(int rank) {
-        return rank <= 0
-                ? FLIGHT_RANK_AUTO
-                : Component.translatable("button.neodragonmounts.flight_rank.value", rank);
+    private Component flightRankTooltip(int rank) {
+        return rank == 0 ? FLIGHT_RANK_AUTO : Component.translatable("button.neodragonmounts.flight_rank.value", rank);
     }
 
     public void handleToggleSitting(Button ignored) {
