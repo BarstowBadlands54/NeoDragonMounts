@@ -267,6 +267,7 @@ public class DragonTypes {
         SCULK = new DragonTypeBuilder(0x29DFEB, material, tier)
                 .model("sculk", "base")
                 .armor("sculk_classic")
+                .setSneezeParticle(ParticleTypes.SCULK_CHARGE_POP)
                 .texture(makeId("textures/entity/dragon/sculk/wild_type/body.png"))
                 .setMaterial(DMItemTags.SCULK_DRAGON_SCALES)
                 .setScaleColor(MapColor.COLOR_BLACK)

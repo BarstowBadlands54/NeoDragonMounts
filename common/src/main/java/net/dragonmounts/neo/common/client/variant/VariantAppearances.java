@@ -88,6 +88,7 @@ public class VariantAppearances {
     public static final VariantAppearance ZOMBIE_ZOMBIE;
     public static final VariantAppearance ZOMBIE_DROWNED;
     public static final VariantAppearance ZOMBIE_HUSK;
+    public static final VariantAppearance ZOMBIE_FROZEN;
     public static final VariantAppearance SCULK_AMETHYST;
     public static final VariantAppearance SCULK_BETA;
     public static final VariantAppearance SCULK_WARDEN;
@@ -238,6 +239,9 @@ public class VariantAppearances {
         ZOMBIE_HUSK = builder()
                 .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
                 .build(makeId("zombie/husk"));
+        ZOMBIE_FROZEN = builder()
+                .withBreath(DMParticleSprites.POISON_BREATH, PoisonBreathParticle.FACTORY)
+                .build(makeId("zombie/frozen"));
     }
 
     static {
@@ -369,6 +373,7 @@ public class VariantAppearances {
             case "zombie" -> ZOMBIE_ZOMBIE;
             case "drowned" -> ZOMBIE_DROWNED;
             case "husk" -> ZOMBIE_HUSK;
+            case "frozen" -> ZOMBIE_FROZEN;
             case "wither" -> WITHER;
             case "fallen" -> LIGHT_FALLEN;
             case "prism" -> LIGHT_PRISM;

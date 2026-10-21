@@ -180,7 +180,7 @@ public class DragonBreathAttack extends GoalBehavior<TameableDragonEntity> {
         // hovering for the full duration while it beats on the dragon.
         boolean crowded = dragon.isFlying() && target != null && !isAirborne(target)
                 && dragon.distanceToSqr(target) < BREAK_OFF_RANGE_SQR;
-        if ((expired && !aerialDuel) || targetGone || controlled || crowded) {
+        if ((expired && !aerialDuel) || targetGone || controlled) {
             this.doStop(level, dragon, time);
             return;
         }

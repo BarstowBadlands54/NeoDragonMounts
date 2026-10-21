@@ -52,10 +52,10 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
             this.committedAir = false;
             return false;
         }
-        if (dragon.distanceToSqr(target) > ENGAGE_RANGE_SQR) {
-            this.committedAir = false;
-            return false;
-        }
+//        if (dragon.distanceToSqr(target) > ENGAGE_RANGE_SQR) {
+//            this.committedAir = false;
+//            return false;
+//        }
         return this.shouldFly(dragon, target);
     }
 
@@ -126,7 +126,7 @@ public class DragonAerialCombat extends GoalBehavior<TameableDragonEntity> {
         // While breathing, yield positioning to DragonBreathAttack and just hold the spot, or the
         // move control rotates the dragon off its aim. Reposition only between bursts.
         if (dragon.isBreathing()) {
-            dragon.getMoveControl().setWantedPosition(dragon.getX(), dragon.getY(), dragon.getZ(), 0.2);
+            dragon.getMoveControl().setWantedPosition(dragon.getX(), dragon.getY(), dragon.getZ(), 0.0);
         } else {
             this.flyToAttackPosition(dragon);
         }
