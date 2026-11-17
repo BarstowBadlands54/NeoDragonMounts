@@ -192,7 +192,7 @@ public class DragonType implements TooltipProvider, DragonTypified {
     public SoundEvent getAmbientSound(TameableDragonEntity dragon) {
         return dragon.isBaby()
                 ? DMSounds.DRAGON_PURR_HATCHLING
-                : dragon.getRandom().nextFloat() < 0.33F
+                : dragon.getRandom().nextFloat() < 0.12F
                   ? DMSounds.DRAGON_PURR
                   : DMSounds.DRAGON_AMBIENT;
     }

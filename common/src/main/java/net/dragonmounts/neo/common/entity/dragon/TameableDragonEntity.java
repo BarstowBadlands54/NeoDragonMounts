@@ -928,7 +928,7 @@ public abstract class TameableDragonEntity extends TamableAnimal implements
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         // locomotion state machine
         controllers.add(
-                new AnimationController<>(this, "movement", 5, state -> {
+                new AnimationController<>(this, "movement", 4, state -> {
                     if (this.isDeadOrDying()) {
                         state.getController().setAnimationSpeed(0.0D);
                         return PlayState.CONTINUE;
